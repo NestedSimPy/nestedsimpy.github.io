@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="640" height="160" viewBox="0 0 640 160" role="img" aria-labelledby="title desc">
-  <title id="title">PyNestedSim logo</title>
-  <desc id="desc">A branching network mark followed by the word PyNestedSim.</desc>
+  <title id="title">NestedSimPy logo</title>
+  <desc id="desc">A branching network mark followed by the word NestedSimPy.</desc>
   <rect width="640" height="160" fill="white"/>
   <g transform="translate(22 18)">
     <path d="M22 64H76" stroke="#0f4c81" stroke-width="10" stroke-linecap="round"/>
@@ -14,7 +14,7 @@
     <circle cx="118" cy="98" r="14" fill="#b42318"/>
   </g>
   <g fill="#0f172a" font-family="Helvetica, Arial, sans-serif">
-    <text x="176" y="72" font-size="48" font-weight="700">PyNestedSim</text>
+    <text x="176" y="72" font-size="48" font-weight="700">NestedSimPy</text>
     <text x="178" y="108" font-size="20" fill="#334155">Branching and replay for SimPy models</text>
   </g>
 </svg>

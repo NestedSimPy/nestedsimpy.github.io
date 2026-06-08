@@ -9,15 +9,15 @@ can preempt lower-priority tasks.
 ## Files
 
 - Plain SimPy: `simpy_examples/machine_shop_plain.py`
-- PyNestedSim: `simpy_examples/machine_shop_nested.py`
+- NestedSimPy: `simpy_examples/machine_shop_nested.py`
 
 ## Parity Goal
 
-The nested adaptation keeps the workshop production summary on the outer path
+The nested adaptation keeps the workshop production summary on the outer simulation
 aligned with the plain baseline while tracing interruptions and preemptions in a
 branch-aware way.
 
-## What PyNestedSim Adds
+## What NestedSimPy Adds
 
 - `NestedPreemptiveResource` instrumentation,
 - trace records for preemption-related transitions,
@@ -36,7 +36,7 @@ resource discipline.
 ```
 ````
 
-````{dropdown} PyNestedSim source
+````{dropdown} NestedSimPy source
 ```{literalinclude} ../../simpy_examples/machine_shop_nested.py
 :language: python
 :caption: simpy_examples/machine_shop_nested.py

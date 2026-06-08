@@ -21,7 +21,7 @@ export_realizations(out_dir, export_dir_name='exports') -> Path
 - **`build_state_long`** — export snapshot queue contents to a long-format CSV.
 - **`build_state_wide`** — export snapshot records to a wide-format CSV.
 - **`export_realizations`** — export per-realisation CSV/JSON bundles for the
-  outer run and its inner branches.
+  outer simulation and its inner simulations.
 
 ## Result Access
 

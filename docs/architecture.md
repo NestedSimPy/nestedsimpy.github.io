@@ -1,6 +1,6 @@
 # Architecture
 
-This page is the short SimPy-focused architecture view for PyNestedSim.
+This page is the short SimPy-focused architecture view for NestedSimPy.
 
 ## Runtime Loop
 
@@ -23,7 +23,7 @@ At a high level, the runtime does five things:
   callbacks.
 
 `NestedPreemptiveResource`
-: The priority/preemption-aware resource path. PyNestedSim does not currently
+: The priority/preemption-aware resource path. NestedSimPy does not currently
   expose a separate ``NestedPriorityResource`` wrapper.
 
 `safe_sleep` / `env.nested_timeout(...)`
@@ -31,7 +31,7 @@ At a high level, the runtime does five things:
   after a fork.
 
 `branch_after_simpy`
-: The SimPy branch driver. It runs the outer path, detects boundaries, forks
+: The SimPy branch driver. It runs the outer simulation, detects boundaries, forks
   children, reseeds or restores RNG state, and writes manifests.
 
 `trace` and `postprocess`

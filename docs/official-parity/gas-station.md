@@ -9,7 +9,7 @@ falls below a threshold.
 ## Files
 
 - Plain SimPy: `simpy_examples/gas_station_plain.py`
-- PyNestedSim: `simpy_examples/gas_station_nested.py`
+- NestedSimPy: `simpy_examples/gas_station_nested.py`
 
 ## Parity Goal
 
@@ -17,7 +17,7 @@ The nested version keeps the outer refueling storyline aligned with the plain
 example while exposing additional state around both the pumps and the shared
 fuel level.
 
-## What PyNestedSim Adds
+## What NestedSimPy Adds
 
 - instrumented resource traces for the pumps,
 - instrumented inventory/state traces for the fuel reservoir path,
@@ -35,7 +35,7 @@ are especially useful here.
 ```
 ````
 
-````{dropdown} PyNestedSim source
+````{dropdown} NestedSimPy source
 ```{literalinclude} ../../simpy_examples/gas_station_nested.py
 :language: python
 :caption: simpy_examples/gas_station_nested.py

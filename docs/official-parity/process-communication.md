@@ -9,14 +9,14 @@ process.
 ## Files
 
 - Plain SimPy: `simpy_examples/process_communication_plain.py`
-- PyNestedSim: `simpy_examples/process_communication_nested.py`
+- NestedSimPy: `simpy_examples/process_communication_nested.py`
 
 ## Parity Goal
 
 The nested adaptation keeps the visible communication output aligned with the
 plain example while adding branchable store traffic underneath.
 
-## What PyNestedSim Adds
+## What NestedSimPy Adds
 
 - branch triggers on store puts,
 - structured traces for inter-process message flow,
@@ -34,7 +34,7 @@ than summarizing it abstractly.
 ```
 ````
 
-````{dropdown} PyNestedSim source
+````{dropdown} NestedSimPy source
 ```{literalinclude} ../../simpy_examples/process_communication_nested.py
 :language: python
 :caption: simpy_examples/process_communication_nested.py

@@ -9,14 +9,14 @@ communication channels.
 ## Files
 
 - Plain SimPy: `simpy_examples/event_latency_plain.py`
-- PyNestedSim: `simpy_examples/event_latency_nested.py`
+- NestedSimPy: `simpy_examples/event_latency_nested.py`
 
 ## Parity Goal
 
 The nested adaptation keeps the outer message-delivery timing aligned with the
 plain baseline. In tests, the received-message lines are matched directly.
 
-## What PyNestedSim Adds
+## What NestedSimPy Adds
 
 - branch triggers on store put events,
 - structured traces for store traffic,
@@ -34,7 +34,7 @@ files directly.
 ```
 ````
 
-````{dropdown} PyNestedSim source
+````{dropdown} NestedSimPy source
 ```{literalinclude} ../../simpy_examples/event_latency_nested.py
 :language: python
 :caption: simpy_examples/event_latency_nested.py

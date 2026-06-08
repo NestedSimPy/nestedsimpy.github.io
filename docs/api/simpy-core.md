@@ -1,6 +1,6 @@
 # SimPy Core API
 
-This page documents the SimPy-facing public surface of PyNestedSim:
+This page documents the SimPy-facing public surface of NestedSimPy:
 the environment, instrumented primitives, sleep helpers, the branch driver,
 the event bus, state and trace utilities, and the typed configuration structs.
 
@@ -120,7 +120,7 @@ resolve_distribution(spec) -> SleepDistribution
 ```
 
 - **`safe_sleep`** — return a branch-friendly event that sleeps according to
-  `distribution`. When an inner branch resumes a sleep already in progress, the
+  `distribution`. When an inner simulation resumes a sleep already in progress, the
   remaining duration is drawn from the *conditional* distribution `S | S > elapsed`.
 - **`resolve_distribution`** — coerce `spec` into a {class}`SleepDistribution`.
 - **`SleepDistribution`** — encapsulates sampling logic for safe sleeps.
@@ -159,7 +159,7 @@ subscribe_event(name, callback) -> Callable[[], None]
 build_uid(outer_id, j, k, cust_id) -> str
 ```
 > Construct a stable, namespace-qualified identifier for a customer across the
-> outer run and its nested branches.
+> outer simulation and its nested branches.
 
 ## Trace
 
@@ -187,4 +187,4 @@ close() -> None
 
 ### `StartStopSpec`
 
-> Declarative composition of stop rules for inner branches.
+> Declarative composition of stop rules for inner simulations.

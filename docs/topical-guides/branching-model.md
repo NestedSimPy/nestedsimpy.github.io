@@ -7,11 +7,11 @@ The core mental model is:
 - run one outer trajectory,
 - fork child futures when a declared boundary fires.
 
-## From Plain SimPy To PyNestedSim
+## From Plain SimPy To NestedSimPy
 
 The usual substitutions are:
 
-| Plain SimPy | PyNestedSim |
+| Plain SimPy | NestedSimPy |
 | --- | --- |
 | `simpy.Environment()` | `NestedEnvironment()` |
 | `simpy.Resource(...)` | `NestedResource(...)` |
@@ -58,7 +58,7 @@ env.nested_run()
 
 ## Runtime Shape
 
-At runtime, PyNestedSim does four things around the underlying SimPy model:
+At runtime, NestedSimPy does four things around the underlying SimPy model:
 
 1. runs the outer trajectory,
 2. watches for the configured boundary,

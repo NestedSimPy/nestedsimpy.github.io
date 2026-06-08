@@ -1,15 +1,15 @@
-# Official SimPy Parity
+# Additional examples
 
 The examples section is intentionally centered on the official SimPy examples.
 
 The point of this section is not to show a random collection of demos. The
-point is to show that PyNestedSim can sit on top of familiar SimPy models and
+point is to show that NestedSimPy can sit on top of familiar SimPy models and
 preserve their outer behavior while adding branching, traces, and replay.
 
 ## Scope
 
 This section tracks the official SimPy examples that are represented here
-through a `plain` baseline and a `nested` PyNestedSim adaptation.
+through a `plain` baseline and a `nested` NestedSimPy adaptation.
 
 The claim here is narrow and deliberate:
 
@@ -22,7 +22,7 @@ The claim here is narrow and deliberate:
 This site currently includes parity adaptations for the following official
 SimPy examples:
 
-| SimPy example | Plain baseline | PyNestedSim adaptation | Main parity focus |
+| SimPy example | Plain baseline | NestedSimPy adaptation | Main parity focus |
 | --- | --- | --- | --- |
 | Bank Renege | `bank_reneging_plain.py` | `bank_reneging_nested.py` | Reneging behavior and condition events |
 | Carwash | `carwash_plain.py` | `carwash_nested.py` | Resource queueing and process waiting |
@@ -99,7 +99,7 @@ Each example page is organized around four questions:
 1. What is the original SimPy scenario?
 2. What file pair implements the plain and nested versions?
 3. What parity property is being preserved?
-4. What branch-aware capabilities are added by PyNestedSim?
+4. What branch-aware capabilities are added by NestedSimPy?
 
 ```{toctree}
 :maxdepth: 1

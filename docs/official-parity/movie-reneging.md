@@ -8,14 +8,14 @@ is sold out, customers waiting for that title leave the queue.
 ## Files
 
 - Plain SimPy: `simpy_examples/movie_reneging_plain.py`
-- PyNestedSim: `simpy_examples/movie_reneging_nested.py`
+- NestedSimPy: `simpy_examples/movie_reneging_nested.py`
 
 ## Parity Goal
 
 The nested version preserves the sold-out and reneging logic of the original
 example, while also producing real branch points tied to customer arrivals.
 
-## What PyNestedSim Adds
+## What NestedSimPy Adds
 
 - explicit branch outputs per arrival boundary,
 - manifests and stop reasons for each branch,
@@ -34,7 +34,7 @@ actual source files directly.
 ```
 ````
 
-````{dropdown} PyNestedSim source
+````{dropdown} NestedSimPy source
 ```{literalinclude} ../../simpy_examples/movie_reneging_nested.py
 :language: python
 :caption: simpy_examples/movie_reneging_nested.py

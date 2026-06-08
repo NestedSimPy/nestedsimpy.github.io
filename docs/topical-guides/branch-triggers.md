@@ -1,6 +1,6 @@
 # Branch Triggers
 
-PyNestedSim branches when the configured nesting condition fires.
+NestedSimPy branches when the configured nesting condition fires.
 
 The main configuration calls are:
 
@@ -70,7 +70,7 @@ single queue primitive.
 
 ## Choosing A First Trigger
 
-If you are introducing PyNestedSim to an existing SimPy model:
+If you are introducing NestedSimPy to an existing SimPy model:
 
 - start with arrival triggers,
 - switch to state predicates when queue conditions matter more than counts,

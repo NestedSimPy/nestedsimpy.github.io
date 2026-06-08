@@ -1,7 +1,7 @@
 # API Reference
 
 This API section is intentionally scoped to the SimPy-facing surface of
-PyNestedSim.
+NestedSimPy.
 
 The main split is:
 

@@ -9,7 +9,7 @@ leave when finished.
 ## Files
 
 - Plain SimPy: `simpy_examples/carwash_plain.py`
-- PyNestedSim: `simpy_examples/carwash_nested.py`
+- NestedSimPy: `simpy_examples/carwash_nested.py`
 
 ## Parity Goal
 
@@ -17,7 +17,7 @@ The nested version preserves the outer printed sequence of arrivals, service
 starts, and departures from the plain example. The test suite compares those
 outer messages directly.
 
-## What PyNestedSim Adds
+## What NestedSimPy Adds
 
 - instrumented queue and service-state traces,
 - branch outputs rooted at the wash resource,
@@ -35,7 +35,7 @@ files directly below to inspect the actual delta.
 ```
 ````
 
-````{dropdown} PyNestedSim source
+````{dropdown} NestedSimPy source
 ```{literalinclude} ../../simpy_examples/carwash_nested.py
 :language: python
 :caption: simpy_examples/carwash_nested.py

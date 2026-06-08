@@ -1,6 +1,6 @@
 # Traces and Outputs
 
-PyNestedSim records raw execution traces first, then packages those traces into
+NestedSimPy records raw execution traces first, then packages those traces into
 more convenient exports.
 
 ## Output Roots
@@ -42,7 +42,7 @@ structure.
 : Raw event stream written during execution.
 
 `manifest.json`
-: Summary metadata for the outer run or a specific branch.
+: Summary metadata for the outer simulation or a specific branch.
 
 `state_wide.csv`, `state_long.csv`, `events.csv`
 : Packaged exports generated from the raw traces for easier analysis.

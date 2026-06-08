@@ -9,7 +9,7 @@ patience runs out first.
 ## Files
 
 - Plain SimPy: `simpy_examples/bank_reneging_plain.py`
-- PyNestedSim: `simpy_examples/bank_reneging_nested.py`
+- NestedSimPy: `simpy_examples/bank_reneging_nested.py`
 
 ## Parity Goal
 
@@ -17,7 +17,7 @@ The nested adaptation keeps the original reneging behavior intact while still
 producing branch manifests and trace outputs. In the test suite, the outer
 stdout lines for customers are compared directly against the plain baseline.
 
-## What PyNestedSim Adds
+## What NestedSimPy Adds
 
 - branch generation on arrival boundaries,
 - structured stop reasons for branch completions,
@@ -35,7 +35,7 @@ side with the original-style baseline.
 ```
 ````
 
-````{dropdown} PyNestedSim source
+````{dropdown} NestedSimPy source
 ```{literalinclude} ../../simpy_examples/bank_reneging_nested.py
 :language: python
 :caption: simpy_examples/bank_reneging_nested.py

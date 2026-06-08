@@ -1,130 +1,74 @@
-# PyNestedSim
+# NestedSimPy
 
-PyNestedSim adds branching, replay, and trace-based analysis to SimPy models.
+## Overview
 
-This site is focused on SimPy usage and on parity adaptations of the official
-SimPy examples.
+NestedSimPy is an extension to [SimPy](https://simpy.readthedocs.io/) that
+supplements it with **nested simulation** functionalities. The package is not
+part of the SimPy project.
 
 ```{note}
-This documentation set covers the SimPy path only. Ciw-related experiments are
-not part of the public site.
+The project is currently under development.
 ```
 
-````{grid} 1 1 2 2
-:gutter: 2
+## What is nested simulation?
 
-```{grid-item-card} PyNestedSim in 10 Minutes
-:link: getting-started
-:link-type: doc
+Nested simulation can be thought of as **simulation within simulation**. The
+user implements and executes an *outer* simulation of some system (e.g.,
+service, inventory, or transportation) — a normal simulation run that also
+defines certain **triggering events** (e.g., a customer arrival). When a
+triggering event is invoked, the outer simulation **pauses** and **branches**
+out to multiple parallel **inner simulations** that independently resume from
+that state until some stopping condition is met. Once all inner simulations
+terminate, the outer simulation receives information about how they played out
+and **resumes**, potentially using the information the inner simulations
+collected.
 
-Start with the shortest SimPy-first path through the project: instrument a
-model, declare branch boundaries, run once, and inspect packaged outputs.
+```{figure} _static/mm1-nested-illustration.svg
+:alt: Number of customers over time for an M/M/1 queue, showing the outer simulation in black with inner simulations forked at two triggering events.
+:width: 100%
+
+An M/M/1 queue under nested simulation. The **black** line is the outer simulation
+(number of customers over time). At each **triggering event** (dots), the outer simulation
+pauses and forks a set of **inner simulations** (light lines) that each explore a
+possible future from that exact state before the outer simulation continues.
 ```
 
-```{grid-item-card} Topical Guides
-:link: topical-guides/index
-:link-type: doc
+## When is it useful?
 
-Read focused guides for branching, triggers, stop rules, replay, and output
-packaging without dropping straight into the full API reference.
-```
+The two primary motivations for using nested simulation in Operations
+Management are:
 
-```{grid-item-card} Official SimPy Parity
-:link: official-parity/index
-:link-type: doc
+1. **Creating benchmarks for machine learning (ML) models for operations
+   problems.**
+   ML models are often used for generating predictions in operations problems
+   such as waiting-time prediction. Existing research tells us how different
+   methods compare to each other in different contexts, but it is difficult to
+   discern whether the best-performing method is optimal or whether better
+   methods can be developed. We can use nested simulation to simulate service
+   systems and compute the average waiting times, which provides **optimal
+   predictions** (when the performance metric is MSE).
 
-See the public examples story for the project: parity adaptations of the
-official SimPy examples, with PyNestedSim layered on top.
-```
-
-```{grid-item-card} API Reference
-:link: api/index
-:link-type: doc
-
-Browse the SimPy-facing API surface for the environment, resources, branch
-driver, tracing layer, and reporting helpers.
-```
-
-```{grid-item-card} About
-:link: about
-:link-type: doc
-
-See the project scope, source layout, and project links.
-```
-````
-
-## Why PyNestedSim
-
-PyNestedSim is for cases where a plain SimPy model is not enough because you
-want to:
-
-- fork the future at meaningful decision boundaries,
-- replay a branch from a captured manifest,
-- collect structured traces instead of only ad hoc printouts,
-- package runs into exports that can be analyzed after execution.
-
-## What PyNestedSim Adds
-
-- Instrumented SimPy primitives for `Resource`, `PreemptiveResource`, `Store`, and `Container`
-- Declarative branch triggers on arrivals, state predicates, and events
-- Branch-local stop rules and replay from manifests
-- Structured traces and packaged CSV/Plotly exports
-- Parity adaptations for the official SimPy example set covered by this site
-
-## Sections
-
-`PyNestedSim in 10 Minutes`
-: Short tutorial path for the core SimPy workflow.
-
-`Official SimPy Parity`
-: The examples section. This is the primary public examples story for the
-  project.
-
-`Topical Guides`
-: Concept pages for branching, triggers, stop rules, replay, and outputs.
-
-`API Reference`
-: SimPy-facing API surface for the instrumented environment, resources,
-  branch driver, tracing, and reporting layers.
-
-`Architecture`
-: Short runtime-oriented explanation of how branching is layered onto SimPy.
-
-`About`
-: Project scope, source layout, and project links.
-
-## At a Glance
-
-| Topic | Current public scope |
-| --- | --- |
-| Modeling baseline | SimPy |
-| Main examples story | Official SimPy parity |
-| Public API docs | SimPy-facing modules only |
-| Ciw | Not covered in this site |
-
-## Documentation Map
+2. **Implementation of rollout (lookahead) policies for dynamic optimization.**
+   A commonly used policy in dynamic optimization is the rollout, or lookahead,
+   policy: at the moment of decision-making we pause, simulate a few
+   alternative courses of action, and choose the action whose simulation yields
+   the best performance. Nested simulation lets the user quickly implement such
+   policies.
 
 ```{toctree}
-:maxdepth: 2
+:hidden:
 :caption: Contents
 
-getting-started
-topical-guides/index
+simple-example
 official-parity/index
+topical-guides/index
 api/index
 architecture
 about
 ```
 
-## Project Layout
+```{toctree}
+:hidden:
 
-- `nested-sim/nestedsim`: core SimPy instrumentation package
-- `nested-sim/examples`: native PyNestedSim examples and plotting/postprocess utilities
-- `simpy_examples`: official SimPy parity adaptations
-- `nested-sim/tests/simpy_cases/examples/test_official_examples.py`: parity smoke tests
-
-## Positioning
-
-SimPy is the baseline modeling framework. PyNestedSim sits on top of that
-baseline and keeps the outer behavior of known examples intact while adding
-branching, traces, replay, and analysis outputs.
+getting-started
+```

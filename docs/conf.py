@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-project = "PyNestedSim"
-author = "PyNestedSim contributors"
-copyright = "2026, PyNestedSim contributors"
+project = "NestedSimPy"
+author = "NestedSimPy contributors"
+copyright = "2026, NestedSimPy contributors"
 
 # Docs-only build: no autodoc / viewcode, so the implementation package is NOT
 # required to build and is never imported or rendered. The API reference pages
@@ -33,7 +33,7 @@ exclude_patterns = [
 templates_path = ["_templates"]
 html_static_path = ["_static"]
 html_theme = "furo"
-html_title = "PyNestedSim"
+html_title = "NestedSimPy"
 html_css_files = ["custom.css"]
 html_logo = "_static/pynestedsim-logo.svg"
 html_favicon = "_static/pynestedsim-favicon.svg"

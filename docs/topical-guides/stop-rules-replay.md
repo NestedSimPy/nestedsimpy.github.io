@@ -1,13 +1,13 @@
 # Stop Rules and Replay
 
-PyNestedSim controls both:
+NestedSimPy controls both:
 
 - when the outer trajectory stops, and
-- when each inner branch stops after a fork.
+- when each inner simulation stops after a fork.
 
 ## Outer Stop Rules
 
-Use `set_outer_stopping_condition(...)` to bound the outer run by time or by an
+Use `set_outer_stopping_condition(...)` to bound the outer simulation by time or by an
 arrival count.
 
 ```python

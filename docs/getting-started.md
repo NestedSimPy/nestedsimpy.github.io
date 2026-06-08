@@ -1,6 +1,6 @@
-# PyNestedSim in 10 Minutes
+# NestedSimPy in 10 Minutes
 
-PyNestedSim is easiest to understand as a small layer on top of SimPy:
+NestedSimPy is easiest to understand as a small layer on top of SimPy:
 
 1. Build your model with a `NestedEnvironment`.
 2. Replace plain SimPy primitives with instrumented ones such as `NestedResource`, `NestedPreemptiveResource`, `NestedStore`, or `NestedContainer`.
@@ -28,7 +28,7 @@ python examples/run_mm1_simpy.py --postprocess --plot-static
 That command:
 
 - runs the outer SimPy trajectory,
-- spawns inner branches at the configured arrival boundaries,
+- spawns inner simulations at the configured arrival boundaries,
 - packages the run into `raw/` and `exports/`,
 - writes CSV summaries and an HTML plot.
 
@@ -42,12 +42,12 @@ python examples/run_mm1_simpy_plain.py
 python examples/run_mm1_simpy.py --postprocess
 ```
 
-The plain script shows baseline behavior. The PyNestedSim version preserves the
+The plain script shows baseline behavior. The NestedSimPy version preserves the
 same model logic while adding branch generation and output packaging.
 
 ## Mental Model
 
-Think of PyNestedSim as a layer that leaves your SimPy process logic in place
+Think of NestedSimPy as a layer that leaves your SimPy process logic in place
 but swaps in branch-aware infrastructure:
 
 - `simpy.Environment` becomes `NestedEnvironment`,

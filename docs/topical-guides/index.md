@@ -1,6 +1,6 @@
 # Topical Guides
 
-This section groups the main concepts behind the SimPy-facing PyNestedSim
+This section groups the main concepts behind the SimPy-facing NestedSimPy
 workflow.
 
 Use these pages when you already know what the package is for and want a more
@@ -13,7 +13,7 @@ direct explanation of how the moving parts fit together.
 :link: branching-model
 :link-type: doc
 
-Understand the main shift from plain SimPy to PyNestedSim: instrumented
+Understand the main shift from plain SimPy to NestedSimPy: instrumented
 environments, instrumented primitives, and branch-aware execution.
 ```
 
