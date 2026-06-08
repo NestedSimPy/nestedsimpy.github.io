@@ -58,16 +58,11 @@ Management are:
 :caption: Contents
 
 self
+getting-started
 simple-example
 official-parity/index
 topical-guides/index
 api/index
 architecture
 about
-```
-
-```{toctree}
-:hidden:
-
-getting-started
 ```
