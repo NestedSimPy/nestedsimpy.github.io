@@ -6,9 +6,29 @@ outputs a nested run produces.
 
 ## Plain SimPy vs. NestedSimPy
 
-```{note}
-TODO — drop in the minimal M/M/1 *plain SimPy* model and its *NestedSimPy*
-adaptation here, shown side by side (or as a diff) so the delta is obvious.
+The plain model is a standard SimPy M/M/1 queue. The NestedSimPy version keeps
+the same outer behaviour and adds instrumented primitives, a triggering event,
+and inner simulations.
+
+`````{tab-set}
+````{tab-item} Plain SimPy
+```{literalinclude} ../simpy_examples/mm1_plain.py
+:language: python
+:caption: mm1_plain.py
+```
+````
+
+````{tab-item} NestedSimPy
+```{literalinclude} ../simpy_examples/mm1_nested.py
+:language: python
+:caption: mm1_nested.py
+```
+````
+`````
+
+```{tip}
+Download: {download}`mm1_plain.py <../simpy_examples/mm1_plain.py>` ·
+{download}`mm1_nested.py <../simpy_examples/mm1_nested.py>`
 ```
 
 ## What a nested run produces
