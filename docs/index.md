@@ -1,6 +1,4 @@
-# NestedSimPy
-
-## Overview
+# Overview
 
 NestedSimPy is an extension to [SimPy](https://simpy.readthedocs.io/) that
 supplements it with **nested simulation** functionalities. The package is not
@@ -59,6 +57,7 @@ Management are:
 :hidden:
 :caption: Contents
 
+self
 simple-example
 official-parity/index
 topical-guides/index

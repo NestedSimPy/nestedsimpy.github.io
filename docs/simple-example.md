@@ -11,26 +11,21 @@ TODO — drop in the minimal M/M/1 *plain SimPy* model and its *NestedSimPy*
 adaptation here, shown side by side (or as a diff) so the delta is obvious.
 ```
 
-<!-- Once the minimal mm1_plain.py / mm1_nested.py are available, embed them:
-````{tab-set}
-```{tab-item} Plain SimPy
-```{literalinclude} ../simpy_examples/mm1_plain.py
-:language: python
-```
-```
-```{tab-item} NestedSimPy
-```{literalinclude} ../simpy_examples/mm1_nested.py
-:language: python
-```
-```
-````
--->
-
 ## What a nested run produces
 
+```{figure} _static/mm1-nested-illustration.svg
+:alt: Number of customers over time for an M/M/1 queue, showing the outer simulation in black with inner simulations forked at two triggering events.
+:width: 100%
+
+A nested run of the M/M/1 queue. The **black** line is the outer simulation
+(number of customers over time). At each **triggering event** (dots), the outer
+simulation pauses and forks a set of **inner simulations** (light lines) that
+each explore a possible future from that state.
+```
+
 ```{note}
-TODO — add the output visualization (the branch plot) and a summary table of
-per-branch results from this run.
+TODO — add a summary table of per-branch results from this run. (Figure labels
+will be updated to match the standard terminology later.)
 ```
 
 ## Next
