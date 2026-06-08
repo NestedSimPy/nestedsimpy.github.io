@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="160" viewBox="0 0 640 160" role="img" aria-labelledby="title desc">
+  <title id="title">PyNestedSim logo</title>
+  <desc id="desc">A branching network mark followed by the word PyNestedSim.</desc>
+  <rect width="640" height="160" fill="white"/>
+  <g transform="translate(22 18)">
+    <path d="M22 64H76" stroke="#0f4c81" stroke-width="10" stroke-linecap="round"/>
+    <path d="M76 64L118 30" stroke="#0f4c81" stroke-width="10" stroke-linecap="round"/>
+    <path d="M76 64L118 64" stroke="#0f4c81" stroke-width="10" stroke-linecap="round"/>
+    <path d="M76 64L118 98" stroke="#0f4c81" stroke-width="10" stroke-linecap="round"/>
+    <circle cx="22" cy="64" r="14" fill="#0f4c81"/>
+    <circle cx="76" cy="64" r="14" fill="#1b6ca8"/>
+    <circle cx="118" cy="30" r="14" fill="#0a8f6a"/>
+    <circle cx="118" cy="64" r="14" fill="#d97706"/>
+    <circle cx="118" cy="98" r="14" fill="#b42318"/>
+  </g>
+  <g fill="#0f172a" font-family="Helvetica, Arial, sans-serif">
+    <text x="176" y="72" font-size="48" font-weight="700">PyNestedSim</text>
+    <text x="178" y="108" font-size="20" fill="#334155">Branching and replay for SimPy models</text>
+  </g>
+</svg>

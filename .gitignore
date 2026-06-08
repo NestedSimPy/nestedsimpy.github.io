@@ -1,0 +1,10 @@
+# Sphinx build output
+docs/_build/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# OS
+.DS_Store

@@ -1,0 +1,50 @@
+# Gas Station Refueling
+
+## Scenario
+
+Cars arrive at a gas station with a limited number of pumps. Those pumps share a
+common fuel reservoir, and a control process summons a tank truck when fuel
+falls below a threshold.
+
+## Files
+
+- Plain SimPy: `simpy_examples/gas_station_plain.py`
+- PyNestedSim: `simpy_examples/gas_station_nested.py`
+
+## Parity Goal
+
+The nested version keeps the outer refueling storyline aligned with the plain
+example while exposing additional state around both the pumps and the shared
+fuel level.
+
+## What PyNestedSim Adds
+
+- instrumented resource traces for the pumps,
+- instrumented inventory/state traces for the fuel reservoir path,
+- branch artifacts rooted in meaningful service arrivals.
+
+## Code
+
+This example is one of the heavier parity adaptations, so the source includes
+are especially useful here.
+
+````{dropdown} Plain SimPy source
+```{literalinclude} ../../simpy_examples/gas_station_plain.py
+:language: python
+:caption: simpy_examples/gas_station_plain.py
+```
+````
+
+````{dropdown} PyNestedSim source
+```{literalinclude} ../../simpy_examples/gas_station_nested.py
+:language: python
+:caption: simpy_examples/gas_station_nested.py
+```
+````
+
+## Run
+
+```bash
+python simpy_examples/gas_station_plain.py
+python simpy_examples/gas_station_nested.py
+```

@@ -1,0 +1,32 @@
+:root {
+  --color-brand-primary: #0f4c81;
+  --color-brand-content: #0f4c81;
+}
+
+.sidebar-brand-text {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.sidebar-logo {
+  max-width: 180px;
+}
+
+.toctree-wrapper p.caption {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.content table {
+  font-size: 0.95rem;
+}
+
+.sd-card {
+  border-radius: 0.6rem;
+}
+
+.sd-card .sd-card-title {
+  font-size: 1.05rem;
+}
