@@ -21,8 +21,6 @@ The current site covers:
 - API reference for the SimPy-facing package surface
 - instrumented `Resource`, `PreemptiveResource`, `Store`, and `Container` paths
 
-Ciw-related experiments are not part of this public documentation set.
-
 ## Project Links
 
 - GitHub: `https://github.com/happywhy0928/NestedSimPy_Web`

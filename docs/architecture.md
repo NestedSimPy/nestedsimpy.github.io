@@ -46,5 +46,3 @@ This site currently describes only the SimPy path:
 - SimPy resources, stores, and containers
 - SimPy parity examples
 - SimPy reporting helpers
-
-Ciw-related experiments are outside the scope of this site.
