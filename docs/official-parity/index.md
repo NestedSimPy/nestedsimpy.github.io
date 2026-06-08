@@ -32,8 +32,8 @@ SimPy examples:
 | Movie Renege | `movie_reneging_plain.py` | `movie_reneging_nested.py` | Shared events and sold-out reneging |
 | Process Communication | `process_communication_plain.py` | `process_communication_nested.py` | Asynchronous Store-based communication |
 
-Parity is enforced by the regression suite in
-`nested-sim/tests/simpy_cases/examples/test_official_examples.py`.
+Parity is enforced by an automated regression suite that compares the outer
+printed sequence of each plain example against its NestedSimPy adaptation.
 
 ````{grid} 1 1 2 2
 :gutter: 2

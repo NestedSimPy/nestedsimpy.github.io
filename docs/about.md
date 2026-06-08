@@ -23,13 +23,15 @@ The current site covers:
 
 ## Project Links
 
-- GitHub: `https://github.com/happywhy0928/NestedSimPy_Web`
-- Documentation site: `https://happywhy0928.github.io/NestedSimPy_Web/`
+- GitHub: <https://github.com/happywhy0928/NestedSimPy_Web>
+- Documentation site: <https://happywhy0928.github.io/NestedSimPy_Web/>
 
 ## Documentation Layout
 
 - {doc}`getting-started`
-- {doc}`topical-guides/index`
+- {doc}`simple-example`
 - {doc}`official-parity/index`
+- {doc}`topical-guides/index`
 - {doc}`api/index`
 - {doc}`architecture`
+- {doc}`about`

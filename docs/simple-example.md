@@ -7,7 +7,7 @@ outputs a nested run produces.
 ## Plain SimPy vs. NestedSimPy
 
 The plain model is a standard SimPy M/M/1 queue. The NestedSimPy version keeps
-the same outer behaviour and adds instrumented primitives, a triggering event,
+the same outer behavior and adds instrumented primitives, a triggering event,
 and inner simulations.
 
 `````{tab-set}
@@ -41,11 +41,6 @@ A nested run of the M/M/1 queue. The **black** line is the outer simulation
 (number of customers over time). At each **triggering event** (dots), the outer
 simulation pauses and forks a set of **inner simulations** (light lines) that
 each explore a possible future from that state.
-```
-
-```{note}
-TODO — add a summary table of per-branch results from this run. (Figure labels
-will be updated to match the standard terminology later.)
 ```
 
 ## Next

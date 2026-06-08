@@ -1,7 +1,7 @@
 # Reporting API
 
 Helpers for turning raw run output into CSV exports, consolidated per-branch
-results, packaged artefacts, and interactive/static plots.
+results, packaged artifacts, and interactive/static plots.
 
 ```{note}
 Signatures below describe the **public interface**. Implementation details are
@@ -56,8 +56,8 @@ has_branch_csv(exports_dir) -> bool
 ```
 
 - **`package_run_outputs`** — package a run and return typed paths to the
-  resulting artefacts.
-- **`PackagedRunArtifacts`** — typed view of the standard artefacts produced by
+  resulting artifacts.
+- **`PackagedRunArtifacts`** — typed view of the standard artifacts produced by
   packaging.
 - **`DEFAULT_EXAMPLE_OUTPUT_ROOT`** — default output root used by the bundled
   examples.
