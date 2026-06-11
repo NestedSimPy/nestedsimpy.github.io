@@ -28,6 +28,12 @@ stdout lines for customers are compared directly against the plain baseline.
 The nested version is easiest to evaluate by reading the actual source side by
 side with the original-style baseline.
 
+```{codediff} ../../simpy_examples/bank_reneging_plain.py ../../simpy_examples/bank_reneging_nested.py
+:left-title: bank_reneging_plain.py
+:right-title: bank_reneging_nested.py
+:context: 3
+```
+
 ````{dropdown} Plain SimPy source
 ```{literalinclude} ../../simpy_examples/bank_reneging_plain.py
 :language: python

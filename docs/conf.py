@@ -1,5 +1,10 @@
 from __future__ import annotations
 
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "_ext"))
+
 project = "NestedSimPy"
 author = "NestedSimPy contributors"
 copyright = "2026, NestedSimPy contributors"
@@ -12,6 +17,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx_design",
     "sphinx_copybutton",
+    "code_diff",
 ]
 
 source_suffix = {
@@ -35,6 +41,7 @@ html_static_path = ["_static"]
 html_theme = "furo"
 html_title = "NestedSimPy"
 html_css_files = ["custom.css"]
+html_js_files = ["custom.js"]
 html_logo = "_static/pynestedsim-logo.svg"
 html_favicon = "_static/pynestedsim-favicon.svg"
 # TODO: point these at the new PUBLIC docs repository once it exists.

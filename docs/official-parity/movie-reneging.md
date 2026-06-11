@@ -27,6 +27,12 @@ The point of this parity pair is that the nested adaptation is still very close
 to the original SimPy example. The easiest way to inspect that is to read the
 actual source files directly.
 
+```{codediff} ../../simpy_examples/movie_reneging_plain.py ../../simpy_examples/movie_reneging_nested.py
+:left-title: movie_reneging_plain.py
+:right-title: movie_reneging_nested.py
+:context: 3
+```
+
 ````{dropdown} Plain SimPy source
 ```{literalinclude} ../../simpy_examples/movie_reneging_plain.py
 :language: python

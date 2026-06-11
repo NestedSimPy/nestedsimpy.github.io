@@ -27,6 +27,12 @@ plain example while adding branchable store traffic underneath.
 This pair stays readable enough that showing the actual source is more useful
 than summarizing it abstractly.
 
+```{codediff} ../../simpy_examples/process_communication_plain.py ../../simpy_examples/process_communication_nested.py
+:left-title: process_communication_plain.py
+:right-title: process_communication_nested.py
+:context: 3
+```
+
 ````{dropdown} Plain SimPy source
 ```{literalinclude} ../../simpy_examples/process_communication_plain.py
 :language: python

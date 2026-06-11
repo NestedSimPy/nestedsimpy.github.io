@@ -28,6 +28,12 @@ outer messages directly.
 The adaptation stays close to the original carwash logic. Expand the source
 files directly below to inspect the actual delta.
 
+```{codediff} ../../simpy_examples/carwash_plain.py ../../simpy_examples/carwash_nested.py
+:left-title: carwash_plain.py
+:right-title: carwash_nested.py
+:context: 3
+```
+
 ````{dropdown} Plain SimPy source
 ```{literalinclude} ../../simpy_examples/carwash_plain.py
 :language: python

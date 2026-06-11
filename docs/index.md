@@ -1,8 +1,25 @@
 # Overview
 
+::::{div} ns-hero
 NestedSimPy is an extension to [SimPy](https://simpy.readthedocs.io/) that
-supplements it with **nested simulation** functionalities. The package is not
-part of the SimPy project.
+supplements it with **nested simulation** — *simulation within simulation*. The
+package is not part of the SimPy project.
+
+:::{div} ns-cta-row
+```{button-ref} getting-started
+:color: primary
+
+Get started
+```
+
+```{button-ref} simple-example
+:color: light
+:outline:
+
+See a simple example
+```
+:::
+::::
 
 ```{note}
 The project is currently under development.
@@ -52,6 +69,54 @@ Management are:
    alternative courses of action, and choose the action whose simulation yields
    the best performance. Nested simulation lets the user quickly implement such
    policies.
+
+## Explore the docs
+
+````{grid} 1 2 2 3
+:gutter: 2
+
+```{grid-item-card} 🚀 NestedSimPy in 10 Minutes
+:link: getting-started
+:link-type: doc
+
+Install, run the first branching demo, and learn the mental model.
+```
+
+```{grid-item-card} 🧩 Simple example
+:link: simple-example
+:link-type: doc
+
+An M/M/1 queue, plain SimPy vs. NestedSimPy, side by side.
+```
+
+```{grid-item-card} 📚 Additional examples
+:link: official-parity/index
+:link-type: doc
+
+The official SimPy examples, adapted with branching and replay.
+```
+
+```{grid-item-card} 🧭 Topical Guides
+:link: topical-guides/index
+:link-type: doc
+
+Branching model, triggers, stop rules, traces and outputs.
+```
+
+```{grid-item-card} 🔌 API Reference
+:link: api/index
+:link-type: doc
+
+The SimPy-facing API surface and reporting helpers.
+```
+
+```{grid-item-card} 🏗️ Architecture
+:link: architecture
+:link-type: doc
+
+How the runtime model works under the hood.
+```
+````
 
 ```{toctree}
 :hidden:

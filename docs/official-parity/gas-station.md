@@ -28,6 +28,12 @@ fuel level.
 This example is one of the heavier parity adaptations, so the source includes
 are especially useful here.
 
+```{codediff} ../../simpy_examples/gas_station_plain.py ../../simpy_examples/gas_station_nested.py
+:left-title: gas_station_plain.py
+:right-title: gas_station_nested.py
+:context: 3
+```
+
 ````{dropdown} Plain SimPy source
 ```{literalinclude} ../../simpy_examples/gas_station_plain.py
 :language: python
