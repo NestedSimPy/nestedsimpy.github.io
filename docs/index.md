@@ -1,6 +1,14 @@
+---
+hide-toc: true
+---
+
 # Overview
 
 ::::{div} ns-hero
+:::{div} ns-hero-headline
+Branching and replay for SimPy models
+:::
+
 NestedSimPy is an extension to [SimPy](https://simpy.readthedocs.io/) that
 supplements it with **nested simulation** — *simulation within simulation*. The
 package is not part of the SimPy project.
@@ -17,6 +25,12 @@ Get started
 :outline:
 
 See a simple example
+```
+:::
+
+:::{div} ns-hero-demo
+```{raw} html
+:file: _static/hero-branching-demo.svg
 ```
 :::
 ::::
@@ -37,16 +51,6 @@ that state until some stopping condition is met. Once all inner simulations
 terminate, the outer simulation receives information about how they played out
 and **resumes**, potentially using the information the inner simulations
 collected.
-
-```{figure} _static/mm1-nested-illustration.svg
-:alt: Number of customers over time for an M/M/1 queue, showing the outer simulation in black with inner simulations forked at two triggering events.
-:width: 100%
-
-An M/M/1 queue under nested simulation. The **black** line is the outer simulation
-(number of customers over time). At each **triggering event** (dots), the outer simulation
-pauses and forks a set of **inner simulations** (light lines) that each explore a
-possible future from that exact state before the outer simulation continues.
-```
 
 ## When is it useful?
 

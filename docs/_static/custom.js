@@ -43,3 +43,19 @@ document.addEventListener("click", function (e) {
     .forEach(function (row) { row.classList.remove("cd-hidden"); });
   expander.remove();
 });
+
+
+// top scroll progress bar
+(function () {
+  var bar = document.createElement("div");
+  bar.id = "ns-progress";
+  document.body.appendChild(bar);
+  function update() {
+    var el = document.scrollingElement;
+    var max = el.scrollHeight - el.clientHeight;
+    bar.style.width = max > 0 ? (el.scrollTop / max) * 100 + "%" : "0";
+  }
+  window.addEventListener("scroll", update, { passive: true });
+  window.addEventListener("resize", update, { passive: true });
+  update();
+})();

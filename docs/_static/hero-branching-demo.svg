@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 380" role="img" aria-label="Animated nested simulation: the outer trajectory draws itself, pauses at four trigger events, and forks bundles of colored inner branches.">
+  <style>
+    .axis { stroke: rgba(255,255,255,0.30); stroke-width: 1.5; fill: none; }
+    .grid { stroke: rgba(255,255,255,0.07); stroke-width: 1; }
+    .outer {
+      fill: none; stroke: #ffffff; stroke-width: 3.5;
+      stroke-linejoin: round; stroke-linecap: round;
+      stroke-dasharray: 1220; stroke-dashoffset: 1220;
+      animation: ns-outer 18s linear infinite;
+    }
+    @keyframes ns-outer {
+      0%   { stroke-dashoffset: 1220; opacity: 1; }
+      55%  { stroke-dashoffset: 0; }
+      94%  { stroke-dashoffset: 0; opacity: 1; }
+      100% { stroke-dashoffset: 0; opacity: 0; }
+    }
+    .branch {
+      fill: none; stroke-width: 2.5;
+      stroke-linejoin: round; stroke-linecap: round;
+      stroke-dasharray: 240; stroke-dashoffset: 240; opacity: 0;
+    }
+    .c1 { stroke: #f6c453; }
+    .c2 { stroke: #5fe3b3; }
+    .c3 { stroke: #7cc4ff; }
+    .c4 { stroke: #ff9e80; }
+    .c5 { stroke: #c5a3ff; }
+    .g1 { animation: ns-g1 18s linear infinite; }
+    .g2 { animation: ns-g2 18s linear infinite; }
+    .g3 { animation: ns-g3 18s linear infinite; }
+    .g4 { animation: ns-g4 18s linear infinite; }
+    @keyframes ns-g1 {
+      0%, 6%  { stroke-dashoffset: 240; opacity: 0; }
+      9%      { opacity: 0.95; }
+      18%     { stroke-dashoffset: 0; opacity: 0.95; }
+      30%     { stroke-dashoffset: 0; opacity: 0.55; }
+      94%     { stroke-dashoffset: 0; opacity: 0.55; }
+      100%    { stroke-dashoffset: 0; opacity: 0; }
+    }
+    @keyframes ns-g2 {
+      0%, 15% { stroke-dashoffset: 240; opacity: 0; }
+      18%     { opacity: 0.95; }
+      27%     { stroke-dashoffset: 0; opacity: 0.95; }
+      40%     { stroke-dashoffset: 0; opacity: 0.55; }
+      94%     { stroke-dashoffset: 0; opacity: 0.55; }
+      100%    { stroke-dashoffset: 0; opacity: 0; }
+    }
+    @keyframes ns-g3 {
+      0%, 30% { stroke-dashoffset: 240; opacity: 0; }
+      33%     { opacity: 0.95; }
+      42%     { stroke-dashoffset: 0; opacity: 0.95; }
+      55%     { stroke-dashoffset: 0; opacity: 0.55; }
+      94%     { stroke-dashoffset: 0; opacity: 0.55; }
+      100%    { stroke-dashoffset: 0; opacity: 0; }
+    }
+    @keyframes ns-g4 {
+      0%, 42% { stroke-dashoffset: 240; opacity: 0; }
+      45%     { opacity: 0.95; }
+      54%     { stroke-dashoffset: 0; opacity: 0.95; }
+      66%     { stroke-dashoffset: 0; opacity: 0.55; }
+      94%     { stroke-dashoffset: 0; opacity: 0.55; }
+      100%    { stroke-dashoffset: 0; opacity: 0; }
+    }
+    .dot { fill: #ffffff; opacity: 0; }
+    .t1 { animation: ns-t1 18s linear infinite; }
+    .t2 { animation: ns-t2 18s linear infinite; }
+    .t3 { animation: ns-t3 18s linear infinite; }
+    .t4 { animation: ns-t4 18s linear infinite; }
+    @keyframes ns-t1 { 0%, 6%  { opacity: 0; } 8%  { opacity: 1; } 94% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes ns-t2 { 0%, 15% { opacity: 0; } 17% { opacity: 1; } 94% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes ns-t3 { 0%, 30% { opacity: 0; } 32% { opacity: 1; } 94% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes ns-t4 { 0%, 42% { opacity: 0; } 44% { opacity: 1; } 94% { opacity: 1; } 100% { opacity: 0; } }
+    .halo { fill: none; stroke: #ffffff; opacity: 0; }
+    .p1 { animation: ns-p1 18s linear infinite; }
+    .p2 { animation: ns-p2 18s linear infinite; }
+    .p3 { animation: ns-p3 18s linear infinite; }
+    .p4 { animation: ns-p4 18s linear infinite; }
+    @keyframes ns-p1 { 0%, 6%  { r: 5; opacity: 0; stroke-width: 3; } 8%  { r: 8; opacity: 0.8; } 13% { r: 18; opacity: 0; stroke-width: 1; } 100% { r: 18; opacity: 0; } }
+    @keyframes ns-p2 { 0%, 15% { r: 5; opacity: 0; stroke-width: 3; } 17% { r: 8; opacity: 0.8; } 22% { r: 18; opacity: 0; stroke-width: 1; } 100% { r: 18; opacity: 0; } }
+    @keyframes ns-p3 { 0%, 30% { r: 5; opacity: 0; stroke-width: 3; } 32% { r: 8; opacity: 0.8; } 37% { r: 18; opacity: 0; stroke-width: 1; } 100% { r: 18; opacity: 0; } }
+    @keyframes ns-p4 { 0%, 42% { r: 5; opacity: 0; stroke-width: 3; } 44% { r: 8; opacity: 0.8; } 49% { r: 18; opacity: 0; stroke-width: 1; } 100% { r: 18; opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .outer, .branch, .dot { animation: none; stroke-dashoffset: 0; opacity: 1; }
+      .branch { opacity: 0.45; }
+      .halo { animation: none; opacity: 0; }
+    }
+  </style>
+
+  <!-- frame -->
+  <g class="grid">
+    <line x1="24" y1="308" x2="660" y2="308"/>
+    <line x1="24" y1="276" x2="660" y2="276"/>
+    <line x1="24" y1="244" x2="660" y2="244"/>
+    <line x1="24" y1="212" x2="660" y2="212"/>
+    <line x1="24" y1="180" x2="660" y2="180"/>
+    <line x1="24" y1="148" x2="660" y2="148"/>
+  </g>
+  <polyline class="axis" points="24,36 24,340 660,340"/>
+
+  <!-- bundle 1: fork at (95,244) -->
+  <path class="branch g1 c1" d="M95 244 H115 V212 H145 V180 H175 V212 H205"/>
+  <path class="branch g1 c2" d="M95 244 H125 V276 H160 V308 H205"/>
+  <path class="branch g1 c3" d="M95 244 H110 V212 H140 V244 H170 V276 H205"/>
+  <path class="branch g1 c4" d="M95 244 H135 V212 H180 V244 H205"/>
+  <path class="branch g1 c5" d="M95 244 H120 V276 H150 V244 H185 V212 H205"/>
+
+  <!-- bundle 2: fork at (200,212) -->
+  <path class="branch g2 c1" d="M200 212 H220 V180 H250 V148 H280 V180 H310"/>
+  <path class="branch g2 c2" d="M200 212 H230 V244 H265 V276 H310"/>
+  <path class="branch g2 c3" d="M200 212 H215 V180 H245 V212 H275 V244 H310"/>
+  <path class="branch g2 c4" d="M200 212 H240 V180 H285 V212 H310"/>
+  <path class="branch g2 c5" d="M200 212 H225 V244 H255 V212 H290 V180 H310"/>
+
+  <!-- bundle 3: fork at (370,180) -->
+  <path class="branch g3 c1" d="M370 180 H390 V148 H420 V116 H450 V148 H480"/>
+  <path class="branch g3 c2" d="M370 180 H400 V212 H435 V244 H480"/>
+  <path class="branch g3 c3" d="M370 180 H385 V148 H415 V180 H445 V212 H480"/>
+  <path class="branch g3 c4" d="M370 180 H410 V148 H455 V180 H480"/>
+  <path class="branch g3 c5" d="M370 180 H395 V212 H425 V180 H460 V148 H480"/>
+
+  <!-- bundle 4: fork at (505,244) -->
+  <path class="branch g4 c1" d="M505 244 H525 V212 H555 V180 H585 V212 H615"/>
+  <path class="branch g4 c2" d="M505 244 H535 V276 H570 V308 H615"/>
+  <path class="branch g4 c3" d="M505 244 H520 V212 H550 V244 H580 V276 H615"/>
+  <path class="branch g4 c4" d="M505 244 H545 V212 H590 V244 H615"/>
+  <path class="branch g4 c5" d="M505 244 H530 V276 H560 V244 H595 V212 H615"/>
+
+  <!-- outer trajectory -->
+  <path class="outer" d="M24 308 H60 V276 H95 V244 H130 V276 H165 V244 H200 V212 H235 V244 H265 V276 H300 V244 H335 V212 H370 V180 H405 V212 H440 V244 H470 V276 H505 V244 H540 V276 H575 V308 H610 V276 H645 V308 H660"/>
+
+  <!-- trigger events -->
+  <circle class="halo p1" cx="95" cy="244" r="5"/>
+  <circle class="halo p2" cx="200" cy="212" r="5"/>
+  <circle class="halo p3" cx="370" cy="180" r="5"/>
+  <circle class="halo p4" cx="505" cy="244" r="5"/>
+  <circle class="dot t1" cx="95" cy="244" r="5.5"/>
+  <circle class="dot t2" cx="200" cy="212" r="5.5"/>
+  <circle class="dot t3" cx="370" cy="180" r="5.5"/>
+  <circle class="dot t4" cx="505" cy="244" r="5.5"/>
+</svg>
