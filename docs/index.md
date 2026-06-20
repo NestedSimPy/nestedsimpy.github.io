@@ -35,6 +35,14 @@ Get started
 :::
 ::::
 
+```{tip}
+**New to SimPy?** NestedSimPy builds directly on SimPy — if you haven't used
+SimPy before, start there. The [SimPy documentation](https://simpy.readthedocs.io/)
+and its [Getting Started guide](https://simpy.readthedocs.io/en/latest/simpy_intro/index.html)
+are the best entry point. Once SimPy feels familiar, this site shows how to add
+nested simulation on top.
+```
+
 ```{note}
 The project is currently under development.
 ```
