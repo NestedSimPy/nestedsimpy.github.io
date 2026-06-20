@@ -1,6 +1,9 @@
-"""Sphinx directive: Beyond-Compare-style side-by-side diff of two source files.
+"""Sphinx directives for showing how a nested adaptation differs from a plain
+SimPy baseline.
 
-Usage (MyST):
+Two directives are provided:
+
+``codediff`` — Beyond-Compare-style two-pane diff of two source files::
 
     ```{codediff} ../../simpy_examples/foo_plain.py ../../simpy_examples/foo_nested.py
     :left-title: foo_plain.py
@@ -8,11 +11,19 @@ Usage (MyST):
     :context: 3
     ```
 
-Renders a two-pane table: removed lines tinted red on the left, added lines
-tinted green on the right, changed lines tinted amber on both sides. When
-``:context:`` is given, long unchanged runs are folded behind a "show N
-unchanged lines" expander (wired up in custom.js). Syntax colors reuse the
-theme's Pygments classes, so light/dark mode both work.
+``codeannotate`` — single-column, full-width view of the NESTED file with new
+lines tinted green and modified lines tinted amber relative to the plain
+baseline. Because there is no narrow second column, lines never wrap, so it
+stays readable on long files::
+
+    ```{codeannotate} ../../simpy_examples/foo_plain.py ../../simpy_examples/foo_nested.py
+    :title: foo_nested.py
+    :context: 3
+    ```
+
+Both reuse the theme's Pygments classes, so light/dark mode both work, and both
+fold long unchanged runs behind a "show N unchanged lines" expander when
+``:context:`` is given (wired up in custom.js).
 """
 from __future__ import annotations
 
@@ -185,6 +196,119 @@ class CodeDiff(SphinxDirective):
         return [nodes.raw("", out, format="html")]
 
 
+class CodeAnnotate(SphinxDirective):
+    """Single-column, full-width view of the NESTED (second) file.
+
+    Each line that exists in the nested file is shown in order, syntax
+    highlighted, and tinted by how it differs from the plain (first) baseline:
+    a line that is new in the nested file is tinted green; a line that is a
+    modified version of a plain line is tinted amber. Lines that exist only in
+    the plain file are simply absent (they are not part of the nested code).
+
+    Unlike ``codediff`` there is no second column, so source lines use the full
+    content width and never wrap into a narrow gutter.
+    """
+
+    required_arguments = 2  # plain (baseline), nested (shown)
+    option_spec = {
+        "title": directives.unchanged,
+        "context": directives.nonnegative_int,
+    }
+
+    _fold_counter = 0
+
+    def run(self):
+        rel_left, abs_left = self.env.relfn2path(self.arguments[0])
+        rel_right, abs_right = self.env.relfn2path(self.arguments[1])
+        self.env.note_dependency(rel_left)
+        self.env.note_dependency(rel_right)
+
+        left_raw = Path(abs_left).read_text(encoding="utf-8").splitlines()
+        right_code = Path(abs_right).read_text(encoding="utf-8")
+        right_raw = right_code.splitlines()
+        right_html = _highlight_lines(right_code, abs_right)
+
+        rows = _diff_rows(left_raw, right_raw)
+        # Keep only lines that exist in the nested file (drop plain-only deletes).
+        nested = [(kind, rj) for (kind, _li, rj) in rows if rj is not None]
+
+        n_ins = sum(1 for k, _ in nested if k == "ins")
+        n_chg = sum(1 for k, _ in nested if k == "chg")
+        context = self.options.get("context")
+        title = self.options.get("title", Path(abs_right).name)
+
+        body: list[str] = []
+
+        def emit(kind, rj, hidden_group=None):
+            ln = str(rj + 1)
+            src = right_html[rj]
+            cls = f"ca-{kind}"
+            attrs = ""
+            if hidden_group is not None:
+                cls += " cd-hidden"
+                attrs = f' data-fold="{hidden_group}"'
+            body.append(
+                f'<tr class="{cls}"{attrs}>'
+                f'<td class="ca-ln">{ln}</td><td class="ca-src">{src}</td></tr>'
+            )
+
+        i = 0
+        while i < len(nested):
+            kind = nested[i][0]
+            if kind != "eq" or context is None:
+                emit(*nested[i])
+                i += 1
+                continue
+            # run of unchanged lines
+            j = i
+            while j < len(nested) and nested[j][0] == "eq":
+                j += 1
+            run = nested[i:j]
+            head = context if i > 0 else 0      # no leading context at file start
+            tail = context if j < len(nested) else 0  # none at file end
+            if len(run) > head + tail + 3:
+                CodeAnnotate._fold_counter += 1
+                gid = f"caf{CodeAnnotate._fold_counter}"
+                for r in run[:head]:
+                    emit(*r)
+                hidden = run[head:len(run) - tail if tail else len(run)]
+                body.append(
+                    f'<tr class="cd-expander" data-foldid="{gid}"><td colspan="2">'
+                    f'<button type="button" class="cd-expand">&#8943; show {len(hidden)} '
+                    f"unchanged lines &#8943;</button></td></tr>"
+                )
+                for r in hidden:
+                    emit(*r, hidden_group=gid)
+                if tail:
+                    for r in run[len(run) - tail:]:
+                        emit(*r)
+            else:
+                for r in run:
+                    emit(*r)
+            i = j
+
+        out = (
+            '<div class="ns-codeannot">'
+            '<div class="ns-ca-head">'
+            f'<span class="ns-ca-title">{html.escape(title)}</span>'
+            '<span class="ns-ca-legend">'
+            '<span class="ca-key ca-key-ins">new</span>'
+            '<span class="ca-key ca-key-chg">changed</span>'
+            "</span>"
+            '<span class="ns-ca-stats">'
+            f'<span class="cd-stat-chg">~{n_chg}</span>'
+            f'<span class="cd-stat-ins">+{n_ins}</span>'
+            "</span>"
+            "</div>"
+            '<div class="ns-ca-scroll"><table class="ns-ca-table highlight">'
+            '<colgroup><col class="ca-col-ln"/><col class="ca-col-src"/></colgroup>'
+            + "".join(body)
+            + "</table></div></div>"
+        )
+        return [nodes.raw("", out, format="html")]
+
+
 def setup(app):
     app.add_directive("codediff", CodeDiff)
-    return {"version": "0.1", "parallel_read_safe": True, "parallel_write_safe": True}
+    app.add_directive("codeannotate", CodeAnnotate)
+    return {"version": "0.2", "parallel_read_safe": True, "parallel_write_safe": True}

@@ -10,25 +10,23 @@ The plain model is a standard SimPy M/M/1 queue. The NestedSimPy version keeps
 the same outer behavior and adds instrumented primitives, a triggering event,
 and inner simulations.
 
-```{codediff} ../simpy_examples/mm1_plain.py ../simpy_examples/mm1_nested.py
-:left-title: mm1_plain.py
-:right-title: mm1_nested.py
-:context: 3
-```
+### Plain SimPy
 
-````{dropdown} Plain SimPy source
 ```{literalinclude} ../simpy_examples/mm1_plain.py
 :language: python
 :caption: simpy_examples/mm1_plain.py
 ```
-````
 
-````{dropdown} NestedSimPy source
-```{literalinclude} ../simpy_examples/mm1_nested.py
-:language: python
-:caption: simpy_examples/mm1_nested.py
+### NestedSimPy
+
+The same model under NestedSimPy. **New lines are highlighted green and modified
+lines amber**, relative to the plain baseline above; long unchanged runs are
+folded — click to expand them.
+
+```{codeannotate} ../simpy_examples/mm1_plain.py ../simpy_examples/mm1_nested.py
+:title: simpy_examples/mm1_nested.py
+:context: 3
 ```
-````
 
 ```{tip}
 Download: {download}`mm1_plain.py <../simpy_examples/mm1_plain.py>` ·

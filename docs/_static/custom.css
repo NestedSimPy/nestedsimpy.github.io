@@ -557,3 +557,78 @@ button.cd-expand:hover { background: rgba(27, 108, 168, 0.22); }
   pointer-events: none;
   transition: width 0.08s linear;
 }
+
+/* ===== Code annotate (codeannotate directive — single-column, full-width) ===== */
+.ns-ca-table { font-variant-ligatures: none; }
+.ns-codeannot {
+  margin: 1.2rem 0 1.8rem;
+  border: 1px solid var(--color-background-border);
+  border-radius: 0.8rem;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(8, 20, 40, 0.20);
+}
+.ns-ca-head {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.5rem 1rem;
+  background: var(--color-background-secondary);
+  border-bottom: 1px solid var(--color-background-border);
+  font-family: var(--font-stack--monospace);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.ns-ca-title { margin-right: auto; }
+.ns-ca-legend { display: flex; gap: 0.5rem; }
+.ca-key {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.05rem 0.5rem 0.05rem 0.45rem;
+  border-radius: 999px;
+}
+.ca-key::before {
+  content: "";
+  width: 0.62rem; height: 0.62rem;
+  border-radius: 3px;
+  margin-right: 0.35rem;
+}
+.ca-key-ins { background: rgba(10, 143, 106, 0.14); color: #18a47e; }
+.ca-key-ins::before { background: #18a47e; }
+.ca-key-chg { background: rgba(217, 119, 6, 0.16); color: #d97706; }
+.ca-key-chg::before { background: #d97706; }
+body[data-theme="light"] .ca-key-ins { color: #0a8f6a; }
+.ns-ca-stats { display: flex; gap: 0.35rem; }
+
+.ns-ca-scroll { overflow-x: auto; background: var(--color-background-primary); }
+table.ns-ca-table {
+  width: 100%;
+  margin: 0;
+  table-layout: auto;
+  border-collapse: collapse;
+  font-family: var(--font-stack--monospace);
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+.ns-ca-table col.ca-col-ln { width: 3.2em; }
+.ns-ca-table td {
+  padding: 0 0.7rem;
+  white-space: pre;
+  vertical-align: top;
+  border: none;
+}
+.ns-ca-table .ca-ln {
+  text-align: right;
+  opacity: 0.45;
+  -webkit-user-select: none;
+  user-select: none;
+  border-right: 1px solid var(--color-background-border);
+  border-left: 3px solid transparent;
+}
+.ns-ca-table .ca-src { width: 100%; }
+/* new line = green, modified line = amber; gutter accent on the line-number cell */
+.ca-ins td { background: rgba(10, 143, 106, 0.13); }
+.ca-ins .ca-ln { border-left-color: #18a47e; opacity: 0.85; }
+.ca-chg td { background: rgba(217, 119, 6, 0.12); }
+.ca-chg .ca-ln { border-left-color: #d97706; opacity: 0.85; }
