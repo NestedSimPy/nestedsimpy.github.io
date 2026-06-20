@@ -6,6 +6,16 @@ The point of this section is not to show a random collection of demos. The
 point is to show that NestedSimPy can sit on top of familiar SimPy models and
 preserve their outer behavior while adding branching, traces, and replay.
 
+```{seealso}
+**Based on the official SimPy examples.** Every model in this section is
+adapted from [SimPy](https://simpy.readthedocs.io/)'s own
+[example suite](https://simpy.readthedocs.io/en/latest/examples/index.html).
+SimPy is an independent project distributed under the MIT License
+(© 2013 Ontje Lünsdorf and Stefan Scherfke). The NestedSimPy adaptations
+preserve each example's outer behavior and add branch-aware instrumentation;
+see {doc}`../about` for full license and attribution details.
+```
+
 ## Scope
 
 This section tracks the official SimPy examples that are represented here
