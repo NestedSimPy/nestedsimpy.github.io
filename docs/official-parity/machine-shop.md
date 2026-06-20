@@ -29,25 +29,23 @@ The plain and nested sources are included below because this parity pair is
 primarily about preserving the original logic while instrumenting a more complex
 resource discipline.
 
-```{codediff} ../../simpy_examples/machine_shop_plain.py ../../simpy_examples/machine_shop_nested.py
-:left-title: machine_shop_plain.py
-:right-title: machine_shop_nested.py
-:context: 3
-```
+### Plain SimPy
 
-````{dropdown} Plain SimPy source
 ```{literalinclude} ../../simpy_examples/machine_shop_plain.py
 :language: python
 :caption: simpy_examples/machine_shop_plain.py
 ```
-````
 
-````{dropdown} NestedSimPy source
-```{literalinclude} ../../simpy_examples/machine_shop_nested.py
-:language: python
-:caption: simpy_examples/machine_shop_nested.py
+### NestedSimPy
+
+The same model under NestedSimPy. **New lines are highlighted green and modified
+lines amber**, relative to the plain baseline above; long unchanged runs are
+folded — click to expand them.
+
+```{codeannotate} ../../simpy_examples/machine_shop_plain.py ../../simpy_examples/machine_shop_nested.py
+:title: simpy_examples/machine_shop_nested.py
+:context: 3
 ```
-````
 
 ## Run
 

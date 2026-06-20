@@ -28,25 +28,23 @@ stdout lines for customers are compared directly against the plain baseline.
 The nested version is easiest to evaluate by reading the actual source side by
 side with the original-style baseline.
 
-```{codediff} ../../simpy_examples/bank_reneging_plain.py ../../simpy_examples/bank_reneging_nested.py
-:left-title: bank_reneging_plain.py
-:right-title: bank_reneging_nested.py
-:context: 3
-```
+### Plain SimPy
 
-````{dropdown} Plain SimPy source
 ```{literalinclude} ../../simpy_examples/bank_reneging_plain.py
 :language: python
 :caption: simpy_examples/bank_reneging_plain.py
 ```
-````
 
-````{dropdown} NestedSimPy source
-```{literalinclude} ../../simpy_examples/bank_reneging_nested.py
-:language: python
-:caption: simpy_examples/bank_reneging_nested.py
+### NestedSimPy
+
+The same model under NestedSimPy. **New lines are highlighted green and modified
+lines amber**, relative to the plain baseline above; long unchanged runs are
+folded — click to expand them.
+
+```{codeannotate} ../../simpy_examples/bank_reneging_plain.py ../../simpy_examples/bank_reneging_nested.py
+:title: simpy_examples/bank_reneging_nested.py
+:context: 3
 ```
-````
 
 ## Run
 

@@ -27,25 +27,23 @@ plain example while adding branchable store traffic underneath.
 This pair stays readable enough that showing the actual source is more useful
 than summarizing it abstractly.
 
-```{codediff} ../../simpy_examples/process_communication_plain.py ../../simpy_examples/process_communication_nested.py
-:left-title: process_communication_plain.py
-:right-title: process_communication_nested.py
-:context: 3
-```
+### Plain SimPy
 
-````{dropdown} Plain SimPy source
 ```{literalinclude} ../../simpy_examples/process_communication_plain.py
 :language: python
 :caption: simpy_examples/process_communication_plain.py
 ```
-````
 
-````{dropdown} NestedSimPy source
-```{literalinclude} ../../simpy_examples/process_communication_nested.py
-:language: python
-:caption: simpy_examples/process_communication_nested.py
+### NestedSimPy
+
+The same model under NestedSimPy. **New lines are highlighted green and modified
+lines amber**, relative to the plain baseline above; long unchanged runs are
+folded — click to expand them.
+
+```{codeannotate} ../../simpy_examples/process_communication_plain.py ../../simpy_examples/process_communication_nested.py
+:title: simpy_examples/process_communication_nested.py
+:context: 3
 ```
-````
 
 ## Run
 

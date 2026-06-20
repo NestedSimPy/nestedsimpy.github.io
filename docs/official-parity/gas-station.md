@@ -28,25 +28,23 @@ fuel level.
 This example is one of the heavier parity adaptations, so the source includes
 are especially useful here.
 
-```{codediff} ../../simpy_examples/gas_station_plain.py ../../simpy_examples/gas_station_nested.py
-:left-title: gas_station_plain.py
-:right-title: gas_station_nested.py
-:context: 3
-```
+### Plain SimPy
 
-````{dropdown} Plain SimPy source
 ```{literalinclude} ../../simpy_examples/gas_station_plain.py
 :language: python
 :caption: simpy_examples/gas_station_plain.py
 ```
-````
 
-````{dropdown} NestedSimPy source
-```{literalinclude} ../../simpy_examples/gas_station_nested.py
-:language: python
-:caption: simpy_examples/gas_station_nested.py
+### NestedSimPy
+
+The same model under NestedSimPy. **New lines are highlighted green and modified
+lines amber**, relative to the plain baseline above; long unchanged runs are
+folded — click to expand them.
+
+```{codeannotate} ../../simpy_examples/gas_station_plain.py ../../simpy_examples/gas_station_nested.py
+:title: simpy_examples/gas_station_nested.py
+:context: 3
 ```
-````
 
 ## Run
 

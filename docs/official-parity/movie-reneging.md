@@ -27,25 +27,23 @@ The point of this parity pair is that the nested adaptation is still very close
 to the original SimPy example. The easiest way to inspect that is to read the
 actual source files directly.
 
-```{codediff} ../../simpy_examples/movie_reneging_plain.py ../../simpy_examples/movie_reneging_nested.py
-:left-title: movie_reneging_plain.py
-:right-title: movie_reneging_nested.py
-:context: 3
-```
+### Plain SimPy
 
-````{dropdown} Plain SimPy source
 ```{literalinclude} ../../simpy_examples/movie_reneging_plain.py
 :language: python
 :caption: simpy_examples/movie_reneging_plain.py
 ```
-````
 
-````{dropdown} NestedSimPy source
-```{literalinclude} ../../simpy_examples/movie_reneging_nested.py
-:language: python
-:caption: simpy_examples/movie_reneging_nested.py
+### NestedSimPy
+
+The same model under NestedSimPy. **New lines are highlighted green and modified
+lines amber**, relative to the plain baseline above; long unchanged runs are
+folded — click to expand them.
+
+```{codeannotate} ../../simpy_examples/movie_reneging_plain.py ../../simpy_examples/movie_reneging_nested.py
+:title: simpy_examples/movie_reneging_nested.py
+:context: 3
 ```
-````
 
 ## Run
 

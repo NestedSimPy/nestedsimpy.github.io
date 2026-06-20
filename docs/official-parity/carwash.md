@@ -28,25 +28,23 @@ outer messages directly.
 The adaptation stays close to the original carwash logic. Expand the source
 files directly below to inspect the actual delta.
 
-```{codediff} ../../simpy_examples/carwash_plain.py ../../simpy_examples/carwash_nested.py
-:left-title: carwash_plain.py
-:right-title: carwash_nested.py
-:context: 3
-```
+### Plain SimPy
 
-````{dropdown} Plain SimPy source
 ```{literalinclude} ../../simpy_examples/carwash_plain.py
 :language: python
 :caption: simpy_examples/carwash_plain.py
 ```
-````
 
-````{dropdown} NestedSimPy source
-```{literalinclude} ../../simpy_examples/carwash_nested.py
-:language: python
-:caption: simpy_examples/carwash_nested.py
+### NestedSimPy
+
+The same model under NestedSimPy. **New lines are highlighted green and modified
+lines amber**, relative to the plain baseline above; long unchanged runs are
+folded — click to expand them.
+
+```{codeannotate} ../../simpy_examples/carwash_plain.py ../../simpy_examples/carwash_nested.py
+:title: simpy_examples/carwash_nested.py
+:context: 3
 ```
-````
 
 ## Run
 

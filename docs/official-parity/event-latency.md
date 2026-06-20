@@ -27,25 +27,23 @@ plain baseline. In tests, the received-message lines are matched directly.
 For this pair, the best way to judge the adaptation is to read the two source
 files directly.
 
-```{codediff} ../../simpy_examples/event_latency_plain.py ../../simpy_examples/event_latency_nested.py
-:left-title: event_latency_plain.py
-:right-title: event_latency_nested.py
-:context: 3
-```
+### Plain SimPy
 
-````{dropdown} Plain SimPy source
 ```{literalinclude} ../../simpy_examples/event_latency_plain.py
 :language: python
 :caption: simpy_examples/event_latency_plain.py
 ```
-````
 
-````{dropdown} NestedSimPy source
-```{literalinclude} ../../simpy_examples/event_latency_nested.py
-:language: python
-:caption: simpy_examples/event_latency_nested.py
+### NestedSimPy
+
+The same model under NestedSimPy. **New lines are highlighted green and modified
+lines amber**, relative to the plain baseline above; long unchanged runs are
+folded — click to expand them.
+
+```{codeannotate} ../../simpy_examples/event_latency_plain.py ../../simpy_examples/event_latency_nested.py
+:title: simpy_examples/event_latency_nested.py
+:context: 3
 ```
-````
 
 ## Run
 
