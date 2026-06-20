@@ -23,8 +23,8 @@ The current site covers:
 
 ## Project Links
 
-- GitHub: <https://github.com/happywhy0928/NestedSimPy_Web>
-- Documentation site: <https://happywhy0928.github.io/NestedSimPy_Web/>
+- GitHub: <https://github.com/NestedSimPy/nestedsimpy.github.io>
+- Documentation site: <https://nestedsimpy.github.io/>
 
 ## Documentation Layout
 

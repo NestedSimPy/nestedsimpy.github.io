@@ -44,8 +44,7 @@ html_css_files = ["custom.css"]
 html_js_files = ["custom.js"]
 html_logo = "_static/pynestedsim-logo.svg"
 html_favicon = "_static/pynestedsim-favicon.svg"
-# TODO: point these at the new PUBLIC docs repository once it exists.
-DOCS_REPO_URL = "https://github.com/happywhy0928/NestedSimPy_Web"
+DOCS_REPO_URL = "https://github.com/NestedSimPy/nestedsimpy.github.io"
 html_theme_options = {
     "navigation_with_keys": True,
     "source_repository": DOCS_REPO_URL + "/",
