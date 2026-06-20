@@ -1,0 +1,21 @@
+NestedSimPy
+Copyright (c) 2026 Hongyu Wang and the NestedSimPy contributors
+
+This project is licensed under the MIT License (see the LICENSE file).
+
+--------------------------------------------------------------------------
+Third-party attribution
+--------------------------------------------------------------------------
+
+The example models under simpy_examples/ are adapted from the official SimPy
+examples. SimPy is an independent project, not affiliated with NestedSimPy,
+and is distributed under the MIT License:
+
+    SimPy
+    Copyright (c) 2013 Ontje Lünsdorf and Stefan Scherfke
+    https://simpy.readthedocs.io/
+    https://gitlab.com/team-simpy/simpy
+
+The NestedSimPy adaptations preserve the original example behavior while
+adding branch-aware instrumentation. The original SimPy examples remain under
+their original MIT License and copyright.
