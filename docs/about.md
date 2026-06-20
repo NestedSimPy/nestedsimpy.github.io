@@ -41,8 +41,8 @@ See the [`NOTICE`][notice] file for attribution details.
 
 ## Documentation Layout
 
-- {doc}`getting-started`
 - {doc}`simple-example`
+- {doc}`getting-started`
 - {doc}`official-parity/index`
 - {doc}`topical-guides/index`
 - {doc}`api/index`

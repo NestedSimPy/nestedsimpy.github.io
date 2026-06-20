@@ -14,17 +14,17 @@ supplements it with **nested simulation** — *simulation within simulation*. Th
 package is not part of the SimPy project.
 
 :::{div} ns-cta-row
-```{button-ref} getting-started
+```{button-ref} simple-example
 :color: primary
 
-Get started
+See a simple example
 ```
 
-```{button-ref} simple-example
+```{button-ref} getting-started
 :color: light
 :outline:
 
-See a simple example
+Get started
 ```
 :::
 
@@ -79,18 +79,18 @@ Management are:
 ````{grid} 1 2 2 3
 :gutter: 2
 
-```{grid-item-card} 🚀 NestedSimPy in 10 Minutes
-:link: getting-started
-:link-type: doc
-
-Install, run the first branching demo, and learn the mental model.
-```
-
 ```{grid-item-card} 🧩 Simple example
 :link: simple-example
 :link-type: doc
 
 An M/M/1 queue, plain SimPy vs. NestedSimPy, side by side.
+```
+
+```{grid-item-card} 🚀 NestedSimPy in 10 Minutes
+:link: getting-started
+:link-type: doc
+
+Install, run the first branching demo, and learn the mental model.
 ```
 
 ```{grid-item-card} 📚 Additional examples
@@ -127,8 +127,8 @@ How the runtime model works under the hood.
 :caption: Contents
 
 self
-getting-started
 simple-example
+getting-started
 official-parity/index
 topical-guides/index
 api/index
