@@ -25,7 +25,7 @@ from _imports import *
 RANDOM_SEED = 42
 TICKETS = 50          # Number of tickets per movie (matches plain example)
 SELLOUT_THRESHOLD = 2  # Fewer tickets than this is a sellout
-SIM_TIME = 40        # Simulate until
+SIM_TIME = 120       # Simulate until
 # fmt: on
 
 NESTED_OUTPUT_FOLDER = set_nested_output_folder("simpy_examples", "movie_reneging")
@@ -134,6 +134,18 @@ def main():
 
     env.process(customer_arrivals(env, theater))
     env.nested_run()
+
+    for movie in movies:
+        if theater.sold_out[movie]:
+            sellout_time = theater.when_sold_out[movie]
+            num_renegers = theater.num_renegers[movie]
+            print(
+                f'Movie "{movie}" sold out {sellout_time:.1f} minutes '
+                f"after ticket counter opening."
+            )
+            print(
+                f"  Number of people leaving queue when film sold out: {num_renegers}"
+            )
 
 
 if __name__ == "__main__":
