@@ -22,7 +22,7 @@ intentionally omitted.
 ```python
 nested_timeout(specification, *, label=None, metadata=None) -> simpy.events.Event
 register_resource(resource, name=None)
-register(resource, name=None)            # fluent mirror of nestedsim.register
+register(resource, name=None)            # fluent mirror of nestedsimpy.register
 get_resource(name)
 iter_resources() -> Iterable[tuple[str, Any]]
 ```
