@@ -4,6 +4,11 @@ This page walks through the smallest end-to-end example: a single **M/M/1
 queue**, first as a plain SimPy model and then adapted for NestedSimPy, with the
 outputs a nested run produces.
 
+```{tip}
+**Run it live:** [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NestedSimPy/nestedsimpy.github.io/blob/main/notebooks/NestedSimPy_mm1.ipynb)
+— installs NestedSimPy and runs this M/M/1 example in your browser (available on release).
+```
+
 ## Plain SimPy vs. NestedSimPy
 
 The plain model is a standard SimPy M/M/1 queue. The NestedSimPy version keeps
