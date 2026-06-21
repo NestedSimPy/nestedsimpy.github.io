@@ -10,40 +10,53 @@ NestedSimPy is easiest to understand as a small layer on top of SimPy:
 
 ## Install
 
-From the repository root:
+NestedSimPy requires Python 3.9+ and runs on top of SimPy. Install it from
+GitHub — either with `pip` directly, or by cloning the repository.
+
+**With pip:**
 
 ```bash
-python3 -m pip install -r nested-sim/requirements.txt
+pip install "git+https://github.com/NestedSimPy/nestedsimpy.git"
+```
+
+**Or download the source and install it:**
+
+```bash
+git clone https://github.com/NestedSimPy/nestedsimpy.git
+cd nestedsimpy
+pip install .
+```
+
+After either, `import nestedsimpy` works from anywhere. For the optional Plotly
+figures, install the extra: `pip install "nestedsimpy[plot] @ git+https://github.com/NestedSimPy/nestedsimpy.git"`.
+
+```{note}
+NestedSimPy is under active development and is not on PyPI yet; the public
+package repository becomes available on release.
 ```
 
 ## First Run
 
-The smallest native walkthrough is the branching M/M/1 demo:
+The smallest walkthrough is the branching M/M/1 demo. From a clone of the
+repository:
 
 ```bash
-cd nested-sim
-python examples/run_mm1_simpy.py --postprocess --plot-static
+python simpy_examples/mm1_nested.py
 ```
 
-That command:
-
-- runs the outer SimPy trajectory,
-- spawns inner simulations at the configured arrival boundaries,
-- packages the run into `raw/` and `exports/`,
-- writes CSV summaries and an HTML plot.
+It runs the outer SimPy trajectory and, at each arrival, forks inner simulations
+that each explore a possible future from that state.
 
 ## Compare Against Plain SimPy
 
-To compare the branching demo against its plain baseline:
-
 ```bash
-cd nested-sim
-python examples/run_mm1_simpy_plain.py
-python examples/run_mm1_simpy.py --postprocess
+python simpy_examples/mm1_plain.py     # plain SimPy M/M/1 baseline
+python simpy_examples/mm1_nested.py    # the same model, under NestedSimPy
 ```
 
-The plain script shows baseline behavior. The NestedSimPy version preserves the
-same model logic while adding branch generation and output packaging.
+The plain script is a standard SimPy M/M/1. The NestedSimPy version keeps the
+same model and adds branching — see {doc}`simple-example` for the line-by-line
+comparison.
 
 ## Mental Model
 
