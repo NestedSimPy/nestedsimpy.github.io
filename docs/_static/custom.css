@@ -632,3 +632,44 @@ table.ns-ca-table {
 .ca-ins .ca-ln { border-left-color: #18a47e; opacity: 0.85; }
 .ca-chg td { background: rgba(217, 119, 6, 0.12); }
 .ca-chg .ca-ln { border-left-color: #d97706; opacity: 0.85; }
+
+/* ===== Dataset scroll table (simple-example) ===== */
+.ns-dataset-scroll {
+  max-height: 360px;
+  overflow-y: auto;
+  margin: 1rem 0 1.4rem;
+  border: 1px solid var(--color-background-border);
+  border-radius: 0.7rem;
+  box-shadow: 0 4px 14px rgba(8, 20, 40, 0.16);
+}
+table.ns-dataset-table {
+  width: 100%;
+  margin: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.9rem;
+}
+table.ns-dataset-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: linear-gradient(180deg, #11385f, #0f4c81);
+  color: #fff;
+  font-weight: 600;
+  text-align: right;
+  padding: 0.5rem 0.85rem;
+  border: none;
+}
+table.ns-dataset-table thead th:first-child,
+table.ns-dataset-table thead th:nth-child(2) { text-align: center; }
+table.ns-dataset-table td {
+  text-align: right;
+  padding: 0.35rem 0.85rem;
+  border: none;
+  border-bottom: 1px solid var(--color-background-border);
+}
+table.ns-dataset-table td:first-child,
+table.ns-dataset-table td:nth-child(2) { text-align: center; }
+table.ns-dataset-table tbody tr:hover td { background: rgba(27, 108, 168, 0.08); }
+table.ns-dataset-table td:last-child { font-weight: 600; }
