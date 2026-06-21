@@ -6,7 +6,7 @@ outputs a nested run produces.
 
 ```{tip}
 **Run it live:** [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NestedSimPy/nestedsimpy.github.io/blob/main/notebooks/NestedSimPy_mm1.ipynb)
-— installs NestedSimPy and runs this M/M/1 example in your browser (available on release).
+— installs NestedSimPy and runs this M/M/1 example in your browser.
 ```
 
 ## Plain SimPy vs. NestedSimPy
