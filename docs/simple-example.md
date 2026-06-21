@@ -45,6 +45,28 @@ simulation pauses and forks a set of **inner simulations** (light lines) that
 each explore a possible future from that state.
 ```
 
+### The dataset a nested run produces
+
+Each customer (arrival) is explored by a set of **inner simulations** that fork
+from that exact state. They share the customer's arrival time but diverge into
+different futures, so each produces a different **waiting time**. A nested run
+packages these into a per-branch table — for example (`user_waits.csv`):
+
+| Customer | Branch | Arrival | Service start | Waiting time |
+| ---: | ---: | ---: | ---: | ---: |
+| 0 | 1 | 1.13 | 1.13 | **0.00** |
+| 0 | 2 | 1.13 | 1.13 | **0.00** |
+| 4 | 1 | 2.45 | 2.79 | **0.34** |
+| 4 | 2 | 2.45 | 2.55 | **0.10** |
+| 16 | 1 | 4.90 | 5.98 | **1.08** |
+| 16 | 2 | 4.90 | 6.62 | **1.72** |
+
+The two branches of customer 4 (0.34 vs. 0.10) and customer 16 (1.08 vs. 1.72)
+show the point of nested simulation: from one state, it samples a **distribution
+of possible futures** instead of a single outcome. Averaging the inner waiting
+times gives an estimate of the customer's expected wait — the kind of optimal
+benchmark described in the overview.
+
 ## Next
 
 - {doc}`official-parity/index` — the same idea applied to the full set of
