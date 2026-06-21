@@ -1,5 +1,9 @@
 # Carwash
 
+```{seealso}
+Based on SimPy's official [Carwash example](https://simpy.readthedocs.io/en/latest/examples/carwash.html).
+```
+
 ## Scenario
 
 Cars arrive at a carwash with a limited number of washing machines. If a machine

@@ -1,5 +1,9 @@
 # Movie Renege
 
+```{seealso}
+Based on SimPy's official [Movie Renege example](https://simpy.readthedocs.io/en/latest/examples/movie_renege.html).
+```
+
 ## Scenario
 
 Customers line up at a single ticket counter for different movies. Once a movie

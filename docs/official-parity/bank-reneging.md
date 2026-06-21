@@ -1,5 +1,9 @@
 # Bank Renege
 
+```{seealso}
+Based on SimPy's official [Bank Renege example](https://simpy.readthedocs.io/en/latest/examples/bank_renege.html).
+```
+
 ## Scenario
 
 The bank example combines a standard `Resource` queue with condition events and

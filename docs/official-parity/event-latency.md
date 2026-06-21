@@ -1,5 +1,9 @@
 # Event Latency
 
+```{seealso}
+Based on SimPy's official [Event Latency example](https://simpy.readthedocs.io/en/latest/examples/latency.html).
+```
+
 ## Scenario
 
 This example uses a `Store` to model delayed message propagation between

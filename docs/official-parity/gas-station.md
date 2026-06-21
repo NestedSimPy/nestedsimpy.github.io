@@ -1,5 +1,9 @@
 # Gas Station Refueling
 
+```{seealso}
+Based on SimPy's official [Gas Station Refueling example](https://simpy.readthedocs.io/en/latest/examples/gas_station_refuel.html).
+```
+
 ## Scenario
 
 Cars arrive at a gas station with a limited number of pumps. Those pumps share a

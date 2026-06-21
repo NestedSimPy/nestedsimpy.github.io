@@ -1,5 +1,9 @@
 # Process Communication
 
+```{seealso}
+Based on SimPy's official [Process Communication example](https://simpy.readthedocs.io/en/latest/examples/process_communication.html).
+```
+
 ## Scenario
 
 This example uses `Store` objects to connect asynchronous producer and consumer

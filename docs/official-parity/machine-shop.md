@@ -1,5 +1,9 @@
 # Machine Shop
 
+```{seealso}
+Based on SimPy's official [Machine Shop example](https://simpy.readthedocs.io/en/latest/examples/machine_shop.html).
+```
+
 ## Scenario
 
 The machine-shop example combines interrupts with a `PreemptiveResource`. A
