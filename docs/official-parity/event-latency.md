@@ -1,10 +1,8 @@
 # Event Latency
 
-```{seealso}
-Based on SimPy's official [Event Latency example](https://simpy.readthedocs.io/en/latest/examples/latency.html).
-```
-
 ## Scenario
+
+Adapted from SimPy's official [Event Latency example](https://simpy.readthedocs.io/en/latest/examples/latency.html).
 
 This example uses a `Store` to model delayed message propagation between
 processes, which is a common pattern for cables, transport links, or other
@@ -14,17 +12,6 @@ communication channels.
 
 - Plain SimPy: `simpy_examples/event_latency_plain.py`
 - NestedSimPy: `simpy_examples/event_latency_nested.py`
-
-## Parity Goal
-
-The nested adaptation keeps the outer message-delivery timing aligned with the
-plain baseline. In tests, the received-message lines are matched directly.
-
-## What NestedSimPy Adds
-
-- branch triggers on store put events,
-- structured traces for store traffic,
-- packaged artifacts for post-run analysis.
 
 ## Code
 
@@ -48,6 +35,10 @@ folded — click to expand them.
 :title: simpy_examples/event_latency_nested.py
 :context: 3
 ```
+
+## Discussion
+
+The message channel changes from `simpy.Store` to `NestedStore`, and branching is triggered on **`store_put`** — each message sent — rather than on a queue arrival. The sender and receiver logic is otherwise identical.
 
 ## Run
 

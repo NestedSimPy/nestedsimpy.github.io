@@ -1,10 +1,8 @@
 # Carwash
 
-```{seealso}
-Based on SimPy's official [Carwash example](https://simpy.readthedocs.io/en/latest/examples/carwash.html).
-```
-
 ## Scenario
+
+Adapted from SimPy's official [Carwash example](https://simpy.readthedocs.io/en/latest/examples/carwash.html).
 
 Cars arrive at a carwash with a limited number of washing machines. If a machine
 is busy, they wait in queue; once a machine is free, they start washing and
@@ -14,18 +12,6 @@ leave when finished.
 
 - Plain SimPy: `simpy_examples/carwash_plain.py`
 - NestedSimPy: `simpy_examples/carwash_nested.py`
-
-## Parity Goal
-
-The nested version preserves the outer printed sequence of arrivals, service
-starts, and departures from the plain example. The test suite compares those
-outer messages directly.
-
-## What NestedSimPy Adds
-
-- instrumented queue and service-state traces,
-- branch outputs rooted at the wash resource,
-- packaged run folders that can be plotted after the run.
 
 ## Code
 
@@ -49,6 +35,10 @@ folded — click to expand them.
 :title: simpy_examples/carwash_nested.py
 :context: 3
 ```
+
+## Discussion
+
+This is the simplest adaptation: `simpy.Resource` becomes `NestedResource`, and branching is configured on car arrivals. The wash process and the arrival logic are unchanged, so the outer behaviour matches plain SimPy exactly.
 
 ## Run
 

@@ -1,10 +1,8 @@
 # Gas Station Refueling
 
-```{seealso}
-Based on SimPy's official [Gas Station Refueling example](https://simpy.readthedocs.io/en/latest/examples/gas_station_refuel.html).
-```
-
 ## Scenario
+
+Adapted from SimPy's official [Gas Station Refueling example](https://simpy.readthedocs.io/en/latest/examples/gas_station_refuel.html).
 
 Cars arrive at a gas station with a limited number of pumps. Those pumps share a
 common fuel reservoir, and a control process summons a tank truck when fuel
@@ -14,18 +12,6 @@ falls below a threshold.
 
 - Plain SimPy: `simpy_examples/gas_station_plain.py`
 - NestedSimPy: `simpy_examples/gas_station_nested.py`
-
-## Parity Goal
-
-The nested version keeps the outer refueling storyline aligned with the plain
-example while exposing additional state around both the pumps and the shared
-fuel level.
-
-## What NestedSimPy Adds
-
-- instrumented resource traces for the pumps,
-- instrumented inventory/state traces for the fuel reservoir path,
-- branch artifacts rooted in meaningful service arrivals.
 
 ## Code
 
@@ -49,6 +35,10 @@ folded — click to expand them.
 :title: simpy_examples/gas_station_nested.py
 :context: 3
 ```
+
+## Discussion
+
+Two primitives change together: the pump `simpy.Resource` becomes `NestedResource` and the shared fuel tank `simpy.Container` becomes `NestedContainer`, so inner simulations fork with the full shared-state snapshot. Branching is configured on car arrivals.
 
 ## Run
 

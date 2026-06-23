@@ -1,10 +1,8 @@
 # Bank Renege
 
-```{seealso}
-Based on SimPy's official [Bank Renege example](https://simpy.readthedocs.io/en/latest/examples/bank_renege.html).
-```
-
 ## Scenario
+
+Adapted from SimPy's official [Bank Renege example](https://simpy.readthedocs.io/en/latest/examples/bank_renege.html).
 
 The bank example combines a standard `Resource` queue with condition events and
 reneging. Customers wait for service, but they may abandon the queue if their
@@ -14,18 +12,6 @@ patience runs out first.
 
 - Plain SimPy: `simpy_examples/bank_reneging_plain.py`
 - NestedSimPy: `simpy_examples/bank_reneging_nested.py`
-
-## Parity Goal
-
-The nested adaptation keeps the original reneging behavior intact while still
-producing branch manifests and trace outputs. In the test suite, the outer
-stdout lines for customers are compared directly against the plain baseline.
-
-## What NestedSimPy Adds
-
-- branch generation on arrival boundaries,
-- structured stop reasons for branch completions,
-- trace files for queue transitions and reneging events.
 
 ## Code
 
@@ -49,6 +35,10 @@ folded — click to expand them.
 :title: simpy_examples/bank_reneging_nested.py
 :context: 3
 ```
+
+## Discussion
+
+The structural changes are small: `simpy.Resource` becomes `NestedResource` (with a `nested_id`), and `env.run()` becomes a nested run with branching configured on arrivals. The reneging logic — the `request | patience-timeout` condition event — is untouched, so the outer customer sequence stays identical to plain SimPy, while inner simulations fork at each arrival.
 
 ## Run
 

@@ -1,10 +1,8 @@
 # Machine Shop
 
-```{seealso}
-Based on SimPy's official [Machine Shop example](https://simpy.readthedocs.io/en/latest/examples/machine_shop.html).
-```
-
 ## Scenario
+
+Adapted from SimPy's official [Machine Shop example](https://simpy.readthedocs.io/en/latest/examples/machine_shop.html).
 
 The machine-shop example combines interrupts with a `PreemptiveResource`. A
 repairman handles both routine work and urgent breakdowns, and machine failures
@@ -14,18 +12,6 @@ can preempt lower-priority tasks.
 
 - Plain SimPy: `simpy_examples/machine_shop_plain.py`
 - NestedSimPy: `simpy_examples/machine_shop_nested.py`
-
-## Parity Goal
-
-The nested adaptation keeps the workshop production summary on the outer simulation
-aligned with the plain baseline while tracing interruptions and preemptions in a
-branch-aware way.
-
-## What NestedSimPy Adds
-
-- `NestedPreemptiveResource` instrumentation,
-- trace records for preemption-related transitions,
-- packaged branch outputs for downstream inspection.
 
 ## Code
 
@@ -50,6 +36,10 @@ folded — click to expand them.
 :title: simpy_examples/machine_shop_nested.py
 :context: 3
 ```
+
+## Discussion
+
+The repairman `simpy.PreemptiveResource` becomes `NestedPreemptiveResource`, so machine breakdowns still preempt routine maintenance and that preemption is captured inside each branch. The per-machine production summary on the outer run matches plain SimPy.
 
 ## Run
 

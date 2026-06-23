@@ -1,10 +1,8 @@
 # Movie Renege
 
-```{seealso}
-Based on SimPy's official [Movie Renege example](https://simpy.readthedocs.io/en/latest/examples/movie_renege.html).
-```
-
 ## Scenario
+
+Adapted from SimPy's official [Movie Renege example](https://simpy.readthedocs.io/en/latest/examples/movie_renege.html).
 
 Customers line up at a single ticket counter for different movies. Once a movie
 is sold out, customers waiting for that title leave the queue.
@@ -13,17 +11,6 @@ is sold out, customers waiting for that title leave the queue.
 
 - Plain SimPy: `simpy_examples/movie_reneging_plain.py`
 - NestedSimPy: `simpy_examples/movie_reneging_nested.py`
-
-## Parity Goal
-
-The nested version preserves the sold-out and reneging logic of the original
-example, while also producing real branch points tied to customer arrivals.
-
-## What NestedSimPy Adds
-
-- explicit branch outputs per arrival boundary,
-- manifests and stop reasons for each branch,
-- traces that make sold-out state transitions inspectable after the run.
 
 ## Code
 
@@ -48,6 +35,10 @@ folded — click to expand them.
 :title: simpy_examples/movie_reneging_nested.py
 :context: 3
 ```
+
+## Discussion
+
+The ticket counter `simpy.Resource` becomes `NestedResource`; the shared sold-out `Event`s and the reneging logic are kept as-is. Branching forks on each arrival, and the sold-out summary on the outer run matches plain SimPy.
 
 ## Run
 

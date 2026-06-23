@@ -1,10 +1,8 @@
 # Process Communication
 
-```{seealso}
-Based on SimPy's official [Process Communication example](https://simpy.readthedocs.io/en/latest/examples/process_communication.html).
-```
-
 ## Scenario
+
+Adapted from SimPy's official [Process Communication example](https://simpy.readthedocs.io/en/latest/examples/process_communication.html).
 
 This example uses `Store` objects to connect asynchronous producer and consumer
 processes, including cases where the consumer is late relative to the sending
@@ -14,17 +12,6 @@ process.
 
 - Plain SimPy: `simpy_examples/process_communication_plain.py`
 - NestedSimPy: `simpy_examples/process_communication_nested.py`
-
-## Parity Goal
-
-The nested adaptation keeps the visible communication output aligned with the
-plain example while adding branchable store traffic underneath.
-
-## What NestedSimPy Adds
-
-- branch triggers on store puts,
-- structured traces for inter-process message flow,
-- packaged outputs for comparing alternative futures.
 
 ## Code
 
@@ -48,6 +35,10 @@ folded — click to expand them.
 :title: simpy_examples/process_communication_nested.py
 :context: 3
 ```
+
+## Discussion
+
+The pipe `simpy.Store` becomes `NestedStore`, and branching triggers on **`store_put`** — each message published. The producer and consumer processes are unchanged, so message delivery matches plain SimPy.
 
 ## Run
 
