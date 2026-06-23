@@ -36,7 +36,7 @@ communication channels.
 
 ## Discussion
 
-Branching is triggered on **every store put** — a message entering the cable, a `NestedStore` — forking **1 inner simulation** that runs for **20 time units, or until the message is delivered**. Message propagation is otherwise unchanged.
+The plain SimPy model is unchanged except for the nesting setup: the cable is a `NestedStore`, the run is `env.nested_run()`, and branching fires on **every store put** (a message entering the cable), forking **1 inner simulation** that runs for **20 time units, or until the message is delivered**.
 
 ## Run
 

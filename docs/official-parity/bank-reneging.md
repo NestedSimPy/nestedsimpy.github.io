@@ -36,7 +36,7 @@ patience runs out first.
 
 ## Discussion
 
-Branching is triggered on **every customer arrival** at the counter — a `NestedResource` — forking **2 inner simulations** that each run **until the triggering customer departs**. The `request | patience-timeout` reneging logic is untouched, so the outer customer sequence is identical to plain SimPy.
+The plain SimPy model is unchanged except for the nesting setup: the counter is a `NestedResource`, the run is `env.nested_run()`, and branching fires on **every customer arrival**, forking **2 inner simulations** that each run **until the triggering customer departs**. The `request | patience-timeout` reneging logic is untouched, so the outer customer sequence is identical to plain SimPy.
 
 ## Run
 

@@ -36,7 +36,7 @@ falls below a threshold.
 
 ## Discussion
 
-Branching is triggered on **every 5th car arrival** at the pumps (a `NestedResource`, capacity 2), forking **1 inner simulation** that runs for **120 time units, or until the triggering car departs**. The shared fuel tank is a `NestedContainer`; refuelling and tank-refill logic are unchanged.
+The plain SimPy model is unchanged except for the nesting setup: the pumps are a `NestedResource` (capacity 2) and the fuel tank a `NestedContainer`, the run is `env.nested_run()`, and branching fires on **every 5th car arrival**, forking **1 inner simulation** that runs for **120 time units, or until the triggering car departs**.
 
 ## Run
 

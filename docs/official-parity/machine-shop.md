@@ -36,7 +36,7 @@ can preempt lower-priority tasks.
 
 ## Discussion
 
-Branching is triggered on **every 10th arrival** to the repairman — a `NestedPreemptiveResource` — forking **2 inner simulations** that each run for **120 time units, or until the triggering job departs**. The preempt-on-breakdown discipline is preserved, so the outer production summary matches plain SimPy.
+The plain SimPy model is unchanged except for the nesting setup: the repairman is a `NestedPreemptiveResource`, the run is `env.nested_run()`, and branching fires on **every 10th arrival**, forking **2 inner simulations** that each run for **120 time units, or until the triggering job departs**. The preempt-on-breakdown discipline is preserved, so the outer production summary matches plain SimPy.
 
 ## Run
 

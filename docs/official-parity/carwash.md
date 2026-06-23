@@ -36,7 +36,7 @@ leave when finished.
 
 ## Discussion
 
-Branching is triggered on **every car arrival** at the washing machines — a `NestedResource` — forking **2 inner simulations** that each run for **20 time units, or until the triggering car departs**. The wash process is otherwise the plain SimPy model, so the outer sequence matches.
+The plain SimPy model is unchanged except for the nesting setup: the washing machines are a `NestedResource`, the run is `env.nested_run()`, and branching fires on **every car arrival**, forking **2 inner simulations** that each run for **20 time units, or until the triggering car departs**. The wash process is otherwise identical to plain SimPy.
 
 ## Run
 
