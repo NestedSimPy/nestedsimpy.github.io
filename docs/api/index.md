@@ -63,6 +63,15 @@ Postprocessing, the packaged reporting helpers, and the `OutputManager`.
 ```
 ````
 
+## Replay
+
+To re-run a single branch deterministically — for example, to inspect a path a
+full run already surfaced — use `run_single_path(...)`:
+
+```python
+env.run_single_path(trigger_index=2, branch_index=0, seed=1234)
+```
+
 ## Raw data
 
 Before packaging, a run writes raw JSONL traces and manifests under `raw/`. The

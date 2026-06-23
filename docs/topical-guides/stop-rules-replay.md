@@ -1,14 +1,12 @@
 # Stopping conditions
 
-NestedSimPy controls both:
+NestedSimPy controls both when the outer trajectory stops and when each inner
+simulation stops after a fork.
 
-- when the outer trajectory stops, and
-- when each inner simulation stops after a fork.
+## Outer stop rules
 
-## Outer Stop Rules
-
-Use `set_outer_stopping_condition(...)` to bound the outer simulation by time or by an
-arrival count.
+Use `set_outer_stopping_condition(...)` to bound the outer simulation by time or
+by an arrival count:
 
 ```python
 env.set_outer_stopping_condition(timeout=10.0, max_arrivals=8)
@@ -16,18 +14,14 @@ env.set_outer_stopping_condition(timeout=10.0, max_arrivals=8)
 
 The outer trajectory ends when one of the configured conditions fires.
 
-## Inner Stop Rules
+## Inner stop rules
 
-Use `set_inner_stopping_condition(...)` to control how long child branches keep
-running after a boundary.
+Use `set_inner_stopping_condition(...)` to control how long each branch keeps
+running after a triggering event. Typical options:
 
-Typical options include:
-
-- `relative_time=...`
-- `absolute_time=...`
-- `triggering_customer_departs=True`
-
-Example:
+- `relative_time=...` — run for this many time units past the fork,
+- `absolute_time=...` — run until this absolute simulation time,
+- `triggering_customer_departs=True` — stop once the anchor customer finishes.
 
 ```python
 env.set_inner_stopping_condition(
@@ -36,32 +30,15 @@ env.set_inner_stopping_condition(
 )
 ```
 
-That configuration says:
+That configuration keeps each branch alive for up to five simulated time units,
+but also stops as soon as the anchor customer finishes — whichever comes first.
 
-- keep each branch alive for up to five simulated time units,
-- but also stop as soon as the anchor customer finishes, if that happens first.
-
-## User-Level Postprocessing
-
-After `nested_run()`, packaged outputs can be postprocessed automatically.
-
-You can:
-
-- set general output behavior with `set_post_processing_options(...)`,
-- register a custom metric hook with `set_postprocessor(...)`.
-
-## Replay
-
-To re-run a specific branch deterministically, use `run_single_path(...)`.
-
-```python
-env.run_single_path(trigger_index=2, branch_index=0, seed=1234)
-```
-
-This is useful when a full branching run has already identified a path you want
-to inspect in isolation.
-
-## Practical Rule
+## Practical rule
 
 Keep the outer stop rules simple, then make the inner stop rules express the
 counterfactual horizon you actually care about.
+
+## Next
+
+- {doc}`visualization` — plot the outer trajectory and inner branches.
+- {doc}`traces-and-outputs` — export them as datasets.

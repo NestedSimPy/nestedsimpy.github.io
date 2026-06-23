@@ -62,6 +62,13 @@ Inspect `raw/` when debugging behavior and `exports/` when comparing results
 across runs or branches. The raw event format is described under
 {doc}`Raw data <../api/raw-data>`.
 
+## Custom postprocessing
+
+Beyond the built-in exports, a run can produce its own outputs: set general
+behavior with `set_post_processing_options(...)`, or register a custom
+metric/output hook with `set_postprocessor(...)`, which runs after
+`nested_run()` over the packaged artefacts.
+
 ## Next
 
 - {doc}`visualization` — plot the same trajectories instead of exporting them.
