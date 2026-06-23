@@ -29,10 +29,6 @@ process.
 
 ### NestedSimPy
 
-The same model under NestedSimPy. **New lines are highlighted green and modified
-lines amber**, relative to the plain baseline above; long unchanged runs are
-folded — click to expand them.
-
 ```{codeannotate} ../../simpy_examples/process_communication_plain.py ../../simpy_examples/process_communication_nested.py
 :title: simpy_examples/process_communication_nested.py
 :context: 3
@@ -40,7 +36,7 @@ folded — click to expand them.
 
 ## Discussion
 
-The pipe `simpy.Store` becomes `NestedStore`, and branching triggers on **`store_put`** — each message published. The producer and consumer processes are unchanged, so message delivery matches plain SimPy.
+`simpy.Store` becomes `NestedStore` (the message pipes) and `env.run()` becomes `env.nested_run()`. Branching is triggered on **every store put** — a message being sent — forking **1 inner simulation** that runs for **20 time units, or until the message is consumed**. The producer/consumer logic is otherwise unchanged.
 
 ## Run
 

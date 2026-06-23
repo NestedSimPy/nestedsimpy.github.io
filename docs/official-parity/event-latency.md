@@ -29,10 +29,6 @@ communication channels.
 
 ### NestedSimPy
 
-The same model under NestedSimPy. **New lines are highlighted green and modified
-lines amber**, relative to the plain baseline above; long unchanged runs are
-folded — click to expand them.
-
 ```{codeannotate} ../../simpy_examples/event_latency_plain.py ../../simpy_examples/event_latency_nested.py
 :title: simpy_examples/event_latency_nested.py
 :context: 3
@@ -40,7 +36,7 @@ folded — click to expand them.
 
 ## Discussion
 
-The message channel changes from `simpy.Store` to `NestedStore`, and branching is triggered on **`store_put`** — each message sent — rather than on a queue arrival. The sender and receiver logic is otherwise identical.
+`simpy.Store` becomes `NestedStore` (`nested_id="cable_store"`, the cable) and `env.run()` becomes `env.nested_run()`. Branching is triggered on **every store put** — a message entering the cable — forking **1 inner simulation** that runs for **20 time units, or until the message is delivered**. Message propagation is otherwise unchanged.
 
 ## Run
 

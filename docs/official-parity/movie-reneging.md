@@ -28,10 +28,6 @@ is sold out, customers waiting for that title leave the queue.
 
 ### NestedSimPy
 
-The same model under NestedSimPy. **New lines are highlighted green and modified
-lines amber**, relative to the plain baseline above; long unchanged runs are
-folded — click to expand them.
-
 ```{codeannotate} ../../simpy_examples/movie_reneging_plain.py ../../simpy_examples/movie_reneging_nested.py
 :title: simpy_examples/movie_reneging_nested.py
 :context: 3
@@ -39,7 +35,7 @@ folded — click to expand them.
 
 ## Discussion
 
-The ticket counter `simpy.Resource` becomes `NestedResource`; the shared sold-out `Event`s and the reneging logic are kept as-is. Branching forks on each arrival, and the sold-out summary on the outer run matches plain SimPy.
+`simpy.Resource` becomes `NestedResource` (`nested_id="counter"`, the ticket counter) and `env.run()` becomes `env.nested_run()`. Branching is triggered on **every moviegoer arrival**, forking **1 inner simulation** that runs for **10 time units, or until the triggering customer departs**. The shared sold-out event and reneging logic are unchanged.
 
 ## Run
 

@@ -29,10 +29,6 @@ falls below a threshold.
 
 ### NestedSimPy
 
-The same model under NestedSimPy. **New lines are highlighted green and modified
-lines amber**, relative to the plain baseline above; long unchanged runs are
-folded — click to expand them.
-
 ```{codeannotate} ../../simpy_examples/gas_station_plain.py ../../simpy_examples/gas_station_nested.py
 :title: simpy_examples/gas_station_nested.py
 :context: 3
@@ -40,7 +36,7 @@ folded — click to expand them.
 
 ## Discussion
 
-Two primitives change together: the pump `simpy.Resource` becomes `NestedResource` and the shared fuel tank `simpy.Container` becomes `NestedContainer`, so inner simulations fork with the full shared-state snapshot. Branching is configured on car arrivals.
+`simpy.Resource` becomes `NestedResource` (`nested_id="gas_station"`, the two pumps) and `simpy.Container` becomes `NestedContainer` (the shared fuel tank); `env.run()` becomes `env.nested_run()`. Branching is triggered on **every 5th car arrival**, forking **1 inner simulation** that runs for **120 time units, or until the triggering car departs**. Refuelling and tank-refill logic are unchanged.
 
 ## Run
 

@@ -29,10 +29,6 @@ leave when finished.
 
 ### NestedSimPy
 
-The same model under NestedSimPy. **New lines are highlighted green and modified
-lines amber**, relative to the plain baseline above; long unchanged runs are
-folded — click to expand them.
-
 ```{codeannotate} ../../simpy_examples/carwash_plain.py ../../simpy_examples/carwash_nested.py
 :title: simpy_examples/carwash_nested.py
 :context: 3
@@ -40,7 +36,7 @@ folded — click to expand them.
 
 ## Discussion
 
-This is the simplest adaptation: `simpy.Resource` becomes `NestedResource`, and branching is configured on car arrivals. The wash process and the arrival logic are unchanged, so the outer behaviour matches plain SimPy exactly.
+`simpy.Resource` becomes `NestedResource` (`nested_id="wash"`, the bank of washing machines) and `env.run()` becomes `env.nested_run()`. Branching is triggered on **every car arrival**, forking **2 inner simulations** that each run for **20 time units, or until the triggering car departs**. The wash process is otherwise unchanged, so the outer sequence matches plain SimPy.
 
 ## Run
 

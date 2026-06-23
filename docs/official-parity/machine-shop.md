@@ -29,10 +29,6 @@ can preempt lower-priority tasks.
 
 ### NestedSimPy
 
-The same model under NestedSimPy. **New lines are highlighted green and modified
-lines amber**, relative to the plain baseline above; long unchanged runs are
-folded — click to expand them.
-
 ```{codeannotate} ../../simpy_examples/machine_shop_plain.py ../../simpy_examples/machine_shop_nested.py
 :title: simpy_examples/machine_shop_nested.py
 :context: 3
@@ -40,7 +36,7 @@ folded — click to expand them.
 
 ## Discussion
 
-The repairman `simpy.PreemptiveResource` becomes `NestedPreemptiveResource`, so machine breakdowns still preempt routine maintenance and that preemption is captured inside each branch. The per-machine production summary on the outer run matches plain SimPy.
+`simpy.PreemptiveResource` becomes `NestedPreemptiveResource` (`nested_id="repairman"`) and `env.run()` becomes `env.nested_run()`. Branching is triggered on **every 10th arrival** to the repairman, forking **2 inner simulations** that each run for **120 time units, or until the triggering job departs**. The preempt-on-breakdown discipline is preserved, so the outer production summary matches plain SimPy.
 
 ## Run
 

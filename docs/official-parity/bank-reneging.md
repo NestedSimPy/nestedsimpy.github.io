@@ -29,10 +29,6 @@ patience runs out first.
 
 ### NestedSimPy
 
-The same model under NestedSimPy. **New lines are highlighted green and modified
-lines amber**, relative to the plain baseline above; long unchanged runs are
-folded — click to expand them.
-
 ```{codeannotate} ../../simpy_examples/bank_reneging_plain.py ../../simpy_examples/bank_reneging_nested.py
 :title: simpy_examples/bank_reneging_nested.py
 :context: 3
@@ -40,7 +36,7 @@ folded — click to expand them.
 
 ## Discussion
 
-The structural changes are small: `simpy.Resource` becomes `NestedResource` (with a `nested_id`), and `env.run()` becomes a nested run with branching configured on arrivals. The reneging logic — the `request | patience-timeout` condition event — is untouched, so the outer customer sequence stays identical to plain SimPy, while inner simulations fork at each arrival.
+`simpy.Resource` becomes `NestedResource` (`nested_id="counter"`) and `env.run()` becomes `env.nested_run()`. Branching is triggered on **every customer arrival** at the counter, forking **2 inner simulations** that each run **until the triggering customer departs**. The reneging logic (the `request | patience-timeout` condition event) is unchanged, so the outer customer sequence is identical to plain SimPy.
 
 ## Run
 
