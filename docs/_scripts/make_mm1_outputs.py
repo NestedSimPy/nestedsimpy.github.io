@@ -32,7 +32,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from nestedsimpy import NestedEnvironment, NestedResource, OutputManager
-from nestedsimpy.reporting import package_run_outputs
+from nestedsimpy.reporting import package_run_outputs, write_dynamic_plot
 
 # --- the exact configuration of simpy_examples/mm1_nested.py -----------------
 ARRIVAL_RATE = 3.0
@@ -254,11 +254,21 @@ def build_table(run_dir: str) -> None:
     print("injected table into", page)
 
 
+def build_interactive(run_dir: str) -> None:
+    """Write the interactive plot: outer path + a clickable marker at every
+    triggering event that toggles that trigger's inner branches."""
+
+    out = STATIC / "mm1-interactive.html"
+    write_dynamic_plot(run_dir, output_path=str(out), resource_id="srv")
+    print("wrote", out)
+
+
 def main() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         run_dir = run_model(os.path.join(tmp, "out"))
         om = OutputManager(run_dir)
-        build_figure(om, run_dir)
+        build_figure(om, run_dir)        # static SVG (useful for the paper)
+        build_interactive(run_dir)       # interactive HTML (embedded on the page)
         build_table(run_dir)
 
 

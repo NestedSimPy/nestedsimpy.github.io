@@ -59,19 +59,15 @@ om.export_outer("predictions.csv", inner_aggregate="mean")    # + averaged inner
 
 ### Visualization
 
-The nested simulation code above is illustrated below.
+The nested simulation is illustrated below. The **black** curve is the outer
+simulation — a single sample path that runs for 10 units of time. Every customer
+arrival is a **triggering event**, marked by a dot on the outer path (these are
+the customers tabulated below). **Click any triggering event** to reveal the
+three **inner simulations** forked there; each inner runs for 5 units of time
+before stopping, after which the outer simulation resumes.
 
-```{figure} _static/mm1-nested-illustration.svg
-:alt: Number of customers over time for an M/M/1 queue, the outer simulation in black with a dot at every triggering event and inner simulations expanded at two of them (blue and red).
-:width: 100%
-
-The **black** curve is the outer simulation — a single sample path that runs for
-10 units of time. Every customer arrival is a **triggering event**, marked by a
-dot on the outer path (these are the customers tabulated below). At a triggering
-event the outer simulation pauses and invokes three **inner simulations**; each
-inner runs for 5 units of time before stopping, after which the outer simulation
-resumes. Two triggering events are expanded here (blue and red) to show their
-inner branches.
+```{raw} html
+<iframe src="_static/mm1-interactive.html" title="Interactive nested M/M/1: click a triggering event to reveal its inner simulations" style="width:100%; height:520px; border:1px solid var(--color-background-border); border-radius:8px;" loading="lazy"></iframe>
 ```
 
 ### Data
