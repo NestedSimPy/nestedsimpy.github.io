@@ -91,9 +91,3 @@ env.set_inner_stopping_condition(relative_time=5.0, triggering_customer_departs=
 
 env.nested_run()
 ```
-
-## Where To Go Next
-
-- For the boundary language, go to {doc}`branch-triggers`.
-- For stop conditions, go to {doc}`stop-rules-replay`.
-- For exporting data, go to {doc}`traces-and-outputs`.

@@ -62,8 +62,3 @@ event (or a callable returning one) to stop the branch when that event fires.
 
 Keep the outer stop rules simple, then make the inner stop rules express the
 counterfactual horizon you actually care about.
-
-## Next
-
-- {doc}`visualization` — plot the outer trajectory and inner branches.
-- {doc}`traces-and-outputs` — export them as datasets.

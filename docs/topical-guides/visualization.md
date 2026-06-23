@@ -65,7 +65,3 @@ om.visualize_outer(metric=lambda row: float(row["(srv)state_num_customers_in_ser
 ```
 
 The same `metric` argument is accepted by `visualize_inner`.
-
-## Next
-
-- {doc}`traces-and-outputs` — export the same trajectories as datasets.

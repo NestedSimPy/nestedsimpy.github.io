@@ -76,7 +76,3 @@ Beyond the built-in exports, a run can produce its own outputs: set general
 behavior with `set_post_processing_options(...)`, or register a custom
 metric/output hook with `set_postprocessor(...)`, which runs after
 `nested_run()` over the packaged artefacts.
-
-## Next
-
-- {doc}`visualization` — plot the same trajectories instead of exporting them.
