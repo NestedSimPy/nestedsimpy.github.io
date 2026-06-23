@@ -154,7 +154,7 @@ def build(name: str, meta: dict) -> dict:
         "import gdown\n"
         f'gdown.download(id="{WHEEL_DRIVE_ID}",\n'
         '               output="nestedsimpy-0.1.0-py3-none-any.whl", quiet=True)\n'
-        "!pip install -q nestedsimpy-0.1.0-py3-none-any.whl\n"
+        '!pip install -q "nestedsimpy-0.1.0-py3-none-any.whl[plot]"\n'
         "\n"
         "import nestedsimpy\n"
         'print("NestedSimPy ready —", len(nestedsimpy.__all__), "public objects")'
