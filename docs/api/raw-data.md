@@ -11,7 +11,7 @@ nested_output/<experiment>/<outer_id>/
     outer/
       trace.jsonl      # the outer event stream
       manifest.json
-    j=0001/            # one directory per triggering event (j = anchor id)
+    j=0001/            # one directory per triggering event (j = trigger index)
       k=00/            # one directory per branch
         trace.jsonl    # an inner event stream
         manifest.json
