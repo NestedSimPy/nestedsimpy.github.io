@@ -1,4 +1,4 @@
-# Stop Rules and Replay
+# Stopping conditions
 
 NestedSimPy controls both:
 

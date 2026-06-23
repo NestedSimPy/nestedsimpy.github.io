@@ -110,11 +110,11 @@ Install, run the first branching demo, and learn the mental model.
 The official SimPy examples, adapted with branching and replay.
 ```
 
-```{grid-item-card} 🧭 Topical Guides
+```{grid-item-card} 🧭 Using NestedSimPy
 :link: topical-guides/index
 :link-type: doc
 
-Branching model, triggers, stop rules, traces and outputs.
+Convert code, place triggers, set stop rules, then visualize and export.
 ```
 
 ```{grid-item-card} 🔌 API Reference

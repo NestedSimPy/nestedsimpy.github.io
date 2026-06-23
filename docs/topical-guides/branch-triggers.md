@@ -1,4 +1,4 @@
-# Branch Triggers
+# Triggering events
 
 NestedSimPy branches when the configured nesting condition fires.
 

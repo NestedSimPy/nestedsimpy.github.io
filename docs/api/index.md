@@ -5,7 +5,7 @@ NestedSimPy.
 
 The main split is:
 
-- `Topical Guides`: concept-first pages if you want the big picture before the
+- `Using NestedSimPy`: concept-first pages if you want the big picture before the
   full module reference.
 - `SimPy Core API`: environment, branch driver, instrumented primitives, sleep,
   events, state, trace, and typed configuration structures.
@@ -14,7 +14,7 @@ The main split is:
 ````{grid} 1 1 2 2
 :gutter: 2
 
-```{grid-item-card} Topical Guides
+```{grid-item-card} Using NestedSimPy
 :link: ../topical-guides/index
 :link-type: doc
 
