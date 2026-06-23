@@ -1,25 +1,13 @@
 # About
 
-NestedSimPy is a SimPy-focused project for branching, replay, and trace-based
-analysis of discrete-event models.
+NestedSimPy is a SimPy-focused project for nested simulation — branching,
+replay, and trace-based analysis of discrete-event models.
 
-This site is organized around how NestedSimPy extends familiar SimPy models.
+## Authors
 
-## Maintainer
+NestedSimPy is developed by **Yaron Shaposhnik** and **Hongyu Wang**.
 
-NestedSimPy is developed and maintained by **Hongyu Wang**.
-
-- Contact: <!-- TODO: add contact email --> *(to be added)*
-- Paper: <!-- TODO: add paper link/citation --> *(link to be added)*
-
-## Scope
-
-The current site covers:
-
-- SimPy usage and branch-aware execution
-- official SimPy parity examples
-- API reference for the SimPy-facing package surface
-- instrumented `Resource`, `PreemptiveResource`, `Store`, and `Container` paths
+- Paper: *(link to be added)*
 
 ## Project Links
 
@@ -38,13 +26,3 @@ See the [`NOTICE`][notice] file for attribution details.
 
 [license]: https://github.com/NestedSimPy/nestedsimpy.github.io/blob/main/LICENSE
 [notice]: https://github.com/NestedSimPy/nestedsimpy.github.io/blob/main/NOTICE
-
-## Documentation Layout
-
-- {doc}`simple-example`
-- {doc}`getting-started`
-- {doc}`official-parity/index`
-- {doc}`topical-guides/index`
-- {doc}`api/index`
-- {doc}`architecture`
-- {doc}`about`

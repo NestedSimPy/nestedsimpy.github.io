@@ -6,12 +6,12 @@ hide-toc: true
 
 ::::{div} ns-hero
 :::{div} ns-hero-headline
-Branching and replay for SimPy models
+Simulation within Simulation
 :::
 
 NestedSimPy is an extension to [SimPy](https://simpy.readthedocs.io/) that
-supplements it with **nested simulation** — *simulation within simulation*. The
-package is not part of the SimPy project.
+supplements it with **nested simulation**, **rollout**, and **policy-lookahead**
+capabilities. The package is **not** part of the SimPy project.
 
 :::{div} ns-cta-row
 ```{button-ref} simple-example
@@ -49,16 +49,18 @@ The project is currently under development.
 
 ## What is nested simulation?
 
-Nested simulation can be thought of as **simulation within simulation**. The
-user implements and executes an *outer* simulation of some system (e.g.,
-service, inventory, or transportation) — a normal simulation run that also
-defines certain **triggering events** (e.g., a customer arrival). When a
-triggering event is invoked, the outer simulation **pauses** and **branches**
-out to multiple parallel **inner simulations** that independently resume from
-that state until some stopping condition is met. Once all inner simulations
-terminate, the outer simulation receives information about how they played out
-and **resumes**, potentially using the information the inner simulations
-collected.
+Nested simulation can be thought of as *simulation within simulation*. The user
+first implements and executes a typical simulation of some system (e.g., service,
+inventory, or transportation), which is referred to as the **outer simulation**.
+The user also defines **triggering events** (e.g., a customer arrival). When a
+triggering event is invoked, the outer simulation **pauses** and **branches** out
+to multiple parallel copies of the outer simulation at that moment in time, called
+**inner simulations**. These independently continue executing the simulation from
+the paused state until a user-defined **inner stopping condition** is met. Once all
+inner simulations terminate, the outer simulation receives information about the
+inner simulations' execution, at which point it may continue its run, using or
+simply recording the inner-simulation realizations. The outer simulation continues
+until a user-defined **outer stopping condition** is met.
 
 ## When is it useful?
 
