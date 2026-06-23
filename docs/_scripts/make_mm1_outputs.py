@@ -46,9 +46,10 @@ INNER_HORIZON = 5.0
 # fan-out: one early, low-occupancy trigger and one near the busy peak).
 HIGHLIGHT_TARGETS = (1.0, 3.5)
 HIGHLIGHT_COLORS = ("#4c78c8", "#d6604d")  # blue, red -- matches the dots
-# How far past each trigger to draw the inner branches (the full inner horizon
-# is 5.0, but a shorter window keeps the fan-out legible).
-INNER_SHOW = 2.0
+# How far past each trigger to draw the inner branches. This matches the model's
+# inner horizon (relative_time=5.0) so the picture agrees with the code and the
+# caption ("each inner runs for 5 units of time").
+INNER_SHOW = 5.0
 
 DOCS = Path(__file__).resolve().parents[1]
 STATIC = DOCS / "_static"
@@ -137,8 +138,8 @@ def build_figure(om: OutputManager, run_dir: str) -> None:
                 iy,
                 where="post",
                 color=color,
-                linewidth=1.0,
-                alpha=0.55,
+                linewidth=0.9,
+                alpha=0.4,
                 zorder=3,
                 label=None if inner_label_used else "Inner branches",
             )
