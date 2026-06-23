@@ -33,6 +33,31 @@ env.set_inner_stopping_condition(
 That configuration keeps each branch alive for up to five simulated time units,
 but also stops as soon as the anchor customer finishes — whichever comes first.
 
+### Custom and composed conditions
+
+The stop rule is not limited to those flags. Pass `event=` a `StartStopSpec` to
+stop on the system state or on your own predicate — and compose several with
+`any_of` / `all_of`:
+
+```python
+from nestedsimpy import StartStopSpec
+
+env.set_inner_stopping_condition(
+    event=StartStopSpec(
+        any_of=[
+            StartStopSpec(queue_ge=10),         # the queue reaches 10, or
+            StartStopSpec(system_empty=True),   # the system empties, or
+            StartStopSpec(custom=my_predicate),  # a custom predicate returns True
+        ]
+    ),
+)
+```
+
+A `StartStopSpec` can set `time_ge`, `queue_ge`, `system_empty`, a `custom`
+predicate (any callable returning a bool, evaluated after each event), or nest
+child specs with `any_of` / `all_of`. You can also hand `event=` a raw SimPy
+event (or a callable returning one) to stop the branch when that event fires.
+
 ## Practical rule
 
 Keep the outer stop rules simple, then make the inner stop rules express the
