@@ -20,7 +20,7 @@ capabilities. The package is **not** part of the SimPy project.
 See a simple example
 ```
 
-```{button-ref} getting-started
+```{button-ref} topical-guides/index
 :color: light
 :outline:
 
@@ -96,13 +96,6 @@ Management are:
 An M/M/1 queue, plain SimPy vs. NestedSimPy, side by side.
 ```
 
-```{grid-item-card} 🚀 NestedSimPy in 10 Minutes
-:link: getting-started
-:link-type: doc
-
-Install, run the first branching demo, and learn the mental model.
-```
-
 ```{grid-item-card} 📚 Additional examples
 :link: official-parity/index
 :link-type: doc
@@ -132,7 +125,6 @@ data each run records.
 
 self
 simple-example
-getting-started
 official-parity/index
 topical-guides/index
 api/index

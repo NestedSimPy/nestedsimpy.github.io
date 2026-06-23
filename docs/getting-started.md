@@ -1,3 +1,7 @@
+---
+orphan: true
+---
+
 # NestedSimPy in 10 Minutes
 
 NestedSimPy is easiest to understand as a small layer on top of SimPy:

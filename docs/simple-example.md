@@ -1,8 +1,8 @@
 # Simple example
 
-This page walks through the smallest end-to-end example: a single **M/M/1
-queue**, first as a plain SimPy model, then adapted for NestedSimPy, and finally
-the visualization and data a nested run produces.
+This page walks through a simple use case of nested simulation. We start with
+simulating an **M/M/1 queue** using SimPy code, and then add to it nested
+simulation capabilities using NestedSimPy.
 
 ```{tip}
 **Run it live:** [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NestedSimPy/nestedsimpy.github.io/blob/main/notebooks/NestedSimPy_mm1.ipynb)
@@ -11,8 +11,8 @@ the visualization and data a nested run produces.
 
 ## An M/M/1 queue in SimPy
 
-The plain model is a standard SimPy M/M/1 queue: customers arrive, wait for a
-single server, and leave once served.
+Here is a simple implementation of an M/M/1 queue using SimPy. It runs for 10
+units of time.
 
 ```{literalinclude} ../simpy_examples/mm1_plain.py
 :language: python
@@ -21,11 +21,10 @@ single server, and leave once served.
 
 ## Nested simulation using NestedSimPy
 
-The same model under NestedSimPy. The outer behavior is unchanged; the additions
-instrument the server, declare a triggering event (every arrival), and ask for
-three independent inner simulations per trigger. **New lines are highlighted
-green and modified lines amber**, relative to the plain baseline above; long
-unchanged runs are folded — click to expand them.
+Here is a modified version that runs the same M/M/1 queue using NestedSimPy.
+Highlighted in **green** are new lines of code, in **amber** modified lines, and
+the remaining lines are identical to the original code. (Long unchanged runs are
+folded — click to expand them.)
 
 ```{codeannotate} ../simpy_examples/mm1_plain.py ../simpy_examples/mm1_nested.py
 :title: simpy_examples/mm1_nested.py
@@ -39,33 +38,39 @@ Download: {download}`mm1_plain.py <../simpy_examples/mm1_plain.py>` ·
 
 ## NestedSimPy output
 
-The run writes its trajectories under `nested_output/mm1`. Afterwards an
-**`OutputManager`** reads that folder — even in a fresh session — to visualize
-and export the outer and inner simulations:
+The package offers visualization and data-generation functionalities. The run
+writes its trajectories under `nested_output/mm1`; afterwards an `OutputManager`
+reads that folder — even in a fresh session — to visualize and export the outer
+and inner simulations:
 
 ```python
 from nestedsimpy import OutputManager
 
 om = OutputManager("nested_output/mm1")        # read the run we just produced
 
-om.visualize_outer()                           # outer trajectory + triggering events
-om.visualize_inner(trigger_id=0)               # the inner branches forked at one trigger
+om.visualize_outer()                           # the outer trajectory
+om.visualize_inner(trigger_id=0, inner_id=0)   # one inner branch at trigger 0
+om.visualize_inner(trigger_id=0)               # all inner branches at trigger 0
 
-om.export_outer("outer.csv")                   # the outer sample path
-om.export_inner(trigger_id=0, inner_id=0, path="inner.csv")  # one inner branch
+om.export_inner(trigger_id=0, inner_id=0, path="inner.csv")   # one inner sample path
+om.export_outer("outer.csv")                                  # the outer sample path
+om.export_outer("predictions.csv", inner_aggregate="mean")    # + averaged inner waits
 ```
 
 ### Visualization
 
+The nested simulation code above is illustrated below.
+
 ```{figure} _static/mm1-nested-illustration.svg
-:alt: Number of customers over time for an M/M/1 queue, showing the outer simulation in black with inner simulations forked at two triggering events.
+:alt: Number of customers over time for an M/M/1 queue, the outer simulation in black with inner simulations forked at two triggering events (blue and red).
 :width: 100%
 
-A nested run of the M/M/1 queue. The **black** line is the outer simulation
-(number of customers over time). At each **triggering event** (dots) the outer
-simulation pauses and forks three **inner simulations** (light lines) that each
-explore a possible future from that state. Two triggering events are highlighted
-here; in this run every arrival triggers one.
+The **black** curve is the outer simulation — a single sample path that runs for
+10 units of time. A **triggering event** (a customer arrival) is marked by a
+point, at which the outer simulation pauses and invokes three **inner
+simulations**; each inner runs for 5 units of time before stopping, after which
+the outer simulation resumes. In general a branching takes place at *every*
+triggering event; only two are highlighted here (blue and red).
 ```
 
 ### Data

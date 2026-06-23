@@ -50,7 +50,7 @@ server = NestedResource(env, capacity=1, nested_id="srv")
 env.set_output_options(out_dir="out/mm1_simpy", gzip_trace=False)
 env.set_nested_triggering_objects(nested_id="srv")
 env.set_nesting_conditions({"on": "arrival", "frequency": 1})
-env.set_inner_repetitions(2)
+env.set_inner_repetitions(3)
 env.set_inner_stopping_condition(relative_time=5.0, triggering_customer_departs=True)
 
 env.nested_run()
