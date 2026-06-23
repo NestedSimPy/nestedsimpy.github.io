@@ -60,7 +60,7 @@ nested_output/mm1/<outer_id>/
 
 Inspect `raw/` when debugging behavior and `exports/` when comparing results
 across runs or branches. The raw event format is described under
-{doc}`Implementation <../architecture>`.
+{doc}`Raw data <../api/raw-data>`.
 
 ## Next
 

@@ -108,5 +108,5 @@ env.nested_run()
 
 - For the main concept guides, go to {doc}`topical-guides/index`.
 - For the public examples story, go to {doc}`official-parity/index`.
-- For the SimPy-facing API surface, go to {doc}`api/index`.
-- For the runtime model, go to {doc}`architecture`.
+- For the runtime, the API surface, and the raw data format, go to
+  {doc}`api/index`.

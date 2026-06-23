@@ -117,18 +117,12 @@ The official SimPy examples, adapted with branching and replay.
 Convert code, place triggers, set stop rules, then visualize and export.
 ```
 
-```{grid-item-card} 🔌 API Reference
+```{grid-item-card} 🔌 Implementation
 :link: api/index
 :link-type: doc
 
-The SimPy-facing API surface and reporting helpers.
-```
-
-```{grid-item-card} 🏗️ Architecture
-:link: architecture
-:link-type: doc
-
-How the runtime model works under the hood.
+The runtime, the SimPy-facing API surface and reporting helpers, and the raw
+data each run records.
 ```
 ````
 
@@ -142,6 +136,5 @@ getting-started
 official-parity/index
 topical-guides/index
 api/index
-architecture
 about
 ```
