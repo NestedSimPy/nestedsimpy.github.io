@@ -20,9 +20,6 @@ falls below a threshold.
 
 ## Code
 
-This example is one of the heavier parity adaptations, so the source includes
-are especially useful here.
-
 ### Plain SimPy
 
 ```{literalinclude} ../../simpy_examples/gas_station_plain.py

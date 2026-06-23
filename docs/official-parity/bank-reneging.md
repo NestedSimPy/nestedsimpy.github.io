@@ -20,9 +20,6 @@ patience runs out first.
 
 ## Code
 
-The nested version is easiest to evaluate by reading the actual source side by
-side with the original-style baseline.
-
 ### Plain SimPy
 
 ```{literalinclude} ../../simpy_examples/bank_reneging_plain.py

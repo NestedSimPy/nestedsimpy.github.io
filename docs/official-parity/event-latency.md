@@ -20,9 +20,6 @@ communication channels.
 
 ## Code
 
-For this pair, the best way to judge the adaptation is to read the two source
-files directly.
-
 ### Plain SimPy
 
 ```{literalinclude} ../../simpy_examples/event_latency_plain.py

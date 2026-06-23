@@ -20,9 +20,6 @@ process.
 
 ## Code
 
-This pair stays readable enough that showing the actual source is more useful
-than summarizing it abstractly.
-
 ### Plain SimPy
 
 ```{literalinclude} ../../simpy_examples/process_communication_plain.py

@@ -20,10 +20,6 @@ can preempt lower-priority tasks.
 
 ## Code
 
-The plain and nested sources are included below because this parity pair is
-primarily about preserving the original logic while instrumenting a more complex
-resource discipline.
-
 ### Plain SimPy
 
 ```{literalinclude} ../../simpy_examples/machine_shop_plain.py

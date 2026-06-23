@@ -20,9 +20,6 @@ leave when finished.
 
 ## Code
 
-The adaptation stays close to the original carwash logic. Expand the source
-files directly below to inspect the actual delta.
-
 ### Plain SimPy
 
 ```{literalinclude} ../../simpy_examples/carwash_plain.py

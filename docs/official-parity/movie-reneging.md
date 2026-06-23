@@ -19,10 +19,6 @@ is sold out, customers waiting for that title leave the queue.
 
 ## Code
 
-The point of this parity pair is that the nested adaptation is still very close
-to the original SimPy example. The easiest way to inspect that is to read the
-actual source files directly.
-
 ### Plain SimPy
 
 ```{literalinclude} ../../simpy_examples/movie_reneging_plain.py
