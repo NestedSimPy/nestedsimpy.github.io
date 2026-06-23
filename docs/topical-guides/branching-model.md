@@ -56,15 +56,6 @@ env.set_inner_stopping_condition(relative_time=5.0, triggering_customer_departs=
 env.nested_run()
 ```
 
-## Runtime Shape
-
-At runtime, NestedSimPy does four things around the underlying SimPy model:
-
-1. runs the outer trajectory,
-2. watches for the configured boundary,
-3. forks child futures at that boundary,
-4. records traces, manifests, and packaged outputs for the outer and inner runs.
-
 ## Where To Go Next
 
 - For the boundary language, go to {doc}`branch-triggers`.
