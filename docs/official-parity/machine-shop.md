@@ -8,6 +8,11 @@ The machine-shop example combines interrupts with a `PreemptiveResource`. A
 repairman handles both routine work and urgent breakdowns, and machine failures
 can preempt lower-priority tasks.
 
+```{tip}
+**Run it live:** [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NestedSimPy/nestedsimpy.github.io/blob/main/notebooks/NestedSimPy_machine_shop.ipynb)
+— installs NestedSimPy and runs this example in your browser.
+```
+
 ## Files
 
 - Plain SimPy: `simpy_examples/machine_shop_plain.py`

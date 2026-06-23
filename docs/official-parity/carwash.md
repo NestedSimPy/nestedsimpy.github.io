@@ -8,6 +8,11 @@ Cars arrive at a carwash with a limited number of washing machines. If a machine
 is busy, they wait in queue; once a machine is free, they start washing and
 leave when finished.
 
+```{tip}
+**Run it live:** [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NestedSimPy/nestedsimpy.github.io/blob/main/notebooks/NestedSimPy_carwash.ipynb)
+— installs NestedSimPy and runs this example in your browser.
+```
+
 ## Files
 
 - Plain SimPy: `simpy_examples/carwash_plain.py`

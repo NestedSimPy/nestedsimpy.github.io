@@ -8,6 +8,11 @@ This example uses a `Store` to model delayed message propagation between
 processes, which is a common pattern for cables, transport links, or other
 communication channels.
 
+```{tip}
+**Run it live:** [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NestedSimPy/nestedsimpy.github.io/blob/main/notebooks/NestedSimPy_event_latency.ipynb)
+— installs NestedSimPy and runs this example in your browser.
+```
+
 ## Files
 
 - Plain SimPy: `simpy_examples/event_latency_plain.py`

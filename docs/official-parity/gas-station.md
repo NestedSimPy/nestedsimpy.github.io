@@ -8,6 +8,11 @@ Cars arrive at a gas station with a limited number of pumps. Those pumps share a
 common fuel reservoir, and a control process summons a tank truck when fuel
 falls below a threshold.
 
+```{tip}
+**Run it live:** [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NestedSimPy/nestedsimpy.github.io/blob/main/notebooks/NestedSimPy_gas_station.ipynb)
+— installs NestedSimPy and runs this example in your browser.
+```
+
 ## Files
 
 - Plain SimPy: `simpy_examples/gas_station_plain.py`
