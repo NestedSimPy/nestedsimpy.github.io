@@ -127,9 +127,29 @@ def build_figure(om: OutputManager, run_dir: str) -> None:
     ox, oy = _series(om.export_outer())
     ax.step(ox, oy, where="post", color="black", linewidth=1.8, label="Outer path", zorder=5)
 
+    def outer_value_at(t):
+        val = oy[0] if oy else 0
+        for x, y in zip(ox, oy):
+            if x <= t:
+                val = y
+            else:
+                break
+        return val
+
+    # Every customer arrival is a triggering event — mark all of them, so the
+    # figure agrees with the dataset below (which tabulates every one).
+    all_t = [info.branch_time or 0.0 for info in triggers]
+    all_y = [outer_value_at(t) for t in all_t]
+    ax.scatter(
+        all_t, all_y, s=16, color="#9aa0a6", zorder=4,
+        label="Triggering events", edgecolor="white", linewidth=0.4,
+    )
+
+    # Expand two of them into their inner simulations, for illustration.
     inner_label_used = False
     for info, color in highlights:
-        bt_show = (info.branch_time or 0.0) + INNER_SHOW
+        bt = info.branch_time or 0.0
+        bt_show = bt + INNER_SHOW
         for k in info.inner_ids:
             rows = [r for r in om.export_inner(info.trigger_id, k) if r.get("segment") == "inner"]
             ix, iy = _series(rows, t_max=bt_show)
@@ -144,20 +164,10 @@ def build_figure(om: OutputManager, run_dir: str) -> None:
                 label=None if inner_label_used else "Inner branches",
             )
             inner_label_used = True
-        # trigger marker
-        bt = info.branch_time or 0.0
-        # value of the outer path at the trigger
-        sys_at = next((y for x, y in zip(ox, oy) if x >= bt), oy[-1] if oy else 0)
         ax.axvline(bt, color=color, linewidth=0.8, linestyle=":", alpha=0.5, zorder=2)
         ax.scatter(
-            [bt],
-            [sys_at],
-            color=color,
-            s=70,
-            zorder=6,
-            label="Trigger point" if info is highlights[0][0] else None,
-            edgecolor="white",
-            linewidth=0.8,
+            [bt], [outer_value_at(bt)], color=color, s=80, zorder=6,
+            edgecolor="white", linewidth=0.9,
         )
 
     ax.set_xlabel("Simulation time", fontsize=12)

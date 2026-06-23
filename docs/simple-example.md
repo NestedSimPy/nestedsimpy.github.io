@@ -62,15 +62,16 @@ om.export_outer("predictions.csv", inner_aggregate="mean")    # + averaged inner
 The nested simulation code above is illustrated below.
 
 ```{figure} _static/mm1-nested-illustration.svg
-:alt: Number of customers over time for an M/M/1 queue, the outer simulation in black with inner simulations forked at two triggering events (blue and red).
+:alt: Number of customers over time for an M/M/1 queue, the outer simulation in black with a dot at every triggering event and inner simulations expanded at two of them (blue and red).
 :width: 100%
 
 The **black** curve is the outer simulation — a single sample path that runs for
-10 units of time. A **triggering event** (a customer arrival) is marked by a
-point, at which the outer simulation pauses and invokes three **inner
-simulations**; each inner runs for 5 units of time before stopping, after which
-the outer simulation resumes. In general a branching takes place at *every*
-triggering event; only two are highlighted here (blue and red).
+10 units of time. Every customer arrival is a **triggering event**, marked by a
+dot on the outer path (these are the customers tabulated below). At a triggering
+event the outer simulation pauses and invokes three **inner simulations**; each
+inner runs for 5 units of time before stopping, after which the outer simulation
+resumes. Two triggering events are expanded here (blue and red) to show their
+inner branches.
 ```
 
 ### Data
