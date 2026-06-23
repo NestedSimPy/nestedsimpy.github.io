@@ -166,7 +166,7 @@ build_uid(outer_id, j, k, cust_id) -> str
 ```python
 attach_trace(env_or_sim, sink, branch_meta) -> None
 detach_trace(env_or_sim, stop_reason=None) -> None
-trace_emit(t, type, **payload) -> None          # module-level emit alias
+trace_emit(env_or_sim, type, **payload) -> None  # module-level emit alias
 ```
 
 ### `JsonlTrace`

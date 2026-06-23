@@ -35,8 +35,10 @@ After either, `import nestedsimpy` works from anywhere. For the optional Plotly
 figures, install the extra: `pip install "nestedsimpy[plot] @ git+https://github.com/NestedSimPy/nestedsimpy.git"`.
 
 ```{note}
-NestedSimPy is under active development and is not on PyPI yet; the public
-package repository becomes available on release.
+NestedSimPy is under active development. The code repository and PyPI release are
+not public yet, so the `git+https://…` and `pip install nestedsimpy` commands
+above will work only once the package is published. Until then, try it in the
+browser via the [Simple example](simple-example) Colab.
 ```
 
 ## First Run
