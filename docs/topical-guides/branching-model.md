@@ -59,5 +59,5 @@ env.nested_run()
 ## Where To Go Next
 
 - For the boundary language, go to {doc}`branch-triggers`.
-- For branch termination and replay, go to {doc}`stop-rules-replay`.
-- For disk outputs, go to {doc}`traces-and-outputs`.
+- For stop conditions, go to {doc}`stop-rules-replay`.
+- For exporting data, go to {doc}`traces-and-outputs`.

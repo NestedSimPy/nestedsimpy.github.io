@@ -100,7 +100,7 @@ An M/M/1 queue, plain SimPy vs. NestedSimPy, side by side.
 :link: official-parity/index
 :link-type: doc
 
-The official SimPy examples, adapted with branching and replay.
+The official SimPy examples, adapted with nested simulation.
 ```
 
 ```{grid-item-card} 🧭 Using NestedSimPy
