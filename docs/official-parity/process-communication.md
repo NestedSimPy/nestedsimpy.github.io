@@ -36,7 +36,7 @@ process.
 
 ## Discussion
 
-`simpy.Store` becomes `NestedStore` (the message pipes) and `env.run()` becomes `env.nested_run()`. Branching is triggered on **every store put** — a message being sent — forking **1 inner simulation** that runs for **20 time units, or until the message is consumed**. The producer/consumer logic is otherwise unchanged.
+Branching is triggered on **every store put** — a message sent through a pipe, a `NestedStore` — forking **1 inner simulation** that runs for **20 time units, or until the message is consumed**. The producer/consumer logic is otherwise unchanged.
 
 ## Run
 

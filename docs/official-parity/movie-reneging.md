@@ -35,7 +35,7 @@ is sold out, customers waiting for that title leave the queue.
 
 ## Discussion
 
-`simpy.Resource` becomes `NestedResource` (`nested_id="counter"`, the ticket counter) and `env.run()` becomes `env.nested_run()`. Branching is triggered on **every moviegoer arrival**, forking **1 inner simulation** that runs for **10 time units, or until the triggering customer departs**. The shared sold-out event and reneging logic are unchanged.
+Branching is triggered on **every moviegoer arrival** at the ticket counter — a `NestedResource` — forking **1 inner simulation** that runs for **10 time units, or until the triggering customer departs**. The shared sold-out event and reneging logic are unchanged.
 
 ## Run
 

@@ -36,7 +36,7 @@ communication channels.
 
 ## Discussion
 
-`simpy.Store` becomes `NestedStore` (`nested_id="cable_store"`, the cable) and `env.run()` becomes `env.nested_run()`. Branching is triggered on **every store put** — a message entering the cable — forking **1 inner simulation** that runs for **20 time units, or until the message is delivered**. Message propagation is otherwise unchanged.
+Branching is triggered on **every store put** — a message entering the cable, a `NestedStore` — forking **1 inner simulation** that runs for **20 time units, or until the message is delivered**. Message propagation is otherwise unchanged.
 
 ## Run
 
