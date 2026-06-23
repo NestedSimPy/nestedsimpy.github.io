@@ -39,7 +39,7 @@ an instrumented object satisfies a predicate.
 ```python
 env.set_nesting_conditions(
     {
-        "on": "state",
+        "on": "state_predicate",
         "resource": "srv",
         "predicate": lambda snap: snap["queue_len"] >= 2,
     }

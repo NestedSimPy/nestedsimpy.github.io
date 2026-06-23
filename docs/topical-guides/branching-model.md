@@ -61,6 +61,8 @@ Supported specifications:
 | Log-normal | `{"distribution": "log-normal", "mu": mu, "sigma": sigma}` |
 | Deterministic | `{"distribution": "deterministic", "value": d}` |
 
+Capped (truncated) exponential and integer-uniform variants are also available; see `nestedsimpy.sleep.resolve_distribution` for the full set.
+
 ## Core Objects
 
 `NestedEnvironment`

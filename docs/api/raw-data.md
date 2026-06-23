@@ -45,10 +45,11 @@ in-service count), which is why the packaged CSVs carry extra `state_*` columns.
 
 ## Manifests
 
-`manifest.json` summarizes a run. The outer manifest records `outer_id`, `seed`,
-`end_time`, `stop_reason`, and `event_count`. A branch manifest adds
-`checkpoint_time`, `boundary_event`, `anchor_arrival_time`, `anchor_cust_id`, and
-the branch's own seed.
+`manifest.json` summarizes a run: `outer_id`, `seed`, `end_time`, `stop_reason`,
+and `event_count`. A branch's manifest additionally describes the fork it came
+from — `boundary_event`, `anchor_arrival_time`, `trigger_resource`, and the
+checkpoint it resumed from (`checkpoint_time`, `checkpoint_states`,
+`anchor_cust_id`).
 
 ## Per-branch metrics
 

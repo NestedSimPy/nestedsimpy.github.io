@@ -40,27 +40,35 @@ feature/label table used to benchmark waiting-time predictions:
 om.export_outer("features.csv", inner_aggregate="mean")
 ```
 
-## On disk: raw and exports
+## On disk
 
-Where the run is written is set on the environment:
+A run is written under the directory you set:
 
 ```python
 env.set_output_options(out_dir="nested_output/mm1", gzip_trace=False)
 ```
 
-A packaged run has this shape:
-
 ```text
 nested_output/mm1/<outer_id>/
-  raw/            # one trace.jsonl + manifest.json per outer run and per branch
-    outer/
-    j=0001/k=00/
-  exports/        # CSVs packaged from the raw traces (what OutputManager reads)
+  raw/        # raw JSONL traces + manifests — see Implementation › Raw data
+  exports/    # the packaged datasets (below)
 ```
 
-Inspect `raw/` when debugging behavior and `exports/` when comparing results
-across runs or branches. The raw event format is described under
-{doc}`Raw data <../api/raw-data>`.
+Packaging writes `exports/` in **three forms**, for three different needs:
+
+1. **Per-realization files** — one CSV *per inner simulation*,
+   `[seed][trigger,boundary][inner].csv` (the outer lead-in, then that inner's
+   own path), alongside the outer path `[seed]-outer.csv` and the per-trigger
+   metric JSONs. These are what `export_outer` / `export_inner` above read.
+2. **Consolidated tables** — the outer and *all* inners flattened into single
+   files: `state_wide.csv` (one row per recorded state), `state_long.csv` (the
+   queue contents at each of those states), and `events.csv` (every non-snapshot
+   event). Use these to analyse the whole run at once.
+3. **Your own metric** — whatever a postprocessor writes (see below); the
+   bundled wait-time hook produces `user_waits.csv`, one waiting time per inner.
+
+Inspect `raw/` when debugging a single branch; the raw event format is described
+under {doc}`Raw data <../api/raw-data>`.
 
 ## Custom postprocessing
 
