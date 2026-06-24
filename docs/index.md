@@ -86,7 +86,7 @@ Management are:
 
 ## Explore the docs
 
-````{grid} 1 2 2 3
+````{grid} 1 2 2 2
 :gutter: 2
 
 ```{grid-item-card} 🧩 Simple example
