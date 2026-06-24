@@ -49,6 +49,7 @@ aggregated feature/label table for prediction.
 ````
 
 ```{toctree}
+:hidden:
 :maxdepth: 1
 
 branching-model

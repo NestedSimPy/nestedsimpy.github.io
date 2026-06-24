@@ -93,6 +93,7 @@ the per-branch metrics; {doc}`Exporting data <../topical-guides/traces-and-outpu
 explains the three export forms and the `OutputManager` that reads them.
 
 ```{toctree}
+:hidden:
 :maxdepth: 1
 
 simpy-core
