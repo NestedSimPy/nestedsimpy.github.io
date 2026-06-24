@@ -30,7 +30,7 @@ iter_resources() -> Iterable[tuple[str, Any]]
 
 - **`nested_timeout`** — sleep for a delay drawn from `specification` (a
   distribution spec, not a pre-sampled number) so the residual can be resampled
-  per branch on a fork. See {doc}`Converting code <../topical-guides/branching-model>`.
+  per branch on a fork. See {doc}`From SimPy to NestedSimPy <../topical-guides/branching-model>`.
 - **`register_resource`** / **`register`** — register an instrumented resource
   under a name for later lookup; `register` returns it for fluent chaining.
 - **`get_resource`** / **`iter_resources`** — look up one registered resource by

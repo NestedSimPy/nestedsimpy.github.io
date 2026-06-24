@@ -1,15 +1,19 @@
-# Converting code
+# From SimPy to NestedSimPy
 
-The core mental model is:
+We transform a given SimPy simulation code to NestedSimPy by following three
+steps:
 
-- keep the SimPy process logic,
-- replace key infrastructure with branch-aware equivalents,
-- run one outer trajectory,
-- fork child futures when a declared boundary fires.
+1. **Replacing SimPy objects** with corresponding NestedSimPy objects,
+2. **Replacing the timeout function call**, and
+3. **Configuring the nested simulation parameters**.
 
-## From plain SimPy to NestedSimPy
+The process logic itself often stays very close to the original SimPy model — we
+keep the SimPy process functions and change the infrastructure around them.
 
-The usual substitutions are:
+## 1. Replacing SimPy objects with corresponding NestedSimPy objects
+
+Swap the SimPy environment, its primitives, and the run call for their
+branch-aware equivalents:
 
 | Plain SimPy | NestedSimPy |
 | --- | --- |
@@ -18,16 +22,23 @@ The usual substitutions are:
 | `simpy.PreemptiveResource(...)` | `NestedPreemptiveResource(...)` |
 | `simpy.Store(...)` | `NestedStore(...)` |
 | `simpy.Container(...)` | `NestedContainer(...)` |
-| `env.timeout(...)` | `env.nested_timeout(...)` |
 | `env.run()` | `env.nested_run()` |
-
-The process logic itself often stays very close to the original SimPy model.
 
 There is not currently a separate `NestedPriorityResource` class. Priority-aware
 service is handled through `NestedPreemptiveResource`, which preserves SimPy's
 priority/preemption request path while adding tracing and branch hooks.
 
-## Delays as distributions
+The wrapped objects play the same roles as before:
+
+`NestedEnvironment`
+: Stores branching configuration and exposes branch-aware entry points such as
+  `nested_run()` and `run_single_path(...)`.
+
+`NestedResource`, `NestedPreemptiveResource`, `NestedStore`, `NestedContainer`
+: Wrapped SimPy primitives that emit structured state transitions and watcher
+  callbacks.
+
+## 2. Replacing the timeout function call
 
 The key behavioural change is how delays are written. In plain SimPy a delay is
 a number that has **already been drawn**:
@@ -63,25 +74,12 @@ Supported specifications:
 
 Capped (truncated) exponential and integer-uniform variants are also available; see `nestedsimpy.sleep.resolve_distribution` for the full set.
 
-## Core objects
+## 3. Configuring the nested simulation parameters
 
-`NestedEnvironment`
-: Stores branching configuration and exposes branch-aware entry points such as
-  `nested_run()` and `run_single_path(...)`.
-
-`NestedResource`, `NestedPreemptiveResource`, `NestedStore`, `NestedContainer`
-: Wrapped SimPy primitives that emit structured state transitions and watcher
-  callbacks.
-
-`env.nested_timeout(...)`
-: Branch-aware timeout helper that tracks pending sleeps so residual durations
-  can be resampled after a fork.
-
-## Typical configuration flow
-
-The nesting setup added around your model. (Your own SimPy processes — the
-arrival generator and the customer logic — are omitted here; the
-{doc}`Simple example <../simple-example>` is the full runnable file.)
+Finally, declare how the nested simulation runs — what triggers branching, how
+many inner simulations to fork, and when the inner and outer runs stop. (Your own
+SimPy processes — the arrival generator and the customer logic — are omitted
+here; the {doc}`Simple example <../simple-example>` is the full runnable file.)
 
 ```python
 env = NestedEnvironment()
@@ -90,8 +88,8 @@ env.process(arrivals(env, server))             # your model's processes
 
 env.set_output_options(out_dir="out/mm1_simpy", gzip_trace=False)
 env.set_rng("independent")                     # each branch draws its own future
-env.set_nested_triggering_objects(nested_id="srv")
-env.set_nesting_conditions({"on": "arrival", "frequency": 1})
+env.set_triggering_objects(nested_id="srv")
+env.set_triggering_conditions({"on": "arrival", "frequency": 1})
 env.set_inner_repetitions(3)
 env.set_inner_stopping_condition(relative_time=5.0, triggering_customer_departs=True)
 env.set_outer_stopping_condition(timeout=10.0)
