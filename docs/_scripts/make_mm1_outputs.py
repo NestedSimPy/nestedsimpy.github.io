@@ -1,28 +1,25 @@
-"""Regenerate the Simple-example figure and dataset table from one nested run.
+"""Regenerate the Simple-example figures and tables from one nested run.
 
-Both the illustration (``_static/mm1-nested-illustration.svg``) and the dataset
-table embedded in ``simple-example.md`` are produced from a *single* nested
-M/M/1 run that matches ``simpy_examples/mm1_nested.py`` exactly (seed 42,
-lambda=3, mu=4, horizon 10, three inner branches per arrival).  Running this
-keeps the figure, the table and the example code consistent.
-
-The figure is drawn through the public :class:`nestedsimpy.OutputManager`, so it
-doubles as a check that the API produces sensible output.
+The four figures (static outer, interactive outer, one inner, all inners) and the
+three dataset tables (one inner path, the outer path, the prediction table) on
+``simple-example.md`` are all produced from a single nested M/M/1 run that
+matches ``simpy_examples/mm1_nested.py`` (seed 42, independent branches). The
+plotted metric is the **queue length** at the server.
 
 Usage (needs the nestedsimpy package on the path)::
 
     PYTHONPATH=/path/to/nestedsimpy-pkg python docs/_scripts/make_mm1_outputs.py
 
-Outputs:
-  * docs/_static/mm1-nested-illustration.svg      (overwritten)
-  * docs/_static/mm1-dataset-table.html           (overwritten; <tbody> rows)
+Outputs (overwritten) under docs/_static/:
+  mm1-outer-static.svg, mm1-interactive.html, mm1-inner-one.svg, mm1-inner-all.svg
+  mm1-table-inner.html, mm1-table-outer.html, mm1-table-pred.html
+and the three tables are injected into simple-example.md between their markers.
 """
 
 from __future__ import annotations
 
 import json
 import os
-import re
 import tempfile
 from pathlib import Path
 
@@ -42,18 +39,17 @@ SEED = 42
 BRANCHES = 3
 INNER_HORIZON = 5.0
 
-# Two triggering events to highlight in the illustration (chosen for a clear
-# fan-out: one early, low-occupancy trigger and one near the busy peak).
-HIGHLIGHT_TARGETS = (1.0, 3.5)
-HIGHLIGHT_COLORS = ("#4c78c8", "#d6604d")  # blue, red -- matches the dots
-# How far past each trigger to draw the inner branches. This matches the model's
-# inner horizon (relative_time=5.0) so the picture agrees with the code and the
-# caption ("each inner runs for 5 units of time").
-INNER_SHOW = 5.0
+# Queue length at the server is the plotted/tabulated metric.
+QUEUE_FIELD = "state_num_customers_in_queue"
+METRIC = "(srv)" + QUEUE_FIELD
+Y_LABEL = "Queue length (srv)"
+
+# Trigger highlighted in the per-inner figures (near a busy moment, clear fan-out).
+HIGHLIGHT_TARGET = 3.5
+COLORS = ("#4c78c8", "#d6604d", "#2ca02c")  # blue, red, green per inner k
 
 DOCS = Path(__file__).resolve().parents[1]
 STATIC = DOCS / "_static"
-METRIC = "(srv)state_num_customers_in_system"
 
 
 def run_model(out_dir: str) -> str:
@@ -77,12 +73,10 @@ def run_model(out_dir: str) -> str:
     server = NestedResource(env, capacity=1, nested_id="srv")
     env.process(arrivals(env, server))
     env.set_output_options(out_dir=out_dir, gzip_trace=False)
-    # Independent random streams per branch so the inner simulations explore
-    # genuinely different futures (CRN would make them identical here).
-    env.set_rng("independent")
+    env.set_rng("independent")  # each branch draws its own future
     env.set_outer_seed(SEED)
-    env.set_nested_triggering_objects(nested_id="srv")
-    env.set_nesting_conditions({"on": "arrival", "frequency": 1})
+    env.set_triggering_objects(nested_id="srv")
+    env.set_triggering_conditions({"on": "arrival", "frequency": 1})
     env.set_inner_repetitions(BRANCHES)
     env.set_inner_stopping_condition(relative_time=INNER_HORIZON)
     env.set_outer_stopping_condition(timeout=SIM_TIME)
@@ -96,13 +90,19 @@ def run_model(out_dir: str) -> str:
     raise RuntimeError("no run directory produced")
 
 
-def _series(rows, t_max=None):
+# ----------------------------------------------------------------- helpers ---
+
+def _series(rows, *, segment=None, t_offset=0.0, t_max=None):
+    """Extract an ``(xs, ys)`` step series of the queue metric from CSV rows."""
+
     xs, ys = [], []
     for row in rows:
+        if segment is not None and row.get("segment") != segment:
+            continue
         value = row.get(METRIC)
         if value in (None, ""):
             continue
-        t = float(row["t"])
+        t = float(row["t"]) - t_offset
         if t_max is not None and t > t_max:
             break
         xs.append(t)
@@ -110,24 +110,29 @@ def _series(rows, t_max=None):
     return xs, ys
 
 
-def build_figure(om: OutputManager, run_dir: str) -> None:
-    """Outer trajectory (black) with a few triggers' inner branches overlaid."""
+def _style(ax) -> None:
+    ax.set_xlabel("time", fontsize=12)
+    ax.set_ylabel(Y_LABEL, fontsize=12)
+    ax.set_ylim(bottom=0)
+    for spine in ("top", "right"):
+        ax.spines[spine].set_visible(False)
 
+
+def _highlight_trigger(om: OutputManager):
     triggers = om.triggers()
-    # Choose the trigger nearest each target time.
-    highlights = []
-    for target, color in zip(HIGHLIGHT_TARGETS, HIGHLIGHT_COLORS):
-        info = min(triggers, key=lambda t: abs((t.branch_time or 0.0) - target))
-        highlights.append((info, color))
+    return min(triggers, key=lambda t: abs((t.branch_time or 0.0) - HIGHLIGHT_TARGET))
 
-    fig, ax = plt.subplots(figsize=(9.2, 3.9))
-    ax.set_facecolor("white")
-    fig.patch.set_facecolor("white")
+
+# ----------------------------------------------------------------- figures ---
+
+def fig_outer_static(om: OutputManager) -> None:
+    """Static plot of the outer queue length, with a dot at every trigger."""
 
     ox, oy = _series(om.export_outer())
-    ax.step(ox, oy, where="post", color="black", linewidth=1.8, label="Outer path", zorder=5)
+    fig, ax = plt.subplots(figsize=(8.0, 3.5))
+    ax.step(ox, oy, where="post", color="black", linewidth=1.8, label="outer")
 
-    def outer_value_at(t):
+    def at(t):
         val = oy[0] if oy else 0
         for x, y in zip(ox, oy):
             if x <= t:
@@ -136,140 +141,175 @@ def build_figure(om: OutputManager, run_dir: str) -> None:
                 break
         return val
 
-    # Every customer arrival is a triggering event — mark all of them, so the
-    # figure agrees with the dataset below (which tabulates every one).
-    all_t = [info.branch_time or 0.0 for info in triggers]
-    all_y = [outer_value_at(t) for t in all_t]
-    ax.scatter(
-        all_t, all_y, s=16, color="#9aa0a6", zorder=4,
-        label="Triggering events", edgecolor="white", linewidth=0.4,
-    )
-
-    # Expand two of them into their inner simulations, for illustration.
-    inner_label_used = False
-    for info, color in highlights:
-        bt = info.branch_time or 0.0
-        bt_show = bt + INNER_SHOW
-        for k in info.inner_ids:
-            rows = [r for r in om.export_inner(info.trigger_id, k) if r.get("segment") == "inner"]
-            ix, iy = _series(rows, t_max=bt_show)
-            ax.step(
-                ix,
-                iy,
-                where="post",
-                color=color,
-                linewidth=0.9,
-                alpha=0.4,
-                zorder=3,
-                label=None if inner_label_used else "Inner branches",
-            )
-            inner_label_used = True
-        ax.axvline(bt, color=color, linewidth=0.8, linestyle=":", alpha=0.5, zorder=2)
-        ax.scatter(
-            [bt], [outer_value_at(bt)], color=color, s=80, zorder=6,
-            edgecolor="white", linewidth=0.9,
-        )
-
-    ax.set_xlabel("Simulation time", fontsize=12)
-    ax.set_ylabel("Number in system", fontsize=12)
+    ts = [info.branch_time or 0.0 for info in om.triggers()]
+    ax.scatter(ts, [at(t) for t in ts], s=16, color="#9aa0a6", zorder=4,
+               edgecolor="white", linewidth=0.4, label="triggering events")
     ax.set_xlim(left=0)
-    ax.set_ylim(bottom=0)
-    for spine in ("top", "right"):
-        ax.spines[spine].set_visible(False)
+    ax.set_title("Outer simulation")
+    _style(ax)
     ax.legend(loc="upper left", frameon=True, fontsize=10)
     fig.tight_layout()
-    out = STATIC / "mm1-nested-illustration.svg"
+    out = STATIC / "mm1-outer-static.svg"
     fig.savefig(out, format="svg", bbox_inches="tight")
     plt.close(fig)
     print("wrote", out)
 
 
-def build_table(run_dir: str) -> None:
-    """Emit the per-inner dataset table (<tbody> rows) for the example page."""
+def fig_inner(om: OutputManager, *, all_inners: bool) -> None:
+    """Static plot of one (or all) inner simulation(s) at the highlight trigger.
 
-    exports = Path(run_dir) / "exports"
-    pattern = re.compile(r"\]\[[0-9]+,[^]]+\]\[[0-9]+\]-metrics\.json$")
-    records = []
-    for path in exports.glob("*-metrics.json"):
-        if not pattern.search(path.name) or "[all]" in path.name:
-            continue
-        d = json.loads(path.read_text(encoding="utf-8"))
-        arrival = d["anchor_arrival_time"]
-        start = d["service_start_time"]
-        if start is None:  # started immediately on arrival (no wait)
-            start = arrival
-        wait = d["waiting_time"]
-        if wait is None:
-            wait = 0.0
-        records.append(
-            {
-                "customer": int(d["anchor_cust_id"]),
-                "branch": int(d["k"]) + 1,
-                "arrival": arrival,
-                "start": start,
-                "end": d["service_end_time"],
-                "wait": wait,
-            }
-        )
-    records.sort(key=lambda r: (r["customer"], r["branch"]))
+    The time axis is relative to the fork (the checkpoint is at 0); the outer
+    lead-in is grey, the inner branch(es) coloured.
+    """
 
-    def fmt(x):
-        return "" if x is None else f"{x:.2f}"
+    info = _highlight_trigger(om)
+    bt = info.branch_time or 0.0
+    inner_ids = info.inner_ids if all_inners else [info.inner_ids[0]]
 
-    head = (
-        '<div class="ns-dataset-scroll">\n'
-        '<table class="ns-dataset-table">\n'
-        "<thead><tr><th>Customer</th><th>Branch</th><th>Arrival</th>"
-        "<th>Service start</th><th>Service end</th><th>Waiting time</th></tr></thead>\n"
-        "<tbody>"
-    )
-    lines = [head]
-    for r in records:
-        lines.append(
-            "<tr>"
-            f"<td>{r['customer']}</td><td>{r['branch']}</td>"
-            f"<td>{fmt(r['arrival'])}</td><td>{fmt(r['start'])}</td>"
-            f"<td>{fmt(r['end'])}</td><td>{fmt(r['wait'])}</td>"
-            "</tr>"
-        )
-    lines.append("</tbody>\n</table>\n</div>")
-    table_html = "\n".join(lines)
-
-    out = STATIC / "mm1-dataset-table.html"
-    out.write_text(table_html + "\n", encoding="utf-8")
-    print("wrote", out, f"({len(records)} rows)")
-
-    # Inject the table into the {raw} html block of the Simple-example page so it
-    # renders with its scroll wrapper (an {include} of raw HTML drops the table
-    # tags). The markers live inside a ```{raw} html``` fence in simple-example.md.
-    page = DOCS / "simple-example.md"
-    text = page.read_text(encoding="utf-8")
-    begin = "<!-- mm1-table:begin"
-    end = "<!-- mm1-table:end -->"
-    i = text.index(begin)
-    i = text.index("-->", i) + len("-->")
-    j = text.index(end)
-    new_text = text[:i] + "\n" + table_html + "\n" + text[j:]
-    page.write_text(new_text, encoding="utf-8")
-    print("injected table into", page)
+    fig, ax = plt.subplots(figsize=(8.0, 3.5))
+    # outer lead-in (shared) from the first branch's outer_before segment
+    ctx = om.export_inner(info.trigger_id, inner_ids[0])
+    cx, cy = _series(ctx, segment="outer_before", t_offset=bt)
+    if cx:
+        ax.step(cx, cy, where="post", color="#888888", linewidth=2.0,
+                label="outer (context)")
+    for k, color in zip(inner_ids, COLORS):
+        rows = om.export_inner(info.trigger_id, k)
+        ix, iy = _series(rows, segment="inner", t_offset=bt)
+        ax.step(ix, iy, where="post", color=color, linewidth=1.4,
+                label=f"inner k={k}")
+    ax.axvline(0.0, color="black", linewidth=0.8, linestyle=":", alpha=0.4)
+    title = ("All inner simulations" if all_inners else "A single inner simulation")
+    ax.set_title(f"{title} (trigger {info.trigger_id})")
+    ax.set_xlabel("time since fork", fontsize=12)
+    ax.set_ylabel(Y_LABEL, fontsize=12)
+    ax.set_ylim(bottom=0)
+    for spine in ("top", "right"):
+        ax.spines[spine].set_visible(False)
+    ax.legend(loc="upper left", frameon=True, fontsize=9)
+    fig.tight_layout()
+    name = "mm1-inner-all.svg" if all_inners else "mm1-inner-one.svg"
+    out = STATIC / name
+    fig.savefig(out, format="svg", bbox_inches="tight")
+    plt.close(fig)
+    print("wrote", out)
 
 
-def build_interactive(run_dir: str) -> None:
-    """Write the interactive plot: outer path + a clickable marker at every
-    triggering event that toggles that trigger's inner branches."""
+def fig_interactive(run_dir: str) -> None:
+    """Interactive outer plot: click a triggering event to toggle its inners."""
 
     out = STATIC / "mm1-interactive.html"
-    write_dynamic_plot(run_dir, output_path=str(out), resource_id="srv")
+    write_dynamic_plot(
+        run_dir, output_path=str(out),
+        state_field=QUEUE_FIELD, resource_id="srv",
+    )
     print("wrote", out)
+
+
+# ------------------------------------------------------------------ tables ---
+
+def _scroll_table(headers, rows) -> str:
+    th = "".join(f"<th>{h}</th>" for h in headers)
+    body = "\n".join(
+        "<tr>" + "".join(f"<td>{c}</td>" for c in r) + "</tr>" for r in rows
+    )
+    return (
+        '<div class="ns-dataset-scroll">\n'
+        '<table class="ns-dataset-table">\n'
+        f"<thead><tr>{th}</tr></thead>\n<tbody>\n{body}\n</tbody>\n</table>\n</div>"
+    )
+
+
+def _num(v, nd=2):
+    if v in (None, ""):
+        return ""
+    try:
+        return f"{float(v):.{nd}f}"
+    except (TypeError, ValueError):
+        return str(v)
+
+
+def _inject(marker: str, html: str) -> None:
+    page = DOCS / "simple-example.md"
+    text = page.read_text(encoding="utf-8")
+    begin = f"<!-- {marker}:begin"
+    end = f"<!-- {marker}:end -->"
+    i = text.index("-->", text.index(begin)) + len("-->")
+    j = text.index(end)
+    page.write_text(text[:i] + "\n" + html + "\n" + text[j:], encoding="utf-8")
+    print("injected", marker)
+
+
+def table_inner(om: OutputManager) -> None:
+    """One inner sample path (its outer lead-in, then the inner branch)."""
+
+    info = _highlight_trigger(om)
+    rows = [r for r in om.export_inner(info.trigger_id, info.inner_ids[0])
+            if r.get(METRIC) not in (None, "")]
+    # Keep the inner segment (the forked future) plus a little outer context just
+    # before the fork, so the table shows the hand-off without the whole history.
+    before = [r for r in rows if r.get("segment") == "outer_before"][-4:]
+    inner = [r for r in rows if r.get("segment") == "inner"]
+    out = [
+        (r.get("segment"), _num(r.get("t")), _num(r.get(METRIC), 0),
+         r.get("queue_event"))
+        for r in before + inner
+    ]
+    html = _scroll_table(["Segment", "Time", "Queue length", "Event"], out)
+    (STATIC / "mm1-table-inner.html").write_text(html + "\n", encoding="utf-8")
+    _inject("mm1-table-inner", html)
+
+
+def table_outer(om: OutputManager) -> None:
+    """The outer sample path."""
+
+    rows = om.export_outer()
+    out = [
+        (_num(r.get("t")), _num(r.get(METRIC), 0), r.get("queue_event"),
+         r.get("cust_id"))
+        for r in rows
+        if r.get(METRIC) not in (None, "")
+    ]
+    html = _scroll_table(["Time", "Queue length", "Event", "Customer"], out)
+    (STATIC / "mm1-table-outer.html").write_text(html + "\n", encoding="utf-8")
+    _inject("mm1-table-outer", html)
+
+
+def table_predictions(om: OutputManager) -> None:
+    """Each triggering customer with the average outcome over its inner runs."""
+
+    rows = om.export_outer(inner_aggregate="mean")
+    out = []
+    for r in rows:
+        if r.get("inner_num_branches") in (None, ""):
+            continue
+        out.append((
+            r.get("cust_id"),
+            _num(r.get("inner_anchor_arrival_time_mean")),
+            r.get("inner_num_branches"),
+            _num(r.get("inner_waiting_time_mean")),
+            _num(r.get("inner_service_completion_time_mean")),
+        ))
+    html = _scroll_table(
+        ["Customer", "Arrival", "# inner sims", "Mean inner wait",
+         "Mean inner service time"],
+        out,
+    )
+    (STATIC / "mm1-table-pred.html").write_text(html + "\n", encoding="utf-8")
+    _inject("mm1-table-pred", html)
 
 
 def main() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         run_dir = run_model(os.path.join(tmp, "out"))
         om = OutputManager(run_dir)
-        build_figure(om, run_dir)        # static SVG (useful for the paper)
-        build_interactive(run_dir)       # interactive HTML (embedded on the page)
-        build_table(run_dir)
+        fig_outer_static(om)
+        fig_interactive(run_dir)
+        fig_inner(om, all_inners=False)
+        fig_inner(om, all_inners=True)
+        table_inner(om)
+        table_outer(om)
+        table_predictions(om)
 
 
 if __name__ == "__main__":
