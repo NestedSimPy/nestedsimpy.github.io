@@ -72,11 +72,25 @@ full run already surfaced — use `run_single_path(...)`:
 env.run_single_path(trigger_index=2, branch_index=0, seed=1234)
 ```
 
-## Raw data
+## On disk
 
-Before packaging, a run writes raw JSONL traces and manifests under `raw/`. The
-{doc}`raw-data` page describes the event stream, the manifest fields, and the
-per-branch metrics that packaging produces.
+A run lands under the output directory (set by `set_output_options`) in two
+layers — raw traces, then packaged datasets:
+
+```text
+nested_output/<experiment>/<outer_id>/
+  raw/                       # raw JSONL traces + manifests
+    outer/                   #   the outer run (trace.jsonl, manifest.json)
+    j=0001/k=00/             #   one folder per branch (j = trigger, k = branch)
+  exports/                   # packaged datasets, in three forms:
+    [seed][j,bnd][inner].csv    #   per-inner files (+ [seed]-outer.csv, metric JSONs)
+    state_wide.csv …            #   consolidated tables (state_wide/long, events)
+    user_waits.csv              #   a postprocessor's own metric
+```
+
+The {doc}`raw-data` page details the raw event stream, the manifest fields, and
+the per-branch metrics; {doc}`Exporting data <../topical-guides/traces-and-outputs>`
+explains the three export forms and the `OutputManager` that reads them.
 
 ```{toctree}
 :maxdepth: 1
