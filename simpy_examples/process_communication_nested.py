@@ -138,8 +138,8 @@ def run_one_to_one():
     # Outer settings.
     env.set_rng("independent")
     env.set_outer_seed(RANDOM_SEED)
-    env.set_nested_triggering_objects(nested_id="pipe")
-    env.set_nesting_conditions({"on": "store_put", "frequency": 1})
+    env.set_triggering_objects(nested_id="pipe")
+    env.set_triggering_conditions({"on": "store_put", "frequency": 1})
     env.set_outer_stopping_condition(timeout=SIM_TIME)
     # Inner settings.
     env.set_inner_repetitions(1)
@@ -175,8 +175,8 @@ def run_one_to_many():
     # Outer settings.
     env.set_rng("independent")
     env.set_outer_seed(RANDOM_SEED)
-    env.set_nested_triggering_objects(nested_id=["bc_pipe_out0", "bc_pipe_out1"])
-    env.set_nesting_conditions({"on": "store_put", "frequency": 1})
+    env.set_triggering_objects(nested_id=["bc_pipe_out0", "bc_pipe_out1"])
+    env.set_triggering_conditions({"on": "store_put", "frequency": 1})
     env.set_outer_stopping_condition(timeout=SIM_TIME)
     # Inner settings.
     env.set_inner_repetitions(1)

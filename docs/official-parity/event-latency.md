@@ -15,8 +15,8 @@ communication channels.
 
 ## Files
 
-- Plain SimPy: `simpy_examples/event_latency_plain.py`
-- NestedSimPy: `simpy_examples/event_latency_nested.py`
+- Plain SimPy: [`simpy_examples/event_latency_plain.py`](https://github.com/NestedSimPy/nestedsimpy.github.io/blob/main/simpy_examples/event_latency_plain.py)
+- NestedSimPy: [`simpy_examples/event_latency_nested.py`](https://github.com/NestedSimPy/nestedsimpy.github.io/blob/main/simpy_examples/event_latency_nested.py)
 
 ## Code
 
@@ -36,11 +36,5 @@ communication channels.
 
 ## Discussion
 
-The plain SimPy model is unchanged except for the nesting setup: the cable is a `NestedStore`, the run is `env.nested_run()`, and branching fires on **every store put** (a message entering the cable), forking **1 inner simulation** that runs for **20 time units, or until the message is delivered**.
+Going from an existing SimPy code to NestedSimPy only requires importing the NestedSimPy package, replacing SimPy objects with NestedSimPy objects, modifying timeout commands, and configuring the nested simulation parameters.
 
-## Run
-
-```bash
-python simpy_examples/event_latency_plain.py
-python simpy_examples/event_latency_nested.py
-```

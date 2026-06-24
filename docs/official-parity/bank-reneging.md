@@ -15,8 +15,8 @@ patience runs out first.
 
 ## Files
 
-- Plain SimPy: `simpy_examples/bank_reneging_plain.py`
-- NestedSimPy: `simpy_examples/bank_reneging_nested.py`
+- Plain SimPy: [`simpy_examples/bank_reneging_plain.py`](https://github.com/NestedSimPy/nestedsimpy.github.io/blob/main/simpy_examples/bank_reneging_plain.py)
+- NestedSimPy: [`simpy_examples/bank_reneging_nested.py`](https://github.com/NestedSimPy/nestedsimpy.github.io/blob/main/simpy_examples/bank_reneging_nested.py)
 
 ## Code
 
@@ -36,11 +36,5 @@ patience runs out first.
 
 ## Discussion
 
-The plain SimPy model is unchanged except for the nesting setup: the counter is a `NestedResource`, the run is `env.nested_run()`, and branching fires on **every customer arrival**, forking **2 inner simulations** that each run **until the triggering customer departs**. The `request | patience-timeout` reneging logic is untouched, so the outer customer sequence is identical to plain SimPy.
+Going from an existing SimPy code to NestedSimPy only requires importing the NestedSimPy package, replacing SimPy objects with NestedSimPy objects, modifying timeout commands, and configuring the nested simulation parameters.
 
-## Run
-
-```bash
-python simpy_examples/bank_reneging_plain.py
-python simpy_examples/bank_reneging_nested.py
-```

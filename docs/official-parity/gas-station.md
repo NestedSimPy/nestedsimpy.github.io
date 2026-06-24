@@ -15,8 +15,8 @@ falls below a threshold.
 
 ## Files
 
-- Plain SimPy: `simpy_examples/gas_station_plain.py`
-- NestedSimPy: `simpy_examples/gas_station_nested.py`
+- Plain SimPy: [`simpy_examples/gas_station_plain.py`](https://github.com/NestedSimPy/nestedsimpy.github.io/blob/main/simpy_examples/gas_station_plain.py)
+- NestedSimPy: [`simpy_examples/gas_station_nested.py`](https://github.com/NestedSimPy/nestedsimpy.github.io/blob/main/simpy_examples/gas_station_nested.py)
 
 ## Code
 
@@ -36,11 +36,5 @@ falls below a threshold.
 
 ## Discussion
 
-The plain SimPy model is unchanged except for the nesting setup: the pumps are a `NestedResource` (capacity 2) and the fuel tank a `NestedContainer`, the run is `env.nested_run()`, and branching fires on **every 5th car arrival**, forking **1 inner simulation** that runs for **120 time units, or until the triggering car departs**.
+Going from an existing SimPy code to NestedSimPy only requires importing the NestedSimPy package, replacing SimPy objects with NestedSimPy objects, modifying timeout commands, and configuring the nested simulation parameters.
 
-## Run
-
-```bash
-python simpy_examples/gas_station_plain.py
-python simpy_examples/gas_station_nested.py
-```

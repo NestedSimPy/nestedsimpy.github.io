@@ -102,8 +102,8 @@ but swaps in branch-aware infrastructure:
 env = NestedEnvironment()
 server = NestedResource(env, capacity=1, nested_id="srv")
 
-env.set_nested_triggering_objects(nested_id="srv")
-env.set_nesting_conditions({"on": "arrival", "frequency": 1})
+env.set_triggering_objects(nested_id="srv")
+env.set_triggering_conditions({"on": "arrival", "frequency": 1})
 env.set_inner_repetitions(2)
 env.set_inner_stopping_condition(relative_time=5.0)
 

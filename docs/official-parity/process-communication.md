@@ -15,8 +15,8 @@ process.
 
 ## Files
 
-- Plain SimPy: `simpy_examples/process_communication_plain.py`
-- NestedSimPy: `simpy_examples/process_communication_nested.py`
+- Plain SimPy: [`simpy_examples/process_communication_plain.py`](https://github.com/NestedSimPy/nestedsimpy.github.io/blob/main/simpy_examples/process_communication_plain.py)
+- NestedSimPy: [`simpy_examples/process_communication_nested.py`](https://github.com/NestedSimPy/nestedsimpy.github.io/blob/main/simpy_examples/process_communication_nested.py)
 
 ## Code
 
@@ -36,11 +36,5 @@ process.
 
 ## Discussion
 
-The plain SimPy model is unchanged except for the nesting setup: the message pipes are a `NestedStore`, the run is `env.nested_run()`, and branching fires on **every store put** (a message sent), forking **1 inner simulation** that runs for **20 time units, or until the message is consumed**.
+Going from an existing SimPy code to NestedSimPy only requires importing the NestedSimPy package, replacing SimPy objects with NestedSimPy objects, modifying timeout commands, and configuring the nested simulation parameters.
 
-## Run
-
-```bash
-python simpy_examples/process_communication_plain.py
-python simpy_examples/process_communication_nested.py
-```

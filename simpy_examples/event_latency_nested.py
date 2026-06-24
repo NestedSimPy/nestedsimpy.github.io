@@ -99,8 +99,8 @@ def main():
     # Outer settings.
     env.set_rng("independent")
     env.set_outer_seed(42)
-    env.set_nested_triggering_objects(nested_id="cable_store")
-    env.set_nesting_conditions({"on": "store_put", "frequency": 1})
+    env.set_triggering_objects(nested_id="cable_store")
+    env.set_triggering_conditions({"on": "store_put", "frequency": 1})
     env.set_outer_stopping_condition(timeout=SIM_DURATION)
     # Inner settings.
     env.set_inner_repetitions(1)

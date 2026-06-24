@@ -4,8 +4,8 @@ NestedSimPy branches when the configured nesting condition fires.
 
 The main configuration calls are:
 
-- `env.set_nested_triggering_objects(...)`
-- `env.set_nesting_conditions(...)`
+- `env.set_triggering_objects(...)`
+- `env.set_triggering_conditions(...)`
 
 ## Triggering objects
 
@@ -15,8 +15,8 @@ be watched for branch boundaries.
 Typical examples:
 
 ```python
-env.set_nested_triggering_objects(nested_id="srv")
-env.set_nested_triggering_objects(nested_id=["srv_a", "srv_b"])
+env.set_triggering_objects(nested_id="srv")
+env.set_triggering_objects(nested_id=["srv_a", "srv_b"])
 ```
 
 ## Arrival triggers
@@ -24,7 +24,7 @@ env.set_nested_triggering_objects(nested_id=["srv_a", "srv_b"])
 Arrival-based branching is the simplest mode and the most common starting point.
 
 ```python
-env.set_nesting_conditions({"on": "arrival", "frequency": 1})
+env.set_triggering_conditions({"on": "arrival", "frequency": 1})
 ```
 
 That means branch on every arrival at the primary triggering object.
@@ -37,7 +37,7 @@ State-triggered branching lets the model fork when the latest observed state of
 an instrumented object satisfies a predicate.
 
 ```python
-env.set_nesting_conditions(
+env.set_triggering_conditions(
     {
         "on": "state_predicate",
         "resource": "srv",
@@ -56,7 +56,7 @@ Event-based branching uses the lightweight event bus exposed by `publish_event`.
 ```python
 publish_event("control_signal", {"kind": "go", "time": env.now})
 
-env.set_nesting_conditions(
+env.set_triggering_conditions(
     {
         "on": "event",
         "name": "control_signal",

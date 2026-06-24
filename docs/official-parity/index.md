@@ -1,22 +1,16 @@
 # Additional examples
 
-Each example here adapts one of the official SimPy examples to NestedSimPy. The
-model and its outer behaviour stay the same — we simply add nested simulation on
-top. Every example is shown as a **plain** SimPy baseline and a **nested**
-NestedSimPy version.
+The [SimPy documentation](https://simpy.readthedocs.io/en/latest/examples/index.html)
+provides multiple examples of discrete-event simulations. We demonstrate how each
+of these examples can be modified and executed using nested simulation. Every
+example is shown as a **plain** SimPy baseline and a **nested** NestedSimPy version.
 
-```{seealso}
-**Based on the official SimPy examples.** Every model in this section is
-adapted from [SimPy](https://simpy.readthedocs.io/)'s own
-[example suite](https://simpy.readthedocs.io/en/latest/examples/index.html).
-SimPy is an independent project distributed under the MIT License
-(© 2013 Ontje Lünsdorf and Stefan Scherfke); see {doc}`../about` for full
-license and attribution details.
-```
+The SimPy examples are distributed under the MIT License (© 2013 Ontje Lünsdorf
+and Stefan Scherfke); see {doc}`../about` for full license and attribution.
 
-- **{doc}`Bank Renege <bank-reneging>`** — customers arrive at a bank and wait
-  for a counter, abandoning the queue if their patience runs out. Illustrates
-  reneging and condition events on a `NestedResource`.
+- **{doc}`Bank Renege <bank-reneging>`** — models customers arriving at a bank and
+  waiting for service at a counter, abandoning the queue if their patience runs
+  out. Illustrates defining triggering events on a `NestedResource`.
 - **{doc}`Carwash <carwash>`** — cars wait for one of a few washing machines and
   leave once washed. The simplest `NestedResource` queueing example.
 - **{doc}`Event Latency <event-latency>`** — messages sent over a channel are

@@ -112,8 +112,8 @@ def main():
     # Outer settings.
     env.set_rng("independent")
     env.set_outer_seed(RANDOM_SEED)
-    env.set_nested_triggering_objects(nested_id="wash")
-    env.set_nesting_conditions({"on": "arrival", "frequency": 1})
+    env.set_triggering_objects(nested_id="wash")
+    env.set_triggering_conditions({"on": "arrival", "frequency": 1})
     env.set_outer_stopping_condition(timeout=SIM_TIME)
     # Inner settings.
     env.set_inner_repetitions(2)

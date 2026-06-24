@@ -15,8 +15,8 @@ leave when finished.
 
 ## Files
 
-- Plain SimPy: `simpy_examples/carwash_plain.py`
-- NestedSimPy: `simpy_examples/carwash_nested.py`
+- Plain SimPy: [`simpy_examples/carwash_plain.py`](https://github.com/NestedSimPy/nestedsimpy.github.io/blob/main/simpy_examples/carwash_plain.py)
+- NestedSimPy: [`simpy_examples/carwash_nested.py`](https://github.com/NestedSimPy/nestedsimpy.github.io/blob/main/simpy_examples/carwash_nested.py)
 
 ## Code
 
@@ -36,11 +36,5 @@ leave when finished.
 
 ## Discussion
 
-The plain SimPy model is unchanged except for the nesting setup: the washing machines are a `NestedResource`, the run is `env.nested_run()`, and branching fires on **every car arrival**, forking **2 inner simulations** that each run for **20 time units, or until the triggering car departs**. The wash process is otherwise identical to plain SimPy.
+Going from an existing SimPy code to NestedSimPy only requires importing the NestedSimPy package, replacing SimPy objects with NestedSimPy objects, modifying timeout commands, and configuring the nested simulation parameters.
 
-## Run
-
-```bash
-python simpy_examples/carwash_plain.py
-python simpy_examples/carwash_nested.py
-```
