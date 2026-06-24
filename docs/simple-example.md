@@ -24,13 +24,18 @@ units of time.
 
 Here is a modified version that runs the same M/M/1 queue using NestedSimPy.
 Highlighted in **green** are new lines of code, in **amber** modified lines, and
-the remaining lines are identical to the original code. (Long unchanged runs are
-folded — click to expand them.)
+the remaining lines are identical to the original code.
 
 ```{codeannotate} ../simpy_examples/mm1_plain.py ../simpy_examples/mm1_nested.py
 :title: simpy_examples/mm1_nested.py
-:context: 3
 ```
+
+As can be seen in the example above, to use NestedSimPy we reuse SimPy code,
+replacing certain SimPy objects with corresponding NestedSimPy objects — for
+example, `simpy.Environment` with `nestedsimpy.NestedEnvironment`, or
+`simpy.Resource` with `nestedsimpy.NestedResource`. We also add a few commands
+that configure the execution of the nested simulation (e.g., what the triggering
+points are, or how long to run the nested simulation before stopping).
 
 ```{tip}
 Download: {download}`mm1_plain.py <../simpy_examples/mm1_plain.py>` ·
@@ -39,23 +44,25 @@ Download: {download}`mm1_plain.py <../simpy_examples/mm1_plain.py>` ·
 
 ## NestedSimPy output
 
-The package offers visualization and data-generation functionalities. The run
-writes its trajectories under `nested_output/mm1`; afterwards an `OutputManager`
-reads that folder — even in a fresh session — to visualize and export the outer
-and inner simulations:
+The package offers visualization and data-generation functionalities. When the
+nested simulator runs, it stores intermediate outputs under `nested_output/mm1`
+(the `out_dir` set in the code above). Once the outer simulation terminates, the
+user can create an `OutputManager` from that folder — even in a fresh session —
+to visualize and export the data:
 
 ```python
 from nestedsimpy import OutputManager
 
-om = OutputManager("nested_output/mm1")        # read the run we just produced
+om = OutputManager("nested_output/mm1")            # load a completed nested run
 
-om.visualize_outer()                           # the outer trajectory
-om.visualize_inner(trigger_id=0, inner_id=0)   # one inner branch at trigger 0
-om.visualize_inner(trigger_id=0)               # all inner branches at trigger 0
+om.visualize_outer_static("outer.png")             # static image of the outer simulation
+om.visualize_outer_interactive()                   # interactive plot of the outer simulation
+om.visualize_inner(trigger_id=0, inner_id=0)       # a single inner simulation at trigger 0
+om.visualize_inner(trigger_id=0)                   # all inner simulations at trigger 0
 
 om.export_inner(trigger_id=0, inner_id=0, path="inner.csv")   # one inner sample path
 om.export_outer("outer.csv")                                  # the outer sample path
-om.export_outer("predictions.csv", inner_aggregate="mean")    # + averaged inner waits
+om.export_outer("predictions.csv", inner_aggregate="mean")    # + averaged inner outcomes
 ```
 
 ### Visualization
