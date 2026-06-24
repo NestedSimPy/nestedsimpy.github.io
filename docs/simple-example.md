@@ -6,7 +6,8 @@ simulation capabilities using NestedSimPy.
 
 ```{tip}
 **Run it live:** [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NestedSimPy/nestedsimpy.github.io/blob/main/notebooks/NestedSimPy_mm1.ipynb)
-— installs NestedSimPy and runs this M/M/1 example in your browser.
+— installs NestedSimPy and runs this M/M/1 example in your browser. To run it
+locally instead, see {doc}`installing NestedSimPy <getting-started>`.
 ```
 
 ## An M/M/1 queue in SimPy

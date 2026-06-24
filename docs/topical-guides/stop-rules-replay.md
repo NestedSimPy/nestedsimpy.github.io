@@ -21,7 +21,7 @@ running after a triggering event. Typical options:
 
 - `relative_time=...` — run for this many time units past the fork,
 - `absolute_time=...` — run until this absolute simulation time,
-- `triggering_customer_departs=True` — stop once the anchor customer finishes.
+- `triggering_customer_departs=True` — stop once the anchor (triggering) customer finishes.
 
 ```python
 env.set_inner_stopping_condition(

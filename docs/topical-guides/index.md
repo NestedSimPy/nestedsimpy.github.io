@@ -27,8 +27,8 @@ events used as branch boundaries.
 :link: stop-rules-replay
 :link-type: doc
 
-How the outer run and each inner run decide when to stop, and how a specific
-path can be replayed.
+How the outer run and each inner run decide when to stop — by time, by the
+anchor customer departing, or a custom condition.
 ```
 
 ```{grid-item-card} Visualization

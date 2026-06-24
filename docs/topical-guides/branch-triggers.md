@@ -7,7 +7,7 @@ The main configuration calls are:
 - `env.set_nested_triggering_objects(...)`
 - `env.set_nesting_conditions(...)`
 
-## Triggering Objects
+## Triggering objects
 
 Triggering objects tell the runtime which resource, store, or container should
 be watched for branch boundaries.
@@ -19,7 +19,7 @@ env.set_nested_triggering_objects(nested_id="srv")
 env.set_nested_triggering_objects(nested_id=["srv_a", "srv_b"])
 ```
 
-## Arrival Triggers
+## Arrival triggers
 
 Arrival-based branching is the simplest mode and the most common starting point.
 
@@ -31,7 +31,7 @@ That means branch on every arrival at the primary triggering object.
 
 You can also use `nth` instead of `frequency`.
 
-## State-Predicate Triggers
+## State-predicate triggers
 
 State-triggered branching lets the model fork when the latest observed state of
 an instrumented object satisfies a predicate.
@@ -49,7 +49,7 @@ env.set_nesting_conditions(
 This is useful when the boundary of interest is not “the nth arrival” but
 something like “the queue first becomes nontrivial.”
 
-## Event Triggers
+## Event triggers
 
 Event-based branching uses the lightweight event bus exposed by `publish_event`.
 
@@ -68,7 +68,7 @@ env.set_nesting_conditions(
 This is useful when the boundary is model-defined rather than directly tied to a
 single queue primitive.
 
-## Choosing A First Trigger
+## Choosing a first trigger
 
 If you are introducing NestedSimPy to an existing SimPy model:
 

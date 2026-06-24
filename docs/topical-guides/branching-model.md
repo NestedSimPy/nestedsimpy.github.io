@@ -7,7 +7,7 @@ The core mental model is:
 - run one outer trajectory,
 - fork child futures when a declared boundary fires.
 
-## From Plain SimPy To NestedSimPy
+## From plain SimPy to NestedSimPy
 
 The usual substitutions are:
 
@@ -63,7 +63,7 @@ Supported specifications:
 
 Capped (truncated) exponential and integer-uniform variants are also available; see `nestedsimpy.sleep.resolve_distribution` for the full set.
 
-## Core Objects
+## Core objects
 
 `NestedEnvironment`
 : Stores branching configuration and exposes branch-aware entry points such as
@@ -77,17 +77,27 @@ Capped (truncated) exponential and integer-uniform variants are also available; 
 : Branch-aware timeout helper that tracks pending sleeps so residual durations
   can be resampled after a fork.
 
-## Typical Configuration Flow
+## Typical configuration flow
+
+The nesting setup added around your model. (Your own SimPy processes — the
+arrival generator and the customer logic — are omitted here; the
+{doc}`Simple example <../simple-example>` is the full runnable file.)
 
 ```python
 env = NestedEnvironment()
 server = NestedResource(env, capacity=1, nested_id="srv")
+env.process(arrivals(env, server))             # your model's processes
 
 env.set_output_options(out_dir="out/mm1_simpy", gzip_trace=False)
+env.set_rng("independent")                     # each branch draws its own future
 env.set_nested_triggering_objects(nested_id="srv")
 env.set_nesting_conditions({"on": "arrival", "frequency": 1})
 env.set_inner_repetitions(3)
 env.set_inner_stopping_condition(relative_time=5.0, triggering_customer_departs=True)
-
+env.set_outer_stopping_condition(timeout=10.0)
 env.nested_run()
 ```
+
+`set_rng` chooses how the branches sample: `"independent"` gives each inner its
+own random stream (so they explore different futures), while `"CRN"` shares one
+stream across branches (useful when comparing policies on the same randomness).

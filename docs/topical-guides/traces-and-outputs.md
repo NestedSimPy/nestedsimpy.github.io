@@ -42,19 +42,10 @@ om.export_outer("features.csv", inner_aggregate="mean")
 
 ## On disk
 
-A run is written under the directory you set:
-
-```python
-env.set_output_options(out_dir="nested_output/mm1", gzip_trace=False)
-```
-
-```text
-nested_output/mm1/<outer_id>/
-  raw/        # raw JSONL traces + manifests — see Implementation › Raw data
-  exports/    # the packaged datasets (below)
-```
-
-Packaging writes `exports/` in **three forms**, for three different needs:
+A run is written under the directory you set (`set_output_options(out_dir=...)`)
+as a raw layer and a packaged layer; the {doc}`directory layout <../api/index>`
+shows both. Packaging writes the packaged `exports/` in **three forms**, for
+three different needs:
 
 1. **Per-realization files** — one CSV *per inner simulation*,
    `[seed][trigger,boundary][inner].csv` (the outer lead-in, then that inner's
