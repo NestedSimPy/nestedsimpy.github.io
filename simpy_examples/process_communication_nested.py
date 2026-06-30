@@ -101,14 +101,13 @@ def message_consumer(name, env, in_pipe):
         sent_time = msg.get("sent_time") if isinstance(msg, dict) else msg[0]
         text = msg.get("msg") if isinstance(msg, dict) else msg[1]
         if sent_time < env.now:
-            user_print(
+            print(
                 f"LATE Getting Message: at time {env.now:g}: "
                 f"{name} received message: {text}",
-                env=env,
             )
         else:
-            user_print(
-                f"at time {env.now:g}: {name} received message: {text}.", env=env
+            print(
+                f"at time {env.now:g}: {name} received message: {text}."
             )
         yield env.nested_timeout(
             {"distribution": "deterministic", "value": random.randint(4, 8)},

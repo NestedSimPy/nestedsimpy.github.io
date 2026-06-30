@@ -71,7 +71,7 @@ def receiver(env, cable):
     while True:
         msg = yield cable.get()
         text = msg.get("msg") if isinstance(msg, dict) else msg
-        user_print(f"Received this at {env.now:g} while {text}", env=env)
+        print(f"Received this at {env.now:g} while {text}")
 
 
 def main():

@@ -86,7 +86,7 @@ set_postprocessor(fn, *, output_name='user_metrics.json', **options)
 set_post_processing_options(**options)
 set_user_output_enabled(enabled)
 nested_run(**overrides) -> None
-run_single_path(*, trigger_index, branch_index, seed=None, **overrides) -> None
+run_single_path(*, trigger_index, branch_index, outer_seed=None, **overrides) -> None
 ```
 
 - **`set_postprocessor`** — register a user hook that runs after packaging to

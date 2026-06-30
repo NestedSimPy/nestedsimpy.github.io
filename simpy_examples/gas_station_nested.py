@@ -35,7 +35,7 @@ def car(name, env, gas_station, station_tank, cust_id=None):
     the car has to wait for the tank truck to arrive.
     """
     car_tank_level = random.randint(*CAR_TANK_LEVEL)
-    user_print(f"{env.now:6.1f} s: {name} arrived at gas station", env=env)
+    print(f"{env.now:6.1f} s: {name} arrived at gas station")
     with gas_station.request(job_id=cust_id) as req:
         yield req
         fuel_required = CAR_TANK_SIZE - car_tank_level
@@ -44,8 +44,8 @@ def car(name, env, gas_station, station_tank, cust_id=None):
             {"distribution": "deterministic", "value": fuel_required / REFUELING_SPEED},
             label="refuel",
         )
-        user_print(
-            f"{env.now:6.1f} s: {name} refueled with {fuel_required:.1f}L", env=env
+        print(
+            f"{env.now:6.1f} s: {name} refueled with {fuel_required:.1f}L"
         )
 
 
@@ -54,7 +54,7 @@ def gas_station_control(env, station_tank):
     truck if the level falls below a threshold."""
     while True:
         if station_tank.level / station_tank.capacity * 100 < THRESHOLD:
-            user_print(f"{env.now:6.1f} s: Calling tank truck", env=env)
+            print(f"{env.now:6.1f} s: Calling tank truck")
             yield env.process(tank_truck(env, station_tank))
         yield env.nested_timeout(
             {"distribution": "deterministic", "value": 10}, label="control_check"
@@ -69,10 +69,9 @@ def tank_truck(env, station_tank):
     )
     amount = station_tank.capacity - station_tank.level
     station_tank.put(amount)
-    user_print(
+    print(
         f"{env.now:6.1f} s: Tank truck arrived and refuelled station "
         f"with {amount:.1f}L",
-        env=env,
     )
 
 

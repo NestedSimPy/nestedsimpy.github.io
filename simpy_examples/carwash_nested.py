@@ -55,7 +55,7 @@ class Carwash:
             {"distribution": "deterministic", "value": self.washtime}, label="wash_time"
         )
         pct_dirt = random.randint(50, 99)
-        user_print(f"Carwash removed {pct_dirt}% of {car}'s dirt.", env=self.env)
+        print(f"Carwash removed {pct_dirt}% of {car}'s dirt.")
 
 
 def car(env, name, cw):
@@ -66,14 +66,14 @@ def car(env, name, cw):
     leaves to never come back ...
 
     """
-    user_print(f"{name} arrives at the carwash at {env.now:.2f}.", env=env)
+    print(f"{name} arrives at the carwash at {env.now:.2f}.")
     with cw.machine.request() as request:
         yield request
 
-        user_print(f"{name} enters the carwash at {env.now:.2f}.", env=env)
+        print(f"{name} enters the carwash at {env.now:.2f}.")
         yield env.process(cw.wash(name))
 
-        user_print(f"{name} leaves the carwash at {env.now:.2f}.", env=env)
+        print(f"{name} leaves the carwash at {env.now:.2f}.")
 
 
 def setup(env, carwash, t_inter):

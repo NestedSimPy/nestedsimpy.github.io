@@ -63,15 +63,6 @@ Postprocessing, the packaged reporting helpers, and the `OutputManager`.
 ```
 ````
 
-## Replay
-
-To re-run a single branch deterministically — for example, to inspect a path a
-full run already surfaced — use `run_single_path(...)`:
-
-```python
-env.run_single_path(trigger_index=2, branch_index=0, seed=1234)
-```
-
 ## On disk
 
 A run lands under the output directory (set by `set_output_options`) in two

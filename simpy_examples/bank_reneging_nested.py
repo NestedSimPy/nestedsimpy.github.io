@@ -38,7 +38,7 @@ def source(env, number, interval, counter):
 def customer(env, name, counter, time_in_bank):
     """Customer arrives, is served and leaves."""
     arrive = env.now
-    user_print(f"{arrive:7.4f} {name}: Here I am", env=env)
+    print(f"{arrive:7.4f} {name}: Here I am")
 
     with counter.request() as req:
         patience = env.nested_timeout(
@@ -52,15 +52,15 @@ def customer(env, name, counter, time_in_bank):
 
         if req in results:
             # We got to the counter
-            user_print(f"{env.now:7.4f} {name}: Waited {wait:6.3f}", env=env)
+            print(f"{env.now:7.4f} {name}: Waited {wait:6.3f}")
             yield env.nested_timeout(
                 {"distribution": "exponential", "lambda": 1.0 / time_in_bank},
                 label="service_time",
             )
-            user_print(f"{env.now:7.4f} {name}: Finished", env=env)
+            print(f"{env.now:7.4f} {name}: Finished")
         else:
             # We reneged
-            user_print(f"{env.now:7.4f} {name}: RENEGED after {wait:6.3f}", env=env)
+            print(f"{env.now:7.4f} {name}: RENEGED after {wait:6.3f}")
 
 
 def main():

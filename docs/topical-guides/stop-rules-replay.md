@@ -62,3 +62,12 @@ event (or a callable returning one) to stop the branch when that event fires.
 
 Keep the outer stop rules simple, then make the inner stop rules express the
 counterfactual horizon you actually care about.
+
+## Replay
+
+To re-run a single branch deterministically — for example, to inspect a path a
+full run already surfaced — use `run_single_path(...)`:
+
+```python
+env.run_single_path(trigger_index=2, branch_index=0, outer_seed=1234)
+```
