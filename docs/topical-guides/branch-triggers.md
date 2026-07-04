@@ -98,10 +98,19 @@ require `state["current_time"] > 0`).
 
 ## Event triggers
 
-Event-based branching uses the lightweight event bus exposed by `publish_event`.
+Event-based branching uses the lightweight event bus exposed by `publish_event`
+(importable from `nestedsimpy`). The model *publishes* a named event wherever a
+decision point occurs in its own logic; the trigger *subscribes* to that name
+and forks the inner simulations when a matching event arrives:
 
 ```python
-publish_event("control_signal", {"kind": "go", "time": env.now})
+from nestedsimpy import publish_event
+
+def controller(env):
+    while True:
+        yield env.timeout(1.0)
+        # Anywhere in your model code: announce a decision point by name.
+        publish_event("control_signal", {"kind": "go", "time": env.now})
 
 env.set_triggering_conditions(
     {
@@ -112,8 +121,27 @@ env.set_triggering_conditions(
 )
 ```
 
-This is useful when the boundary is model-defined rather than directly tied to a
-single queue primitive.
+How it works:
+
+- **`publish_event(name, payload)`** takes an event name and an optional
+  `payload` -- a plain dict that you, the publisher, fill with whatever
+  describes the moment (there are no required keys; `payload` defaults to an
+  empty dict).
+- **`name`** filters which published events the trigger listens to; other
+  event names are ignored.
+- **`predicate`** receives that same payload dict and returns `True` to fire.
+  Omit it to fire on every published event with that name. (The predicate may
+  optionally accept `(payload, resource)` or `(payload, resource, env)` if it
+  needs more context.)
+- **`nth`** (optional, like the other trigger kinds) fires only on every
+  n-th matching event.
+
+Each firing forks the configured inner simulations at the moment of
+publication, exactly as an arrival trigger would. This is useful when the
+boundary is model-defined -- a control decision, a review epoch, a batch
+completing -- rather than directly tied to a single queue primitive. After the
+run, each firing appears as one row in `OutputManager.export_triggers` (next
+section).
 
 ## Collecting the triggering events
 

@@ -53,19 +53,21 @@ from that folder — even in a fresh session — to visualize and export the dat
 ```python
 from nestedsimpy import OutputManager
 
-# Load a completed nested run from its output folder
+# Load a completed nested simulation run
 om = OutputManager("nested_output/mm1")
 
 # Visualization: plot the outer simulation and the inner simulations
-om.visualize_outer_static("outer.png")             # the outer simulation, as a static image
-om.visualize_outer_interactive()                   # the outer simulation, as an interactive plot
-om.visualize_inner(trigger_id=0, inner_id=0)       # one inner simulation at triggering event 0
-om.visualize_inner(trigger_id=0)                   # all inner simulations at triggering event 0
+om.visualize_outer_static("outer.png")             # display outer simulation
+om.visualize_outer_interactive()                   # display outer simulation
+om.visualize_inner(trigger_id=0, inner_id=0)       # display a single inner simulation
+om.visualize_inner(trigger_id=0)                   # display all inner simulations
 
 # Data export: write the run out as CSV tables
-om.export_inner(trigger_id=0, inner_id=0, path="inner.csv")   # event log of one inner simulation
-om.export_outer("outer.csv")                                  # event log of the outer simulation
-om.export_outer("predictions.csv", inner_aggregate="mean")    # case table: one row per customer
+om.export_inner(trigger_id=0, inner_id=0, path="inner.csv")   # export a single inner simulation
+om.export_outer("outer.csv")                                  # export the outer simulation
+# export the outer simulation and aggregate the output of the
+# inner simulations at every triggering event
+om.export_outer("predictions.csv", inner_aggregate="mean")
 ```
 
 ### Visualization
