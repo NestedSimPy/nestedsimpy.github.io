@@ -71,8 +71,32 @@ Supported specifications:
 | Normal (truncated at 0) | `{"distribution": "normal", "mean": mu, "std": sigma}` |
 | Log-normal | `{"distribution": "log-normal", "mu": mu, "sigma": sigma}` |
 | Deterministic | `{"distribution": "deterministic", "value": d}` |
+| Discrete | `{"distribution": "discrete", "support": [...], "probabilities": [...]}` |
 
 Capped (truncated) exponential and integer-uniform variants are also available; see `nestedsimpy.sleep.resolve_distribution` for the full set.
+
+### User-defined discrete distributions
+
+When a delay takes one of a few known values, enter the support and the
+matching probabilities — NestedSimPy takes care of the rest (validation,
+sampling, and the correct residual at a fork):
+
+```python
+yield env.nested_timeout(
+    {
+        "distribution": "discrete",
+        "support": [0.5, 1.0, 2.0],          # the possible durations
+        "probabilities": [0.25, 0.5, 0.25],  # must sum to 1
+    }
+)
+```
+
+The two lists must have the same length, the probabilities must be
+non-negative and sum to 1 (tiny floating-point slack is normalised away;
+anything else raises a clear `ValueError`). When an inner simulation resumes
+such a delay mid-flight, the residual is drawn from the support values still
+reachable — those greater than the time already elapsed — with their
+probabilities renormalised.
 
 ## 3. Configuring the nested simulation parameters
 

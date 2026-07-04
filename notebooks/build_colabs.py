@@ -51,16 +51,6 @@ def default_out(*parts):
 
 def set_nested_output_folder(*parts):
     p = Path(os.path.join(*[str(x) for x in parts])); p.mkdir(parents=True, exist_ok=True); return p
-
-def should_emit_user_output(env=None):
-    if env is None:
-        return True
-    f = getattr(env, "should_emit_user_output", None)
-    return bool(f()) if callable(f) else getattr(env, "_ns_run_kind", "outer") != "inner"
-
-def user_print(*args, env=None, **kw):
-    if should_emit_user_output(env):
-        print(*args, **kw)
 # --- end prelude ---
 
 '''
@@ -176,7 +166,8 @@ def build(name: str, meta: dict) -> dict:
         'print(f"{len(om.triggers())} triggering events; '
         'the outer path has {len(om.export_outer())} recorded events")\n'
         "\n"
-        "fig = om.visualize_outer()        # outer trajectory with triggering markers\n"
+        'om.visualize_outer_static("outer.png")   # outer trajectory, saved as a static image\n'
+        "fig = om.visualize_outer_interactive()   # the same trajectory as an interactive plot\n"
         "fig.show()\n"
         '\n'
         'om.export_outer("outer.csv")      # the outer sample path as a CSV\n'

@@ -22,7 +22,7 @@ om.export_outer("outer.csv")          # ... and write a CSV
 ## A single inner branch
 
 `export_inner` returns one inner simulation, including the outer lead-in up to
-the fork (the `segment` column is `outer_before`, then `inner`):
+the fork (the `simulation_source` column is `outer`, then `inner`):
 
 ```python
 om.export_inner(trigger_id=0, inner_id=0)                  # rows
@@ -39,6 +39,23 @@ feature/label table used to benchmark waiting-time predictions:
 ```python
 om.export_outer("features.csv", inner_aggregate="mean")
 ```
+
+## The triggering events
+
+`export_triggers` keeps only the triggering events themselves — one row per
+trigger. Each row carries `trigger_id` and `anchor_cust_id` (the anchor
+customer), the fork time `t`, the `boundary_event` that fired, the object's
+`state_*` columns at the trigger moment, `num_branches` (how many inner
+simulations were forked there) and the averaged inner outcomes
+(`inner_waiting_time_mean`, `inner_service_completion_time_mean`, ...):
+
+```python
+om.export_triggers()                   # list of dicts, one per triggering event
+om.export_triggers("triggers.csv")     # ... and write a CSV
+```
+
+It is the compact companion to `export_outer(inner_aggregate="mean")`: the same
+tagged information, without the non-triggering rows of the outer path.
 
 ## On disk
 

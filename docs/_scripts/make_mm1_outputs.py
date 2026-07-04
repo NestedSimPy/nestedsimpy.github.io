@@ -39,10 +39,17 @@ SEED = 42
 BRANCHES = 3
 INNER_HORIZON = 5.0
 
-# Queue length at the server is the plotted/tabulated metric.
+# Queue length at the server is the plotted metric.
 QUEUE_FIELD = "state_num_customers_in_queue"
 METRIC = "(srv)" + QUEUE_FIELD
 Y_LABEL = "Queue length (srv)"
+
+# The three per-resource state columns of the server, as (CSV column, header).
+STATE_COLUMNS = [
+    ("(srv)state_num_customers_in_queue", "(srv) # in queue"),
+    ("(srv)state_num_customers_in_service", "(srv) # in service"),
+    ("(srv)state_num_customers_in_system", "(srv) # in system"),
+]
 
 # Trigger highlighted in the per-inner figures (near a busy moment, clear fan-out).
 HIGHLIGHT_TARGET = 3.5
@@ -92,12 +99,12 @@ def run_model(out_dir: str) -> str:
 
 # ----------------------------------------------------------------- helpers ---
 
-def _series(rows, *, segment=None, t_offset=0.0, t_max=None):
+def _series(rows, *, source=None, t_offset=0.0, t_max=None):
     """Extract an ``(xs, ys)`` step series of the queue metric from CSV rows."""
 
     xs, ys = [], []
     for row in rows:
-        if segment is not None and row.get("segment") != segment:
+        if source is not None and row.get("simulation_source") != source:
             continue
         value = row.get(METRIC)
         if value in (None, ""):
@@ -167,15 +174,25 @@ def fig_inner(om: OutputManager, *, all_inners: bool) -> None:
     inner_ids = info.inner_ids if all_inners else [info.inner_ids[0]]
 
     fig, ax = plt.subplots(figsize=(8.0, 3.5))
-    # outer lead-in (shared) from the first branch's outer_before segment
+    # outer lead-in (shared) from the first branch's outer rows
     ctx = om.export_inner(info.trigger_id, inner_ids[0])
-    cx, cy = _series(ctx, segment="outer_before", t_offset=bt)
+    cx, cy = _series(ctx, source="outer", t_offset=bt)
+    # state at the fork = the last outer value (the inner starts from it)
+    fork_y = cy[-1] if cy else None
+    if cx and fork_y is not None:
+        # bridge the context up to the fork so the lines meet at time 0
+        cx.append(0.0)
+        cy.append(fork_y)
     if cx:
         ax.step(cx, cy, where="post", color="#888888", linewidth=2.0,
                 label="outer (context)")
     for k, color in zip(inner_ids, COLORS):
         rows = om.export_inner(info.trigger_id, k)
-        ix, iy = _series(rows, segment="inner", t_offset=bt)
+        ix, iy = _series(rows, source="inner", t_offset=bt)
+        if fork_y is not None:
+            # every inner starts at the fork with the outer state
+            ix.insert(0, 0.0)
+            iy.insert(0, fork_y)
         ax.step(ix, iy, where="post", color=color, linewidth=1.4,
                 label=f"inner k={k}")
     ax.axvline(0.0, color="black", linewidth=0.8, linestyle=":", alpha=0.4)
@@ -248,14 +265,20 @@ def table_inner(om: OutputManager) -> None:
             if r.get(METRIC) not in (None, "")]
     # Keep the inner segment (the forked future) plus a little outer context just
     # before the fork, so the table shows the hand-off without the whole history.
-    before = [r for r in rows if r.get("segment") == "outer_before"][-4:]
-    inner = [r for r in rows if r.get("segment") == "inner"]
+    before = [r for r in rows if r.get("simulation_source") == "outer"][-4:]
+    inner = [r for r in rows if r.get("simulation_source") == "inner"]
     out = [
-        (r.get("segment"), _num(r.get("t")), _num(r.get(METRIC), 0),
-         r.get("queue_event"))
+        (r.get("simulation_source"), _num(r.get("t")))
+        + tuple(_num(r.get(col), 0) for col, _ in STATE_COLUMNS)
+        + (r.get("queue_event"),)
         for r in before + inner
     ]
-    html = _scroll_table(["Segment", "Time", "Queue length", "Event"], out)
+    html = _scroll_table(
+        ["Simulation source", "Time"]
+        + [header for _, header in STATE_COLUMNS]
+        + ["Event"],
+        out,
+    )
     (STATIC / "mm1-table-inner.html").write_text(html + "\n", encoding="utf-8")
     _inject("mm1-table-inner", html)
 
@@ -265,12 +288,18 @@ def table_outer(om: OutputManager) -> None:
 
     rows = om.export_outer()
     out = [
-        (_num(r.get("t")), _num(r.get(METRIC), 0), r.get("queue_event"),
-         r.get("cust_id"))
+        (_num(r.get("t")),)
+        + tuple(_num(r.get(col), 0) for col, _ in STATE_COLUMNS)
+        + (r.get("queue_event"), r.get("cust_id"))
         for r in rows
         if r.get(METRIC) not in (None, "")
     ]
-    html = _scroll_table(["Time", "Queue length", "Event", "Customer"], out)
+    html = _scroll_table(
+        ["Time"]
+        + [header for _, header in STATE_COLUMNS]
+        + ["Event", "Customer"],
+        out,
+    )
     (STATIC / "mm1-table-outer.html").write_text(html + "\n", encoding="utf-8")
     _inject("mm1-table-outer", html)
 
@@ -283,16 +312,23 @@ def table_predictions(om: OutputManager) -> None:
     for r in rows:
         if r.get("inner_num_branches") in (None, ""):
             continue
-        out.append((
-            r.get("cust_id"),
-            _num(r.get("inner_anchor_arrival_time_mean")),
-            r.get("inner_num_branches"),
-            _num(r.get("inner_waiting_time_mean")),
-            _num(r.get("inner_service_completion_time_mean")),
-        ))
+        out.append(
+            (
+                r.get("cust_id"),
+                _num(r.get("inner_anchor_arrival_time_mean")),
+            )
+            # system state at the triggering event (from the trigger row itself)
+            + tuple(_num(r.get(col), 0) for col, _ in STATE_COLUMNS)
+            + (
+                r.get("inner_num_branches"),
+                _num(r.get("inner_waiting_time_mean")),
+                _num(r.get("inner_service_completion_time_mean")),
+            )
+        )
     html = _scroll_table(
-        ["Customer", "Arrival", "# inner sims", "Mean inner wait",
-         "Mean inner service time"],
+        ["Customer", "Arrival"]
+        + [header for _, header in STATE_COLUMNS]
+        + ["# inner sims", "Mean inner wait", "Mean inner service time"],
         out,
     )
     (STATIC / "mm1-table-pred.html").write_text(html + "\n", encoding="utf-8")

@@ -113,6 +113,7 @@ visualize_inner(trigger_id, inner_id=None, *, relative_start=None,
 
 export_outer(path=None, *, inner_aggregate=None) -> list[dict]
 export_inner(trigger_id, inner_id, path=None) -> list[dict]
+export_triggers(path=None) -> list[dict]
 ```
 
 - **`visualize_outer` / `visualize_inner`** — plot the outer trajectory, or the
@@ -123,3 +124,7 @@ export_inner(trigger_id, inner_id, path=None) -> list[dict]
   inner branch (with its outer lead-in), as a list of rows; write a CSV when
   `path` is given. `inner_aggregate="mean"` augments each triggering row with
   that trigger's averaged inner outcomes.
+- **`export_triggers`** — one row per triggering event: `trigger_id` /
+  `anchor_cust_id`, the fork time `t`, `boundary_event`, the `state_*` columns
+  at the trigger moment, `num_branches`, and the averaged inner outcomes
+  (`inner_waiting_time_mean`, ...); write a CSV when `path` is given.
