@@ -9,6 +9,13 @@ from nestedsimpy import OutputManager
 om = OutputManager("nested_output/mm1")
 ```
 
+The argument is the run's output directory (or a parent of several runs — the
+most recent is chosen; see {doc}`Visualization <visualization>` for the
+loading rules). Each export method returns a list of plain dicts — one dict
+per row, ready for `pandas.DataFrame(rows)` — and writes the same table as a
+CSV when a `path` is given. Values read back from the run's CSVs are strings;
+convert (e.g. `float(row["t"])`) before computing with them.
+
 ## The outer sample path
 
 `export_outer` returns the outer trajectory — one row per recorded outer event.
@@ -18,6 +25,16 @@ Pass a path to also write it as CSV:
 rows = om.export_outer()              # list of dicts
 om.export_outer("outer.csv")          # ... and write a CSV
 ```
+
+The most useful columns of each row:
+
+| Column | Meaning |
+| --- | --- |
+| `t` | Simulation time of the event. |
+| `queue_event` | What happened — `arrival`, `service_start`, `service_departure`, ... |
+| `cust_id` | The customer the event belongs to. |
+| `nesting_object_id` | Which object emitted the event (its `nested_id`). |
+| `(<id>)state_*` | The state of each nesting object after the event — one column group per object, prefixed with its `nested_id`. A resource contributes, among others, `(<id>)state_num_customers_in_queue`, `..._in_service` and `..._in_system` (the total: in queue plus in service). |
 
 ## A single inner branch
 
@@ -29,6 +46,13 @@ om.export_inner(trigger_id=0, inner_id=0)                  # rows
 om.export_inner(trigger_id=0, inner_id=0, path="inner.csv")
 ```
 
+`trigger_id` is the id of the triggering event — one of `om.trigger_ids`, which
+are the anchor customer ids — and `inner_id` selects the branch (`0` to
+`K-1`; each trigger's valid ids are listed by `om.triggers()`). The rows have
+the same columns as `export_outer`, plus `simulation_source` as the first
+column: `outer` marks the shared history recorded before the fork, `inner` the
+forked branch itself.
+
 ## Aggregated features and labels
 
 For prediction tasks, `inner_aggregate="mean"` augments each **triggering** row
@@ -39,6 +63,15 @@ feature/label table used to benchmark waiting-time predictions:
 ```python
 om.export_outer("features.csv", inner_aggregate="mean")
 ```
+
+Six columns are appended to every row: `inner_num_branches`,
+`inner_anchor_arrival_time_mean`, `inner_waiting_time_mean`,
+`inner_waiting_time_std`, `inner_service_completion_time_mean` and
+`inner_service_completion_time_std`. They are filled on exactly one row per
+triggering event (the anchor customer's row at the fork moment) and left empty
+everywhere else — so filtering the table to non-empty `inner_waiting_time_mean`
+yields one feature/label pair per trigger. (`"mean"` is currently the only
+supported aggregate.)
 
 ## The triggering events
 
@@ -53,6 +86,12 @@ simulations were forked there) and the averaged inner outcomes
 om.export_triggers()                   # list of dicts, one per triggering event
 om.export_triggers("triggers.csv")     # ... and write a CSV
 ```
+
+The full column list, in order: `trigger_id`, `t`, `boundary_event`,
+`anchor_cust_id`, the `(<id>)state_*` columns copied from the outer row at the
+trigger moment, `num_branches`, then `inner_anchor_arrival_time_mean`,
+`inner_waiting_time_mean`, `inner_waiting_time_std`,
+`inner_service_completion_time_mean` and `inner_service_completion_time_std`.
 
 It is the compact companion to `export_outer(inner_aggregate="mean")`: the same
 tagged information, without the non-triggering rows of the outer path.
@@ -75,6 +114,12 @@ three different needs:
 3. **Your own metric** — whatever a postprocessor writes (see below); the
    bundled wait-time hook produces `user_waits.csv`, one waiting time per inner.
 
+Reading a per-realization name such as `[42][2,arrival][0].csv`: the outer
+seed was `42`, the trigger is the one anchored at customer `2` and fired by an
+`arrival` boundary, and the last bracket is an internal branch identifier —
+it is *not* the `inner_id`, so prefer `om.trigger_ids` / `om.triggers()` over
+parsing file names.
+
 Inspect `raw/` when debugging a single branch; the raw event format is described
 under {doc}`Raw data <../api/raw-data>`.
 
@@ -84,3 +129,41 @@ Beyond the built-in exports, a run can produce its own outputs: set general
 behavior with `set_post_processing_options(...)`, or register a custom
 metric/output hook with `set_postprocessor(...)`, which runs after
 `nested_run()` over the packaged artefacts.
+
+`set_post_processing_options` takes free keyword options; the ones
+`nested_run()` reads are:
+
+| Option | Type | Default | Meaning |
+| --- | --- | --- | --- |
+| `package_latest` | `bool` | `False` | Package the run (build `exports/` from `raw/`) immediately at the end of `nested_run()`. Without it, packaging happens lazily the first time an `OutputManager` opens the run — either way the exports come out the same. |
+| `raw_dir_name`, `export_dir_name` | `str` | `"raw"`, `"exports"` | Rename the two layers of the run directory. |
+| `print_outputs` | `bool` | same as `package_latest` | Print the run, raw and exports directories when packaging completes. |
+| `verify_outputs` | `bool` | same as `package_latest` | Sanity-check that the packaged directories exist where expected. |
+
+A postprocessor is a callable with the fixed signature
+`fn(outer_dir, exports_dir, manifest, **options)` — the run directory, its
+packaged `exports/` directory, and the outer manifest dict. It runs once,
+inside `nested_run()`, right after packaging (registering one implies
+packaging, so `package_latest` is not needed). If it returns a dict, the dict
+is written as JSON to `exports/<output_name>` (`output_name` defaults to
+`"user_metrics.json"`); any extra keyword arguments passed to
+`set_postprocessor` are forwarded to the callable. The bundled
+`wait_time_hook` is a ready-made example — it scans the per-realization CSVs
+and writes `user_waits.csv`:
+
+```python
+from nestedsimpy import wait_time_hook
+
+env.set_postprocessor(wait_time_hook, output_name="wait_summary.json")
+env.nested_run()   # ... afterwards: exports/wait_summary.json + exports/user_waits.csv
+```
+
+A minimal hand-written hook follows the same pattern:
+
+```python
+def count_branches(outer_dir, exports_dir, manifest, **options):
+    n = len(list(exports_dir.glob("*[[]*,*[]]*.csv")))   # per-realization CSVs
+    return {"num_branch_csvs": n}                        # -> exports/user_metrics.json
+
+env.set_postprocessor(count_branches)
+```

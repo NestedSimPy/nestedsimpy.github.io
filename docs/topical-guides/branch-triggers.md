@@ -19,6 +19,21 @@ env.set_triggering_objects(nested_id="srv")
 env.set_triggering_objects(nested_id=["srv_a", "srv_b"])
 ```
 
+The `nested_id` is the identifier you gave the object when constructing it —
+`NestedResource(env, capacity=1, nested_id="srv")` — and it is how the object
+is referred to everywhere else: in this call, in trigger specs, and in the
+output columns (see {doc}`From SimPy to NestedSimPy <branching-model>`). If
+you never call `set_triggering_objects`, the default is a single object named
+`"srv"`; a run whose objects use other ids must set this explicitly.
+
+With **several** triggering objects, the configured condition is armed on each
+of them independently. Whichever object fires first causes the fork, and that
+object becomes the *triggering object of that fork* — the one the anchor
+customer and the state-based inner stop rules refer to (see
+{doc}`Stopping conditions <stop-rules-replay>`). The fork snapshot itself
+always captures the state of *all* the triggering objects, so the branches
+resume the full system consistently.
+
 ## Arrival triggers
 
 Arrival-based branching is the simplest mode and the most common starting point.
@@ -30,6 +45,64 @@ env.set_triggering_conditions({"on": "arrival", "frequency": 1})
 That means branch on every arrival at the primary triggering object.
 
 You can also use `nth` instead of `frequency`.
+
+The condition is a plain dict with these keys:
+
+| Key | Type | Default | Meaning |
+| --- | --- | --- | --- |
+| `on` | `str` | — (required) | Which built-in boundary to watch — see the table below. An `"arrival"` is the moment a request is submitted to the object (the customer joins). |
+| `frequency` / `nth` | `int` | `1` | Fire on every *n*-th matching occurrence. The two names are aliases; `frequency` is the preferred spelling. |
+| `resource` | `str` or list | `None` | Optional filter: only occurrences at this triggering object (by `nested_id`) count. Useful when several triggering objects are configured but only one should fork. |
+
+The counter behind `frequency` restarts after each fork: `{"on": "arrival",
+"frequency": 3}` forks at every third arrival *since the previous fork* (for a
+pure arrival trigger that is the same as every third arrival overall).
+
+`"arrival"` is one of several built-in boundaries; the same dict shape works
+for all of them:
+
+| `on` value | Applies to | Fires when |
+| --- | --- | --- |
+| `"arrival"` | resource | a request is submitted (a customer joins the queue or grabs a free server) |
+| `"service_start"` | resource | a request is granted (a customer enters service) |
+| `"service_end"` | resource | a request is released (a customer's service completes) |
+| `"capacity_change"` | resource | the object's capacity changes |
+| `"store_put"` / `"store_get"` | store | a put / get on the store completes |
+| `"container_put"` / `"container_get"` | container | a put / get on the container completes |
+
+A complete minimal example — the M/M/1 model from the
+{doc}`Simple example <../simple-example>`, branching on every second arrival:
+
+```python
+import nestedsimpy
+
+
+def customer(env, server):
+    with server.request() as request:
+        yield request
+        yield env.nested_timeout({"distribution": "exponential", "lambda": 4.0})
+
+
+def arrivals(env, server):
+    while True:
+        yield env.nested_timeout({"distribution": "exponential", "lambda": 3.0})
+        env.process(customer(env, server))
+
+
+env = nestedsimpy.NestedEnvironment()
+server = nestedsimpy.NestedResource(env, capacity=1, nested_id="srv")
+env.process(arrivals(env, server))
+
+env.set_output_options(out_dir="nested_output/mm1_every2nd", gzip_trace=False)
+env.set_rng("independent")
+env.set_outer_seed(42)
+env.set_triggering_objects(nested_id="srv")
+env.set_triggering_conditions({"on": "arrival", "frequency": 2})
+env.set_inner_repetitions(3)
+env.set_inner_stopping_condition(relative_time=5.0)
+env.set_outer_stopping_condition(timeout=10.0)
+env.nested_run()
+```
 
 ## State-predicate triggers
 
@@ -49,6 +122,11 @@ env.set_triggering_conditions(
 This is useful when the boundary of interest is not “the nth arrival” but
 something like “the queue first becomes nontrivial.”
 
+For `on="state_predicate"` the dict takes `predicate` (required) in addition to
+the shared keys above: here `resource` names which triggering object the
+predicate watches, and `frequency`/`nth` counts *rising edges* — with
+`"frequency": 2`, every second time the predicate flips from false to true.
+
 ### What the predicate receives
 
 Every time the watched object goes through a state transition, NestedSimPy
@@ -58,6 +136,10 @@ Python dict: a snapshot of the triggering object's state at that event moment
 return `True` to branch; the trigger fires on the *rising edge*, i.e. the
 moment the predicate flips from false to true, so a queue that stays long does
 not re-trigger on every subsequent event.
+
+(The predicate may also accept `(state, resource)` or `(state, resource, env)`
+when it needs the object or the environment as extra context; the
+one-argument form is the common case.)
 
 For a `NestedResource` (and `NestedPreemptiveResource`) the snapshot contains:
 

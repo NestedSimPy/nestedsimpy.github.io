@@ -28,6 +28,24 @@ There is not currently a separate `NestedPriorityResource` class. Priority-aware
 service is handled through `NestedPreemptiveResource`, which preserves SimPy's
 priority/preemption request path while adding tracing and branch hooks.
 
+The wrapped objects take the same constructor arguments as their SimPy
+counterparts, plus one keyword argument: **`nested_id`**, a string naming the
+object —
+
+```python
+server = NestedResource(env, capacity=1, nested_id="srv")
+```
+
+The `nested_id` is the object's identity throughout NestedSimPy: it is how you
+refer to the object in the configuration calls of step 3 (e.g.
+`set_triggering_objects(nested_id="srv")`), and it labels the object's columns
+in the exported data (e.g. `(srv)state_num_customers_in_queue` — see
+{doc}`Exporting data <traces-and-outputs>`). Each object registers itself with
+the environment under this id when constructed, so ids must be unique within a
+run. If omitted, a resource defaults to `nested_id="srv"` — fine for a
+single-resource model, but give every object an explicit, distinct id as soon
+as there is more than one.
+
 The wrapped objects play the same roles as before:
 
 `NestedEnvironment`
@@ -119,6 +137,25 @@ env.set_inner_stopping_condition(relative_time=5.0, triggering_customer_departs=
 env.set_outer_stopping_condition(timeout=10.0)
 env.nested_run()
 ```
+
+Line by line, each call configures one aspect of the run:
+
+| Call | What it configures | Details |
+| --- | --- | --- |
+| `set_output_options(out_dir=..., gzip_trace=...)` | Where the run's outputs are written (`out_dir`, a directory path — each run creates a fresh subdirectory inside it) and whether the raw trace files are gzip-compressed (`gzip_trace`, default `True`; `False` keeps them human-readable). | {doc}`Exporting data <traces-and-outputs>` |
+| `set_rng(mode)` | How the inner branches draw randomness: `"independent"` or `"CRN"` — see below. | — |
+| `set_triggering_objects(nested_id=...)` | Which object(s) — by their `nested_id` — are watched for triggering events. Pass a list for several. | {doc}`Triggering events <branch-triggers>` |
+| `set_triggering_conditions(spec)` | *When* to fork: a dict such as `{"on": "arrival", "frequency": 1}` (fork at every arrival). `frequency=n` forks at every *n*-th occurrence. | {doc}`Triggering events <branch-triggers>` |
+| `set_inner_repetitions(count)` | How many inner simulations to fork at each triggering event (a positive `int`). | — |
+| `set_inner_stopping_condition(...)` | When each inner branch stops — here after 5 time units past the fork, or as soon as the triggering customer finishes, whichever comes first. At least one inner rule is required. | {doc}`Stopping conditions <stop-rules-replay>` |
+| `set_outer_stopping_condition(timeout=...)` | When the outer simulation stops — here at time 10. | {doc}`Stopping conditions <stop-rules-replay>` |
+| `nested_run()` | Executes the configured run: the outer simulation advances, forks the inner simulations at every triggering event, and writes all outputs under `out_dir`. | — |
+
+Two of the calls are strictly required before `nested_run()` —
+`set_inner_repetitions` and `set_inner_stopping_condition` (the run raises a
+clear error otherwise). The others have working defaults, but a real model
+sets them all explicitly. To make the run reproducible, also fix the seed with
+`env.set_outer_seed(42)` (any `int`; the default seed is `2025`).
 
 `set_rng` chooses how the branches sample: `"independent"` gives each inner its
 own random stream (so they explore different futures), while `"CRN"` shares one
