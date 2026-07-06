@@ -105,21 +105,29 @@ OutputManager(folder, *, outer_id=None, resource_id=None, metric=None)
 triggers() -> list[TriggerInfo]          # TriggerInfo(trigger_id, boundary, branch_time, inner_ids)
 trigger_ids -> list[int]                 # property
 
-visualize_outer(*, start=None, end=None, show_triggering_events=True,
-                metric=None, path=None) -> go.Figure
-visualize_inner(trigger_id, inner_id=None, *, relative_start=None,
-                relative_end=None, metric=None, show_outer_context=True,
-                path=None) -> go.Figure
+visualize_outer_static(path=None, *, start=None, end=None,
+                       show_triggering_events=True, metric=None,
+                       nested_id=None) -> plt.Figure
+visualize_outer_interactive(path=None, *, start=None, end=None,
+                            show_triggering_events=True, metric=None,
+                            nested_id=None) -> go.Figure
+visualize_inner(trigger_id, inner_id=None, path=None, *, relative_start=None,
+                relative_end=None, metric=None, nested_id=None,
+                show_outer_context=True) -> go.Figure
 
 export_outer(path=None, *, inner_aggregate=None) -> list[dict]
 export_inner(trigger_id, inner_id, path=None) -> list[dict]
 export_triggers(path=None) -> list[dict]
 ```
 
-- **`visualize_outer` / `visualize_inner`** — plot the outer trajectory, or the
-  inner branches forked at one triggering event, for a chosen `metric` (a
-  state-field name or a `row -> float` callable). Return a Plotly figure and,
-  when `path` is given, write it to HTML.
+- **`visualize_outer_static` / `visualize_outer_interactive` /
+  `visualize_inner`** — plot the outer trajectory (static image or interactive
+  plot), or the inner branches forked at one triggering event. `nested_id`
+  selects which resource/container to plot; `metric` is `"in_queue"`,
+  `"in_service"`, `"in_system"` (resources), `"level"` (containers), a full
+  state-field name, or a `row -> float` callable for custom metrics. When
+  `path` is given the figure is also written to disk. (`visualize_outer`
+  remains as an alias for the interactive variant.)
 - **`export_outer` / `export_inner`** — return the outer sample path, or one
   inner branch (with its outer lead-in), as a list of rows; write a CSV when
   `path` is given. `inner_aggregate="mean"` augments each triggering row with
