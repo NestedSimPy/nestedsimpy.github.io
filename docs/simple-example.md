@@ -402,6 +402,40 @@ every inner simulation:
 <!-- mm1-table-pred:end -->
 ```
 
+#### User-defined metrics
+
+The two inner-outcome columns above are instances of a general mechanism: the
+user registers a function that is computed from an inner branch's event log —
+the same table shown under *Exporting event logs* above — and
+NestedSimPy evaluates it for every inner branch and aggregates it into new
+case-table columns automatically. The function may return NaN when the
+quantity is undefined for a branch (e.g. the triggering customer was not
+served within the horizon), and NaN branches are skipped in the aggregation.
+(The `type` field holds raw event names such as `request_granted`; the
+table's Event column shows their friendly labels, e.g. `service_start`.):
+
+```python
+def user_wait(rows, ctx):
+    # rows: the inner branch's event log (the table above); ctx: trigger info
+    for row in rows:
+        if (row["simulation_source"] == "inner"
+                and row["cust_id"] == ctx["triggering_customer_id"]
+                and row["type"] == "request_granted"):
+            return row["t"] - ctx["anchor_arrival_time"]
+    return float("nan")            # not served within the horizon
+
+env.register_metric("user_wait", user_wait)   # register BEFORE nested_run()
+env.nested_run()
+# the case table now carries inner_user_wait_mean / inner_user_wait_std --
+# for this metric, identical to the built-in mean inner wait column
+```
+
+Registering `user_wait` reproduces the built-in waiting-time column exactly —
+the built-in metrics are just pre-registered instances of the same mechanism —
+and any quantity observable in the event log (a container's level, a queue
+count) can become a metric the same way. The full contract of the metric
+function is described in {ref}`user-defined-metrics`.
+
 ## Next
 
 - {doc}`official-parity/index` — the same idea applied to the full set of

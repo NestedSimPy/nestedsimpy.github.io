@@ -126,6 +126,52 @@ parsing file names.
 Inspect `raw/` when debugging a single branch; the raw event format is described
 under {doc}`Raw data <../api/raw-data>`.
 
+(user-defined-metrics)=
+## User-defined metrics
+
+`env.register_metric(name, fn)` — called before `nested_run()` — registers a
+per-branch metric computed from the event log. For every inner branch, `fn` is
+evaluated once during post-processing, in the same phase that computes the
+built-in `waiting_time` / `service_completion_time`, and its value is
+aggregated exactly like the built-ins. The {doc}`Simple example
+<../simple-example>` shows a worked metric (`user_wait`) that reproduces the
+built-in waiting time from the event-log rows.
+
+**The metric function.** `fn(rows, ctx)` must return a number (anything
+`float()` accepts) or `float("nan")`:
+
+- `rows` is the branch's full event log as a list of dicts — the outer lead-in
+  up to the trigger point followed by the inner branch — with the same columns
+  as `export_inner_event_log` (`simulation_source`, `t`, `queue_event`,
+  `type`, `cust_id`, `nesting_object_id`, the `(<id>)state_*` columns, ...).
+  Unlike CSVs read back from disk, the values are native Python objects
+  (numbers, `None`), not strings.
+- `ctx` describes the branch, with at least: `trigger_id`, `trigger_time`,
+  `triggering_customer_id` (the triggering customer), `anchor_arrival_time`,
+  `boundary_event`, `j`, `replication_k`, `inner_seed`, `outer_seed` and
+  `outer_id`.
+
+**Missing values.** Returning `float("nan")` (or `None`) marks the branch's
+value as missing — it is stored as JSON `null` and skipped by the mean/std
+aggregation, exactly like a missing built-in `waiting_time`. If `fn` raises,
+or returns something `float()` cannot convert, or returns a non-finite
+`float("inf")` / `float("-inf")`, a warning is emitted (once per metric name
+per packaging pass) and the value is likewise recorded as missing; the run
+still completes.
+
+**Where the results appear.** Each registered metric shows up in all three
+metric outputs: the per-branch `...-metrics.json` gains a `<name>` entry, the
+per-trigger `[all]-metrics.json` gains `<name>_mean` / `<name>_std`, and
+`export_outer_case_table` / `export_triggers` automatically gain
+`inner_<name>_mean` / `inner_<name>_std` columns next to the built-in six.
+
+`name` must be a non-empty string that collides neither with a built-in metric
+key (`waiting_time`, `service_completion_time`, ...) nor with an
+already-registered metric. Registering a metric implies packaging (like
+`set_postprocessor` below, `package_latest` is not needed); metrics only take
+effect for runs packaged through `nested_run()`'s own pipeline, not when an
+output folder is packaged standalone.
+
 ## Custom postprocessing
 
 Beyond the built-in exports, a run can produce its own outputs: set general
