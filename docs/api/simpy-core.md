@@ -30,7 +30,7 @@ iter_resources() -> Iterable[tuple[str, Any]]
 
 - **`nested_timeout`** — sleep for a delay drawn from `specification` (a
   distribution spec, not a pre-sampled number) so the residual can be resampled
-  per branch on a fork. See {doc}`From SimPy to NestedSimPy <../topical-guides/branching-model>`.
+  per branch when a trigger event fires. See {doc}`From SimPy to NestedSimPy <../topical-guides/branching-model>`.
 - **`register_resource`** / **`register`** — register an instrumented resource
   under a name for later lookup; `register` returns it for fluent chaining.
 - **`get_resource`** / **`iter_resources`** — look up one registered resource by
@@ -52,8 +52,8 @@ set_output_options(*, out_dir='./out/simpy', gzip_trace=True, ...)
 clear_branching()
 ```
 
-- **`set_inner_repetitions`** — how many inner simulations fork at each
-  triggering event.
+- **`set_inner_repetitions`** — how many inner simulations launch at each
+  trigger event.
 - **`set_rng`** — RNG strategy: `'CRN'` (common random numbers across branches)
   or `'independent'` (each branch its own stream); `policy_fn(k, env)` supplies a
   per-branch policy for rollout/lookahead.
@@ -61,10 +61,10 @@ clear_branching()
   optionally fix the inner-branch seed base.
 - **`set_triggering_objects`** — which instrumented object(s) are watched
   for triggers. See {doc}`Triggering events <../topical-guides/branch-triggers>`.
-- **`set_triggering_conditions`** — the boundary that fires a branch (on an arrival,
+- **`set_triggering_conditions`** — the trigger event that fires a branch (on an arrival,
   a state predicate, or a published event).
 - **`set_inner_stopping_condition`** — when each inner branch stops (a relative
-  or absolute time, the anchor customer departing, or a `StartStopSpec`). See
+  or absolute time, the triggering customer departing, or a `StartStopSpec`). See
   {doc}`Stopping conditions <../topical-guides/stop-rules-replay>`.
 - **`set_outer_stopping_condition`** — when the outer run stops (a timeout or an
   arrival count).
@@ -103,7 +103,7 @@ run_single_path(*, trigger_index, branch_index, outer_seed=None, **overrides) ->
 ## Instrumented primitives
 
 Drop-in replacements for SimPy primitives. Each records queue transitions, emits
-structured trace events, and notifies the boundary watchers that drive
+structured trace events, and notifies the trigger-event watchers that drive
 branching. Construct them like their SimPy counterparts plus a `nested_id`, e.g.
 `NestedResource(env, capacity=1, nested_id="srv")`.
 
@@ -124,7 +124,7 @@ watch(cb) -> Callable[[], None]
 - **`queue_length`** — waiting jobs, excluding those in service.
 - **`set_capacity`** — change the capacity at runtime (emits `capacity_changed`).
 - **`describe_state`** — the exported state schema for this object.
-- **`watch`** — register a callback fired on every boundary event; returns an
+- **`watch`** — register a callback fired on every trigger event; returns an
   unsubscribe callable.
 
 ### `NestedStore` / `NestedContainer`
@@ -139,7 +139,7 @@ watch(cb) -> Callable[[], None]
 ```
 
 - **`NestedStore.put` / `.get`** — submit/withdraw one item, emitting put/get
-  lifecycle events (a `store_put` can be a triggering event).
+  lifecycle events (a `store_put` can be a trigger event).
 - **`NestedContainer.put` / `.get`** — add/remove an amount of bulk material.
 - **`describe_state`** / **`watch`** — as above.
 
@@ -174,7 +174,7 @@ branch_after(env_or_sim, backend='auto', **kwargs) -> None
 ```
 
 - **`branch_after_simpy`** — the low-level driver `nested_run` calls: run the
-  outer simulation, fork `K` children at each boundary, and write traces and
+  outer simulation, fork `K` children at each trigger event, and write traces and
   manifests. Most users configure `NestedEnvironment` and call `nested_run`
   instead of calling this directly.
 - **`branch_after`** — dispatch to the appropriate backend (currently SimPy).

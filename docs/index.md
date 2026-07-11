@@ -52,8 +52,8 @@ The project is currently under development.
 Nested simulation can be thought of as *simulation within simulation*. The user
 first implements and executes a typical simulation of some system (e.g., service,
 inventory, or transportation), which is referred to as the **outer simulation**.
-The user also defines **triggering events** (e.g., a customer arrival). When a
-triggering event is invoked, the outer simulation **pauses** and **branches** out
+The user also defines **trigger events** (e.g., a customer arrival). When a
+trigger event is invoked, the outer simulation **pauses** and **branches** out
 to multiple parallel copies of the outer simulation at that moment in time, called
 **inner simulations**. These independently continue executing the simulation from
 the paused state until a user-defined **inner stopping condition** is met. Once all

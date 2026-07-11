@@ -9,7 +9,7 @@ NestedSimPy is easiest to understand as a small layer on top of SimPy:
 1. Build your model with a `NestedEnvironment`.
 2. Replace plain SimPy primitives with instrumented ones such as `NestedResource`, `NestedPreemptiveResource`, `NestedStore`, or `NestedContainer`.
 3. Use `env.nested_timeout(...)` instead of raw `env.timeout(...)` where branch-safe sleeps matter.
-4. Declare when branches should fork.
+4. Declare when branches should be launched.
 5. Run once and inspect packaged outputs.
 
 ## Install
@@ -50,7 +50,7 @@ repository:
 python simpy_examples/mm1_nested.py
 ```
 
-It runs the outer SimPy trajectory and, at each arrival, forks inner simulations
+It runs the outer SimPy trajectory and, at each arrival, launches inner simulations
 that each explore a possible future from that state.
 
 ## Compare Against Plain SimPy
@@ -86,7 +86,7 @@ but swaps in branch-aware infrastructure:
 
 `NestedResource`
 : Instrumented resource that records queue transitions and exposes watcher
-  callbacks used by branch boundaries.
+  callbacks used by trigger events.
 
 `NestedPreemptiveResource`, `NestedStore`, `NestedContainer`
 : Instrumented SimPy primitives for priority/preemption, buffered item flow, and
@@ -94,7 +94,7 @@ but swaps in branch-aware infrastructure:
 
 `env.nested_timeout(...)`
 : Distribution-aware sleep helper that can resample residual time correctly
-  after a fork.
+  after a trigger point.
 
 ## Typical Flow
 

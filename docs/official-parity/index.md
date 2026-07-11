@@ -10,7 +10,7 @@ and Stefan Scherfke); see {doc}`../about` for full license and attribution.
 
 - **{doc}`Bank Renege <bank-reneging>`** — models customers arriving at a bank and
   waiting for service at a counter, abandoning the queue if their patience runs
-  out. Illustrates defining triggering events on a `NestedResource`.
+  out. Illustrates defining trigger events on a `NestedResource`.
 - **{doc}`Carwash <carwash>`** — cars wait for one of a few washing machines and
   leave once washed. The simplest `NestedResource` queueing example.
 - **{doc}`Event Latency <event-latency>`** — messages sent over a channel are

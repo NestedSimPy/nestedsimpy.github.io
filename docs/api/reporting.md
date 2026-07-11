@@ -40,9 +40,9 @@ extract_anchor_outcome(events, anchor_cust_id, anchor_arrival,
 - **`iter_branch_results`** — yield consolidated per-branch records (empty if
   none).
 - **`load_snapshots`** — return a `{j: snapshot_record}` map for the run.
-- **`extract_anchor_wait`** — the anchor customer's realised wait in hours, or
+- **`extract_anchor_wait`** — the triggering customer's realised wait in hours, or
   `None`.
-- **`extract_anchor_outcome`** — `(realised_wait, outcome)` for the anchor in
+- **`extract_anchor_outcome`** — `(realised_wait, outcome)` for the triggering customer in
   one branch.
 
 ## Packaged Reporting
@@ -115,24 +115,28 @@ visualize_inner(trigger_id, inner_id=None, path=None, *, relative_start=None,
                 relative_end=None, metric=None, nested_id=None,
                 show_outer_context=True) -> go.Figure
 
-export_outer(path=None, *, inner_aggregate=None) -> list[dict]
-export_inner(trigger_id, inner_id, path=None) -> list[dict]
+export_outer_event_log(path=None) -> list[dict]
+export_outer_case_table(path=None) -> list[dict]
+export_inner_event_log(trigger_id, inner_id, path=None) -> list[dict]
 export_triggers(path=None) -> list[dict]
 ```
 
 - **`visualize_outer_static` / `visualize_outer_interactive` /
   `visualize_inner`** — plot the outer trajectory (static image or interactive
-  plot), or the inner branches forked at one triggering event. `nested_id`
+  plot), or the inner branches launched at one trigger event. `nested_id`
   selects which resource/container to plot; `metric` is `"in_queue"`,
   `"in_service"`, `"in_system"` (resources), `"level"` (containers), a full
   state-field name, or a `row -> float` callable for custom metrics. When
   `path` is given the figure is also written to disk. (`visualize_outer`
   remains as an alias for the interactive variant.)
-- **`export_outer` / `export_inner`** — return the outer sample path, or one
-  inner branch (with its outer lead-in), as a list of rows; write a CSV when
-  `path` is given. `inner_aggregate="mean"` augments each triggering row with
-  that trigger's averaged inner outcomes.
-- **`export_triggers`** — one row per triggering event: `trigger_id` /
-  `anchor_cust_id`, the fork time `t`, `boundary_event`, the `state_*` columns
+- **`export_outer_event_log` / `export_inner_event_log`** — return the outer
+  sample path, or one inner branch (with its outer lead-in), as an event log —
+  a list of rows, one per simulation event; write a CSV when `path` is given.
+  (`export_outer` / `export_inner` remain as aliases.)
+- **`export_outer_case_table`** — the case table: the outer rows with each
+  trigger event's row augmented with that trigger's averaged inner outcomes
+  (the table `export_outer(inner_aggregate="mean")` used to spell).
+- **`export_triggers`** — one row per trigger event: `trigger_id` /
+  `anchor_cust_id`, the trigger time `t`, `boundary_event`, the `state_*` columns
   at the trigger moment, `num_branches`, and the averaged inner outcomes
   (`inner_waiting_time_mean`, ...); write a CSV when `path` is given.

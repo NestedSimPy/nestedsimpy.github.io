@@ -153,7 +153,7 @@ def build(name: str, meta: dict) -> dict:
     writefile = f"%%writefile {script}\n" + future_block + PRELUDE + model
 
     run = (
-        "# Run as a subprocess so the outer output is clean (inner branches fork).\n"
+        "# Run as a subprocess so the outer output is clean (inner branches run in separate processes).\n"
         f"!python {script}"
     )
 
@@ -163,14 +163,14 @@ def build(name: str, meta: dict) -> dict:
         "\n"
         "from nestedsimpy import OutputManager\n"
         "om = OutputManager(run)\n"
-        'print(f"{len(om.triggers())} triggering events; '
-        'the outer path has {len(om.export_outer())} recorded events")\n'
+        'print(f"{len(om.triggers())} trigger events; '
+        'the outer path has {len(om.export_outer_event_log())} recorded events")\n'
         "\n"
         'om.visualize_outer_static("outer.png")   # outer trajectory, saved as a static image\n'
         "fig = om.visualize_outer_interactive()   # the same trajectory as an interactive plot\n"
         "fig.show()\n"
         '\n'
-        'om.export_outer("outer.csv")      # the outer sample path as a CSV\n'
+        'om.export_outer_event_log("outer.csv")   # the outer event log as a CSV\n'
         'print("wrote outer.csv")'
     )
 
@@ -180,7 +180,7 @@ def build(name: str, meta: dict) -> dict:
             "",
             f"[NestedSimPy](https://nestedsimpy.github.io/) adapts SimPy's official "
             f"[{meta['title']} example]({meta['url']}) — {meta['blurb']} — so the outer "
-            f"behavior is unchanged while inner simulations fork at each triggering "
+            f"behavior is unchanged while inner branches are launched at each trigger "
             f"event. This example uses `{meta['primitive']}`.",
             "",
             f"See the [example page](https://nestedsimpy.github.io/official-parity/{meta['page']}.html) "
@@ -199,7 +199,7 @@ def build(name: str, meta: dict) -> dict:
         code(run),
         md("## 3. Inspect the run",
            "",
-           "`OutputManager` reads the run folder and reports the triggering events, "
+           "`OutputManager` reads the run folder and reports the trigger events, "
            "plots the outer trajectory, and exports the sample path."),
         code(inspect),
     ]

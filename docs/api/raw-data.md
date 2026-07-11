@@ -11,7 +11,7 @@ nested_output/<experiment>/<outer_id>/
     outer/
       trace.jsonl      # the outer event stream
       manifest.json
-    j=0001/            # one directory per triggering event (j = trigger index)
+    j=0001/            # one directory per trigger event (j = trigger index)
       k=00/            # one directory per branch
         trace.jsonl    # an inner event stream
         manifest.json
@@ -30,7 +30,7 @@ Each line of `trace.jsonl` is one JSON event. Common keys:
   `request_released`, `snapshot`, `checkpoint_reached`, `queue_length`.
 
 `run_kind`, `j`, `k`, `anchor_cust_id`
-: `run_kind` is `"outer"` or `"inner"`; `j`/`k` identify the triggering event and
+: `run_kind` is `"outer"` or `"inner"`; `j`/`k` identify the trigger event and
   branch (both `null` on the outer path); `anchor_cust_id` is the triggering
   customer.
 
@@ -46,19 +46,19 @@ in-service count), which is why the packaged CSVs carry extra `state_*` columns.
 ## Manifests
 
 `manifest.json` summarizes a run: `outer_id`, `seed`, `end_time`, `stop_reason`,
-and `event_count`. A branch's manifest additionally describes the fork it came
+and `event_count`. A branch's manifest additionally describes the trigger event it came
 from — `boundary_event`, `anchor_arrival_time`, `trigger_resource`, and the
-checkpoint it resumed from (`checkpoint_time`, `checkpoint_states`,
+captured state it resumed from (`checkpoint_time`, `checkpoint_states`,
 `anchor_cust_id`).
 
 ## Per-branch metrics
 
-Packaging also writes a metrics JSON per branch, with the anchor customer's
+Packaging also writes a metrics JSON per branch, with the triggering customer's
 outcome in that branch — `anchor_cust_id`, `k`, `anchor_arrival_time`,
 `service_start_time`, `service_end_time`, `waiting_time`, and
-`service_completion_time` — plus an `[all]` file per triggering event holding the
+`service_completion_time` — plus an `[all]` file per trigger event holding the
 means and standard deviations across its branches (the source of
-`OutputManager.export_outer(inner_aggregate="mean")`).
+`OutputManager.export_outer_case_table()`).
 
 ## Reading it back
 

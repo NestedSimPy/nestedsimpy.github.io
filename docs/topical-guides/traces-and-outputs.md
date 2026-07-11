@@ -18,12 +18,12 @@ convert (e.g. `float(row["t"])`) before computing with them.
 
 ## The outer sample path
 
-`export_outer` returns the outer trajectory — one row per recorded outer event.
-Pass a path to also write it as CSV:
+`export_outer_event_log` returns the outer trajectory — one row per recorded
+outer event. Pass a path to also write it as CSV:
 
 ```python
-rows = om.export_outer()              # list of dicts
-om.export_outer("outer.csv")          # ... and write a CSV
+rows = om.export_outer_event_log()              # list of dicts
+om.export_outer_event_log("outer.csv")          # ... and write a CSV
 ```
 
 The most useful columns of each row:
@@ -38,52 +38,54 @@ The most useful columns of each row:
 
 ## A single inner branch
 
-`export_inner` returns one inner simulation, including the outer lead-in up to
-the fork (the `simulation_source` column is `outer`, then `inner`):
+`export_inner_event_log` returns one inner simulation, including the outer
+lead-in up to the trigger point (the `simulation_source` column is `outer`,
+then `inner`):
 
 ```python
-om.export_inner(trigger_id=0, inner_id=0)                  # rows
-om.export_inner(trigger_id=0, inner_id=0, path="inner.csv")
+om.export_inner_event_log(trigger_id=0, inner_id=0)                  # rows
+om.export_inner_event_log(trigger_id=0, inner_id=0, path="inner.csv")
 ```
 
-`trigger_id` is the id of the triggering event — one of `om.trigger_ids`, which
-are the anchor customer ids — and `inner_id` selects the branch (`0` to
+`trigger_id` is the id of the trigger event — one of `om.trigger_ids`, which
+are the triggering customer ids — and `inner_id` selects the branch (`0` to
 `K-1`; each trigger's valid ids are listed by `om.triggers()`). The rows have
-the same columns as `export_outer`, plus `simulation_source` as the first
-column: `outer` marks the shared history recorded before the fork, `inner` the
-forked branch itself.
+the same columns as `export_outer_event_log`, plus `simulation_source` as the first
+column: `outer` marks the shared history recorded before the trigger point, `inner` the
+branch itself.
 
 ## Aggregated features and labels
 
-For prediction tasks, `inner_aggregate="mean"` augments each **triggering** row
-of the outer path with that trigger's averaged inner outcomes (the mean waiting
-time and service-completion time over its branches). The result is the
+For prediction tasks, `export_outer_case_table` augments each **triggering**
+row of the outer path with that trigger's averaged inner outcomes (the mean
+waiting time and service-completion time over its branches). The result is the
 feature/label table used to benchmark waiting-time predictions:
 
 ```python
-om.export_outer("features.csv", inner_aggregate="mean")
+om.export_outer_case_table("features.csv")
 ```
 
 Six columns are appended to every row: `inner_num_branches`,
 `inner_anchor_arrival_time_mean`, `inner_waiting_time_mean`,
 `inner_waiting_time_std`, `inner_service_completion_time_mean` and
 `inner_service_completion_time_std`. They are filled on exactly one row per
-triggering event (the anchor customer's row at the fork moment) and left empty
+trigger event (the triggering customer's row at the trigger time) and left empty
 everywhere else — so filtering the table to non-empty `inner_waiting_time_mean`
-yields one feature/label pair per trigger. (`"mean"` is currently the only
-supported aggregate.)
+yields one feature/label pair per trigger. (The mean is currently the only
+supported aggregate; the older spelling `export_outer(inner_aggregate="mean")`
+still works as an alias.)
 
-## The triggering events
+## The trigger events
 
-`export_triggers` keeps only the triggering events themselves — one row per
-trigger. Each row carries `trigger_id` and `anchor_cust_id` (the anchor
-customer), the fork time `t`, the `boundary_event` that fired, the object's
+`export_triggers` keeps only the trigger events themselves — one row per
+trigger. Each row carries `trigger_id` and `anchor_cust_id` (the triggering
+customer), the trigger time `t`, the `boundary_event` that fired, the object's
 `state_*` columns at the trigger moment, `num_branches` (how many inner
-simulations were forked there) and the averaged inner outcomes
+simulations were launched there) and the averaged inner outcomes
 (`inner_waiting_time_mean`, `inner_service_completion_time_mean`, ...):
 
 ```python
-om.export_triggers()                   # list of dicts, one per triggering event
+om.export_triggers()                   # list of dicts, one per trigger event
 om.export_triggers("triggers.csv")     # ... and write a CSV
 ```
 
@@ -93,8 +95,8 @@ trigger moment, `num_branches`, then `inner_anchor_arrival_time_mean`,
 `inner_waiting_time_mean`, `inner_waiting_time_std`,
 `inner_service_completion_time_mean` and `inner_service_completion_time_std`.
 
-It is the compact companion to `export_outer(inner_aggregate="mean")`: the same
-tagged information, without the non-triggering rows of the outer path.
+It is the compact companion to `export_outer_case_table`: the same tagged
+information, without the non-triggering rows of the outer path.
 
 ## On disk
 
@@ -106,7 +108,8 @@ three different needs:
 1. **Per-realization files** — one CSV *per inner simulation*,
    `[seed][trigger,boundary][inner].csv` (the outer lead-in, then that inner's
    own path), alongside the outer path `[seed]-outer.csv` and the per-trigger
-   metric JSONs. These are what `export_outer` / `export_inner` above read.
+   metric JSONs. These are what `export_outer_event_log` /
+   `export_inner_event_log` above read.
 2. **Consolidated tables** — the outer and *all* inners flattened into single
    files: `state_wide.csv` (one row per recorded state), `state_long.csv` (the
    queue contents at each of those states), and `events.csv` (every non-snapshot
@@ -115,8 +118,8 @@ three different needs:
    bundled wait-time hook produces `user_waits.csv`, one waiting time per inner.
 
 Reading a per-realization name such as `[42][2,arrival][0].csv`: the outer
-seed was `42`, the trigger is the one anchored at customer `2` and fired by an
-`arrival` boundary, and the last bracket is an internal branch identifier —
+seed was `42`, the trigger is the one whose triggering customer is `2`, fired by an
+`arrival` trigger event, and the last bracket is an internal branch identifier —
 it is *not* the `inner_id`, so prefer `om.trigger_ids` / `om.triggers()` over
 parsing file names.
 

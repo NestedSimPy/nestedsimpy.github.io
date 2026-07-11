@@ -10,7 +10,7 @@ At a high level, the runtime does five things:
 
 1. instrument the SimPy model,
 2. run one outer trajectory,
-3. fork child futures when a boundary fires,
+3. fork child futures when a trigger event fires,
 4. collect per-branch traces and manifests,
 5. package outputs for inspection, visualization, and export.
 
@@ -27,10 +27,10 @@ At a high level, the runtime does five things:
 
 `safe_sleep` / `env.nested_timeout(...)`
 : Sleep registration layer so pending delays can be resampled correctly after a
-  fork.
+  trigger point.
 
 `branch_after_simpy`
-: The SimPy branch driver. It runs the outer simulation, detects boundaries,
+: The SimPy branch driver. It runs the outer simulation, detects trigger events,
   forks children, reseeds or restores RNG state, and writes manifests.
 
 `trace` and `postprocess`

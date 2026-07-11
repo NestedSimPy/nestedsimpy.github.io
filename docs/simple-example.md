@@ -33,8 +33,10 @@ the remaining lines are identical to the original code.
 As can be seen in the example above, to use NestedSimPy we reuse SimPy code,
 replacing certain SimPy objects with corresponding NestedSimPy objects — for
 example, `simpy.Environment` with `nestedsimpy.NestedEnvironment`, or
-`simpy.Resource` with `nestedsimpy.NestedResource`. We also add a few commands
-that configure the execution of the nested simulation (e.g., what the triggering
+`simpy.Resource` with `nestedsimpy.NestedResource` (each NestedSimPy object is
+given a `nested_id` — here `"srv"` — a unique name that identifies it in the
+outputs). We also add a few commands
+that configure the execution of the nested simulation (e.g., what the trigger
 points are, or how long to run the nested simulation before stopping).
 
 ```{tip}
@@ -63,60 +65,60 @@ om.visualize_inner(trigger_id=0, inner_id=0)       # display a single inner simu
 om.visualize_inner(trigger_id=0)                   # display all inner simulations
 
 # Data export: write the run out as CSV tables
-om.export_inner(trigger_id=0, inner_id=0, path="inner.csv")   # export a single inner simulation
-om.export_outer("outer.csv")                                  # export the outer simulation
+om.export_inner_event_log(trigger_id=0, inner_id=0, path="inner.csv")   # export a single inner simulation
+om.export_outer_event_log("outer.csv")                                  # export the outer simulation
 # export the outer simulation and aggregate the output of the
-# inner simulations at every triggering event
-om.export_outer("predictions.csv", inner_aggregate="mean")
+# inner simulations at every trigger event
+om.export_outer_case_table("predictions.csv")
 ```
 
 ### Visualization
 
 `OutputManager` plots the run in four ways — the **outer** simulation on its own
-(static or interactive), and the **inner** simulations forked at a triggering
+(static or interactive), and the **inner** simulations launched at a trigger
 event. All four show the **queue length** at the server over time.
 
 #### Outer simulation (static)
 
 `visualize_outer_static` draws the outer sample path — the queue length over the
-10 units of simulated time — with a grey dot at every **triggering event** (here,
+10 units of simulated time — with a grey dot at every **trigger point** (here,
 each customer arrival).
 
 ```{figure} _static/mm1-outer-static.svg
-:alt: Static outer simulation — queue length over time with a dot at every triggering event
+:alt: Static outer simulation — queue length over time with a dot at every trigger point
 :width: 100%
 ```
 
 #### Outer simulation (interactive)
 
 `visualize_outer_interactive` shows the same outer path as a clickable plot.
-**Click any triggering event** to reveal the three **inner simulations** forked
+**Click any trigger point** to reveal the three **inner simulations** launched
 there; each inner runs for 5 units of time before stopping, after which the outer
 simulation resumes.
 
 ```{raw} html
-<iframe src="_static/mm1-interactive.html" title="Interactive nested M/M/1: click a triggering event to reveal its inner simulations" style="width:100%; height:520px; border:1px solid var(--color-background-border); border-radius:8px;" loading="lazy"></iframe>
+<iframe src="_static/mm1-interactive.html" title="Interactive nested M/M/1: click a trigger point to reveal its inner simulations" style="width:100%; height:520px; border:1px solid var(--color-background-border); border-radius:8px;" loading="lazy"></iframe>
 ```
 
 #### A single inner simulation
 
 `visualize_inner(trigger_id, inner_id)` plots one inner branch. The grey line is
-the outer context up to the fork (at time 0 on this axis); the coloured line is
+the outer context up to the trigger point (at time 0 on this axis); the coloured line is
 the inner simulation that continues from there.
 
 ```{figure} _static/mm1-inner-one.svg
-:alt: A single inner simulation forked at a triggering event
+:alt: A single inner simulation launched at a trigger event
 :width: 100%
 ```
 
 #### All inner simulations
 
-`visualize_inner(trigger_id)` overlays the three inner simulations forked at the
-same triggering event. They share the outer history but fork into **different
-futures**, so their queue lengths diverge after the checkpoint.
+`visualize_inner(trigger_id)` overlays the three inner simulations launched at the
+same trigger event. They share the outer history but branch into **different
+futures**, so their queue lengths diverge after the trigger point.
 
 ```{figure} _static/mm1-inner-all.svg
-:alt: All inner simulations forked at one triggering event
+:alt: All inner simulations launched at one trigger event
 :width: 100%
 ```
 
@@ -128,25 +130,33 @@ tables** — one row per case (here, per customer), giving its predicted outcome
 
 #### Exporting event logs
 
-An event log records the simulation event by event: each row is one event
-(an arrival, a service start, or a service departure) together with the time it
-occurred and the state it produced. Each resource and container in the model
-appears in the log under its `nested_id`; a resource contributes three state
-columns — the number of customers **in queue**, **in service**, and **in
-system** (the total: in queue plus in service). Here the single server `srv`
-contributes the three `(srv)` columns. Both the inner and the outer simulations
-can be exported this way.
+An event log records the simulation event by event: each row represents one
+event (e.g., an arrival, a service start, or a service departure) together with
+the timestamp at which it occurred and the system state it produced. The system
+state is tracked by NestedSimPy using the individual state of three objects:
+resources, containers, and stores. Resources are used by SimPy to maintain
+queues, while containers and stores are used for tracking continuous and
+discrete quantities such as inventory. We use `nested_id` to uniquely identify
+these objects. When generating the event log, a column is added for each of the
+resources, containers, and stores to represent the overall system state. For
+resources, we report on the number of customers **in queue**, **in service**,
+and **in system** (the system represents the total number in queue plus in
+service). In the example below the single server `srv` contributes the three
+`(srv)` columns. Both the inner and the outer simulations can be exported this
+way.
 
 ##### One inner sample path
 
-`export_inner(trigger_id, inner_id)` returns the event log of a single inner
-simulation — the state of the server after each event, with a few rows of outer
-context just before the fork. The first column, **Simulation source**, says
-where each row comes from: `outer` marks the context recorded before the fork,
-and `inner` marks the forked inner simulation itself (scroll it):
+`export_inner_event_log(trigger_id, inner_id)` returns the event log of a single inner
+simulation — here the inner simulation with replication number k = 0 launched at
+trigger event 16 — the state of the server after each event, with a few rows of outer
+context just before the trigger point. The first column, **Simulation source**, indicates
+where each row comes from: `outer` marks the context recorded before the trigger point,
+and `inner` marks the inner simulation itself (scroll it):
 
 ```{raw} html
 <!-- mm1-table-inner:begin (auto-generated by docs/_scripts/make_mm1_outputs.py — do not edit by hand) -->
+<p class="ns-dataset-caption"><em>Inner simulation with replication number k&nbsp;=&nbsp;0 at trigger event 16.</em></p>
 <div class="ns-dataset-scroll">
 <table class="ns-dataset-table">
 <thead><tr><th>Simulation source</th><th>Time</th><th>(srv) # in queue</th><th>(srv) # in service</th><th>(srv) # in system</th><th>Event</th></tr></thead>
@@ -208,7 +218,11 @@ and `inner` marks the forked inner simulation itself (scroll it):
 
 ##### The outer sample path
 
-`export_outer()` returns the event log of the outer simulation — the state of
+Notice that running nested simulation results in a single outer simulation but
+many inner simulations. Each inner simulation is associated with a trigger
+event, and an inner simulation replication number.
+
+`export_outer_event_log()` returns the event log of the outer simulation — the state of
 the server `srv` after each arrival and service completion (scroll it):
 
 ```{raw} html
@@ -332,20 +346,23 @@ the server `srv` after each arrival and service completion (scroll it):
 #### Exporting case tables
 
 A case table has one row per case — here, per customer — rather than one row per
-event. `export_outer(inner_aggregate="mean")` produces the **prediction table**:
-for each triggering customer it reports the system state at the triggering event
+event. `export_outer_case_table()` produces the **prediction table**:
+for each triggering customer it reports the system state at the trigger point
 — the `(srv)` columns give the number in queue, in service, and in system at
 that moment — together with the **average outcome over its inner simulations** —
 for example the mean waiting time, which estimates that customer's expected wait
-(the optimal benchmark from the {doc}`overview <index>`):
+(the optimal benchmark from the {doc}`overview <index>`). A mean inner wait of
+`0.00` means the customer never waited: it arrived to an idle server and entered
+service immediately at the trigger point, so its waiting time is exactly zero in
+every inner simulation:
 
 ```{raw} html
 <!-- mm1-table-pred:begin (auto-generated by docs/_scripts/make_mm1_outputs.py — do not edit by hand) -->
 <div class="ns-dataset-scroll">
 <table class="ns-dataset-table">
-<thead><tr><th>Customer</th><th>Arrival</th><th>(srv) # in queue</th><th>(srv) # in service</th><th>(srv) # in system</th><th># inner sims</th><th>Mean inner wait</th><th>Mean inner service time</th></tr></thead>
+<thead><tr><th>Customer</th><th>Arrival</th><th>(srv) # in queue</th><th>(srv) # in service</th><th>(srv) # in system</th><th># inner branches</th><th>Mean inner wait</th><th>Mean inner service time</th></tr></thead>
 <tbody>
-<tr><td>0</td><td>0.34</td><td>1</td><td>0</td><td>1</td><td>3</td><td></td><td>0.21</td></tr>
+<tr><td>0</td><td>0.34</td><td>1</td><td>0</td><td>1</td><td>3</td><td>0.00</td><td>0.21</td></tr>
 <tr><td>1</td><td>0.35</td><td>1</td><td>1</td><td>2</td><td>3</td><td>0.34</td><td>0.52</td></tr>
 <tr><td>2</td><td>0.43</td><td>1</td><td>1</td><td>2</td><td>3</td><td>0.03</td><td>0.35</td></tr>
 <tr><td>3</td><td>0.81</td><td>1</td><td>1</td><td>2</td><td>3</td><td>0.27</td><td>0.65</td></tr>
@@ -356,14 +373,14 @@ for example the mean waiting time, which estimates that customer's expected wait
 <tr><td>8</td><td>1.35</td><td>4</td><td>1</td><td>5</td><td>3</td><td>0.74</td><td>0.97</td></tr>
 <tr><td>9</td><td>1.70</td><td>2</td><td>1</td><td>3</td><td>3</td><td>1.16</td><td>1.37</td></tr>
 <tr><td>10</td><td>2.25</td><td>1</td><td>1</td><td>2</td><td>3</td><td>0.06</td><td>0.33</td></tr>
-<tr><td>11</td><td>2.65</td><td>1</td><td>0</td><td>1</td><td>3</td><td></td><td>0.16</td></tr>
+<tr><td>11</td><td>2.65</td><td>1</td><td>0</td><td>1</td><td>3</td><td>0.00</td><td>0.16</td></tr>
 <tr><td>12</td><td>2.71</td><td>1</td><td>1</td><td>2</td><td>3</td><td>0.24</td><td>0.40</td></tr>
 <tr><td>13</td><td>2.84</td><td>2</td><td>1</td><td>3</td><td>3</td><td>0.54</td><td>0.74</td></tr>
 <tr><td>14</td><td>2.88</td><td>3</td><td>1</td><td>4</td><td>3</td><td>0.86</td><td>1.14</td></tr>
 <tr><td>15</td><td>2.91</td><td>4</td><td>1</td><td>5</td><td>3</td><td>1.14</td><td>1.23</td></tr>
 <tr><td>16</td><td>3.54</td><td>4</td><td>1</td><td>5</td><td>3</td><td>0.79</td><td>0.95</td></tr>
 <tr><td>17</td><td>4.09</td><td>3</td><td>1</td><td>4</td><td>3</td><td>0.62</td><td>1.09</td></tr>
-<tr><td>18</td><td>5.29</td><td>1</td><td>0</td><td>1</td><td>3</td><td></td><td>0.23</td></tr>
+<tr><td>18</td><td>5.29</td><td>1</td><td>0</td><td>1</td><td>3</td><td>0.00</td><td>0.23</td></tr>
 <tr><td>19</td><td>5.61</td><td>1</td><td>1</td><td>2</td><td>3</td><td>0.30</td><td>0.43</td></tr>
 <tr><td>20</td><td>5.90</td><td>1</td><td>1</td><td>2</td><td>3</td><td>0.03</td><td>0.24</td></tr>
 <tr><td>21</td><td>5.91</td><td>2</td><td>1</td><td>3</td><td>3</td><td>0.67</td><td>1.01</td></tr>
@@ -373,8 +390,8 @@ for example the mean waiting time, which estimates that customer's expected wait
 <tr><td>25</td><td>6.26</td><td>3</td><td>1</td><td>4</td><td>3</td><td>0.45</td><td>0.77</td></tr>
 <tr><td>26</td><td>6.41</td><td>4</td><td>1</td><td>5</td><td>3</td><td>1.05</td><td>1.19</td></tr>
 <tr><td>27</td><td>6.56</td><td>3</td><td>1</td><td>4</td><td>3</td><td>0.67</td><td>1.00</td></tr>
-<tr><td>28</td><td>7.48</td><td>1</td><td>0</td><td>1</td><td>3</td><td></td><td>0.25</td></tr>
-<tr><td>29</td><td>7.92</td><td>1</td><td>0</td><td>1</td><td>3</td><td></td><td>0.13</td></tr>
+<tr><td>28</td><td>7.48</td><td>1</td><td>0</td><td>1</td><td>3</td><td>0.00</td><td>0.25</td></tr>
+<tr><td>29</td><td>7.92</td><td>1</td><td>0</td><td>1</td><td>3</td><td>0.00</td><td>0.13</td></tr>
 <tr><td>30</td><td>8.08</td><td>1</td><td>1</td><td>2</td><td>3</td><td>0.55</td><td>1.23</td></tr>
 <tr><td>31</td><td>8.42</td><td>2</td><td>1</td><td>3</td><td>3</td><td>0.40</td><td>0.55</td></tr>
 <tr><td>32</td><td>8.69</td><td>3</td><td>1</td><td>4</td><td>3</td><td>0.32</td><td>0.50</td></tr>

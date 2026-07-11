@@ -72,7 +72,7 @@ yield env.nested_timeout({"distribution": "exponential", "lambda": rate})
 ```
 
 Passing the distribution — rather than a pre-sampled value — is what makes
-branching meaningful. When the outer simulation forks at a triggering event, any
+branching meaningful. When the outer simulation branches at a trigger event, any
 delay already in progress is **resampled** for each inner simulation, so the
 branches explore genuinely different futures instead of replaying one fixed
 draw. The resample is **conditional on the time already elapsed**: an
@@ -97,7 +97,7 @@ Capped (truncated) exponential and integer-uniform variants are also available; 
 
 When a delay takes one of a few known values, enter the support and the
 matching probabilities — NestedSimPy takes care of the rest (validation,
-sampling, and the correct residual at a fork):
+sampling, and the correct residual at a trigger point):
 
 ```python
 yield env.nested_timeout(
@@ -119,7 +119,7 @@ probabilities renormalised.
 ## 3. Configuring the nested simulation parameters
 
 Finally, declare how the nested simulation runs — what triggers branching, how
-many inner simulations to fork, and when the inner and outer runs stop. (Your own
+many inner simulations to launch, and when the inner and outer runs stop. (Your own
 SimPy processes — the arrival generator and the customer logic — are omitted
 here; the {doc}`Simple example <../simple-example>` is the full runnable file.)
 
@@ -144,12 +144,12 @@ Line by line, each call configures one aspect of the run:
 | --- | --- | --- |
 | `set_output_options(out_dir=..., gzip_trace=...)` | Where the run's outputs are written (`out_dir`, a directory path — each run creates a fresh subdirectory inside it) and whether the raw trace files are gzip-compressed (`gzip_trace`, default `True`; `False` keeps them human-readable). | {doc}`Exporting data <traces-and-outputs>` |
 | `set_rng(mode)` | How the inner branches draw randomness: `"independent"` or `"CRN"` — see below. | — |
-| `set_triggering_objects(nested_id=...)` | Which object(s) — by their `nested_id` — are watched for triggering events. Pass a list for several. | {doc}`Triggering events <branch-triggers>` |
-| `set_triggering_conditions(spec)` | *When* to fork: a dict such as `{"on": "arrival", "frequency": 1}` (fork at every arrival). `frequency=n` forks at every *n*-th occurrence. | {doc}`Triggering events <branch-triggers>` |
-| `set_inner_repetitions(count)` | How many inner simulations to fork at each triggering event (a positive `int`). | — |
-| `set_inner_stopping_condition(...)` | When each inner branch stops — here after 5 time units past the fork, or as soon as the triggering customer finishes, whichever comes first. At least one inner rule is required. | {doc}`Stopping conditions <stop-rules-replay>` |
+| `set_triggering_objects(nested_id=...)` | Which object(s) — by their `nested_id` — are watched for trigger events. Pass a list for several. | {doc}`Triggering events <branch-triggers>` |
+| `set_triggering_conditions(spec)` | *When* to branch: a dict such as `{"on": "arrival", "frequency": 1}` (branch at every arrival). `frequency=n` branches at every *n*-th occurrence. | {doc}`Triggering events <branch-triggers>` |
+| `set_inner_repetitions(count)` | How many inner simulations to launch at each trigger event (a positive `int`). | — |
+| `set_inner_stopping_condition(...)` | When each inner branch stops — here after 5 time units past the trigger point, or as soon as the triggering customer finishes, whichever comes first. At least one inner rule is required. | {doc}`Stopping conditions <stop-rules-replay>` |
 | `set_outer_stopping_condition(timeout=...)` | When the outer simulation stops — here at time 10. | {doc}`Stopping conditions <stop-rules-replay>` |
-| `nested_run()` | Executes the configured run: the outer simulation advances, forks the inner simulations at every triggering event, and writes all outputs under `out_dir`. | — |
+| `nested_run()` | Executes the configured run: the outer simulation advances, launches the inner simulations at every trigger event, and writes all outputs under `out_dir`. | — |
 
 Two of the calls are strictly required before `nested_run()` —
 `set_inner_repetitions` and `set_inner_stopping_condition` (the run raises a

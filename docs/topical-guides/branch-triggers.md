@@ -10,7 +10,7 @@ The main configuration calls are:
 ## Triggering objects
 
 Triggering objects tell the runtime which resource, store, or container should
-be watched for branch boundaries.
+be watched for trigger events.
 
 Typical examples:
 
@@ -27,10 +27,10 @@ you never call `set_triggering_objects`, the default is a single object named
 `"srv"`; a run whose objects use other ids must set this explicitly.
 
 With **several** triggering objects, the configured condition is armed on each
-of them independently. Whichever object fires first causes the fork, and that
-object becomes the *triggering object of that fork* — the one the anchor
-customer and the state-based inner stop rules refer to (see
-{doc}`Stopping conditions <stop-rules-replay>`). The fork snapshot itself
+of them independently. Whichever object fires first causes the branching, and that
+object becomes the *triggering object of that trigger event* — the one the
+triggering customer and the state-based inner stop rules refer to (see
+{doc}`Stopping conditions <stop-rules-replay>`). The snapshot at the trigger point
 always captures the state of *all* the triggering objects, so the branches
 resume the full system consistently.
 
@@ -50,15 +50,15 @@ The condition is a plain dict with these keys:
 
 | Key | Type | Default | Meaning |
 | --- | --- | --- | --- |
-| `on` | `str` | — (required) | Which built-in boundary to watch — see the table below. An `"arrival"` is the moment a request is submitted to the object (the customer joins). |
+| `on` | `str` | — (required) | Which built-in trigger event to watch — see the table below. An `"arrival"` is the moment a request is submitted to the object (the customer joins). |
 | `frequency` / `nth` | `int` | `1` | Fire on every *n*-th matching occurrence. The two names are aliases; `frequency` is the preferred spelling. |
-| `resource` | `str` or list | `None` | Optional filter: only occurrences at this triggering object (by `nested_id`) count. Useful when several triggering objects are configured but only one should fork. |
+| `resource` | `str` or list | `None` | Optional filter: only occurrences at this triggering object (by `nested_id`) count. Useful when several triggering objects are configured but only one should trigger branching. |
 
-The counter behind `frequency` restarts after each fork: `{"on": "arrival",
-"frequency": 3}` forks at every third arrival *since the previous fork* (for a
+The counter behind `frequency` restarts after each trigger event: `{"on": "arrival",
+"frequency": 3}` branches at every third arrival *since the previous trigger event* (for a
 pure arrival trigger that is the same as every third arrival overall).
 
-`"arrival"` is one of several built-in boundaries; the same dict shape works
+`"arrival"` is one of several built-in trigger events; the same dict shape works
 for all of them:
 
 | `on` value | Applies to | Fires when |
@@ -106,7 +106,7 @@ env.nested_run()
 
 ## State-predicate triggers
 
-State-triggered branching lets the model fork when the latest observed state of
+State-triggered branching lets the model branch when the latest observed state of
 an instrumented object satisfies a predicate.
 
 ```python
@@ -119,7 +119,7 @@ env.set_triggering_conditions(
 )
 ```
 
-This is useful when the boundary of interest is not “the nth arrival” but
+This is useful when the trigger event of interest is not “the nth arrival” but
 something like “the queue first becomes nontrivial.”
 
 For `on="state_predicate"` the dict takes `predicate` (required) in addition to
@@ -183,7 +183,7 @@ require `state["current_time"] > 0`).
 Event-based branching uses the lightweight event bus exposed by `publish_event`
 (importable from `nestedsimpy`). The model *publishes* a named event wherever a
 decision point occurs in its own logic; the trigger *subscribes* to that name
-and forks the inner simulations when a matching event arrives:
+and launches the inner simulations when a matching event arrives:
 
 ```python
 from nestedsimpy import publish_event
@@ -218,22 +218,22 @@ How it works:
 - **`nth`** (optional, like the other trigger kinds) fires only on every
   n-th matching event.
 
-Each firing forks the configured inner simulations at the moment of
+Each firing launches the configured inner simulations at the moment of
 publication, exactly as an arrival trigger would. This is useful when the
-boundary is model-defined -- a control decision, a review epoch, a batch
+trigger event is model-defined -- a control decision, a review epoch, a batch
 completing -- rather than directly tied to a single queue primitive. After the
 run, each firing appears as one row in `OutputManager.export_triggers` (next
 section).
 
-## Collecting the triggering events
+## Collecting the trigger events
 
-After the run, `OutputManager.export_triggers` collects the triggering events
-into one compact table — one row per trigger, with the fork time, the state at
+After the run, `OutputManager.export_triggers` collects the trigger events
+into one compact table — one row per trigger, with the trigger time, the state at
 that moment, the number of inner simulations and their averaged outcomes:
 
 ```python
 om = OutputManager("nested_output/mm1")
-rows = om.export_triggers()            # list of dicts, one per triggering event
+rows = om.export_triggers()            # list of dicts, one per trigger event
 om.export_triggers("triggers.csv")     # ... and write a CSV
 ```
 
