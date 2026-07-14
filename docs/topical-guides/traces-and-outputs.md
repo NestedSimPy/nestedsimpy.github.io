@@ -138,18 +138,40 @@ aggregated exactly like the built-ins. The {doc}`Simple example
 built-in waiting time from the event-log rows.
 
 **The metric function.** `fn(rows, ctx)` must return a number (anything
-`float()` accepts) or `float("nan")`:
+`float()` accepts) or `float("nan")`.
 
-- `rows` is the branch's full event log as a list of dicts — the outer lead-in
-  up to the trigger point followed by the inner branch — with the same columns
-  as `export_inner_event_log` (`simulation_source`, `t`, `queue_event`,
-  `type`, `cust_id`, `nesting_object_id`, the `(<id>)state_*` columns, ...).
-  Unlike CSVs read back from disk, the values are native Python objects
-  (numbers, `None`), not strings.
-- `ctx` describes the branch, with at least: `trigger_id`, `trigger_time`,
-  `triggering_customer_id` (the triggering customer), `anchor_arrival_time`,
-  `boundary_event`, `j`, `replication_k`, `inner_seed`, `outer_seed` and
-  `outer_id`.
+`rows` is the branch's full event log as a list of dicts — the outer lead-in
+up to the trigger point followed by the inner branch — with the same columns
+as `export_inner_event_log`. Unlike CSVs read back from disk, the values are
+native Python objects (numbers, `None`), not strings.
+
+What `rows` contains:
+
+| Column | Meaning |
+| --- | --- |
+| `simulation_source` | `outer` for the lead-in rows recorded before the trigger point, `inner` for the branch itself. |
+| `t` | Simulation time of the event. |
+| `type` | Raw event name as recorded by the engine (e.g. `request_granted`). |
+| `queue_event` | The friendly event label — `arrival`, `service_start`, `service_departure`, ... |
+| `cust_id` | The customer the event belongs to. |
+| `nesting_object_id` | Which object emitted the event (its `nested_id`). |
+| `(<id>)state_*` | The state of each nesting object after the event — one column group per object, prefixed with its `nested_id`. |
+| `run_kind`, `outer_id`, `j`, `k`, `anchor_cust_id`, ... | Bookkeeping columns identifying the run and branch each row belongs to (the same columns as in the exported CSVs). |
+
+`ctx` describes the branch. What `ctx` contains:
+
+| Key | Meaning |
+| --- | --- |
+| `trigger_id` | Id of the trigger event — the triggering customer's id. |
+| `trigger_time` | Simulation time at which the trigger event fired. |
+| `triggering_customer_id` | The triggering customer's id (identical to `trigger_id`). |
+| `anchor_arrival_time` | Arrival time of the triggering customer. |
+| `boundary_event` | The event type that fired the trigger (e.g. `arrival`). |
+| `j` | Internal index of the trigger event within the run (the order in which triggers fired). |
+| `replication_k` | The branch's replication number `k` — the same value as `inner_id`. |
+| `inner_seed` | Random seed used by this inner branch. |
+| `outer_seed` | Random seed of the outer simulation. |
+| `outer_id` | Identifier of the outer run. |
 
 **Missing values.** Returning `float("nan")` (or `None`) marks the branch's
 value as missing — it is stored as JSON `null` and skipped by the mean/std

@@ -197,7 +197,7 @@ def fig_inner(om: OutputManager, *, all_inners: bool) -> None:
                 label=f"inner branch k={k}")
     ax.axvline(0.0, color="black", linewidth=0.8, linestyle=":", alpha=0.4)
     title = ("All inner branches" if all_inners else "A single inner branch")
-    ax.set_title(f"{title} (trigger {info.trigger_id})")
+    ax.set_title(f"{title} (trigger event {info.trigger_id})")
     ax.set_xlabel("time since trigger", fontsize=12)
     ax.set_ylabel(Y_LABEL, fontsize=12)
     ax.set_ylim(bottom=0)
