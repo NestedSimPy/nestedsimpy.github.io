@@ -187,6 +187,41 @@ per-trigger `[all]-metrics.json` gains `<name>_mean` / `<name>_std`, and
 `export_outer_case_table` / `export_triggers` automatically gain
 `inner_<name>_mean` / `inner_<name>_std` columns next to the built-in six.
 
+**Writing your own metric: a recipe.**
+
+1. Decide the quantity, and make sure it is *observable*: it must be
+   computable from the event-log columns above. Queue counts and waits
+   already are; a model-specific quantity (a cost, a score) becomes
+   observable by tracking it in a `NestedContainer` -- its
+   `(<id>)state_level` column then appears in every row.
+2. Scan `rows` for the events or state values you need, using `ctx` for the
+   branch's identity (which customer triggered it, when, which replication).
+3. Return one number -- or `float("nan")` whenever the quantity is undefined
+   for this branch.
+4. Register it before the run: `env.register_metric("my_metric", fn)`.
+
+A second example -- the branch's time-average number in system, computed by
+integrating the piecewise-constant state over the inner segment:
+
+```python
+def avg_in_system(rows, ctx):
+    area, last_t, last_n = 0.0, None, None
+    for row in rows:
+        if row["simulation_source"] != "inner":
+            continue                                # inner segment only
+        n = row.get("(srv)state_num_customers_in_system")
+        if n is None:
+            continue                                # row of another object
+        if last_t is not None:
+            area += (row["t"] - last_t) * last_n    # exact for DES state
+        last_t, last_n = row["t"], n
+    if last_t is None:
+        return float("nan")                         # no inner activity
+    return area / (last_t - ctx["trigger_time"]) if last_t > ctx["trigger_time"] else float("nan")
+
+env.register_metric("avg_in_system", avg_in_system)
+```
+
 `name` must be a non-empty string that collides neither with a built-in metric
 key (`waiting_time`, `service_completion_time`, ...) nor with an
 already-registered metric. Registering a metric implies packaging (like
