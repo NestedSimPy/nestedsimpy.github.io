@@ -26,6 +26,13 @@ What are triggering events and how to define them?
 Defining when the outer and inner simulation stop.
 ```
 
+```{grid-item-card} Replay
+:link: replay
+:link-type: doc
+
+Re-running a single branch deterministically.
+```
+
 ```{grid-item-card} Visualization
 :link: visualization
 :link-type: doc
@@ -48,6 +55,7 @@ Exporting the nested simulation output.
 branching-model
 branch-triggers
 stop-rules-replay
+replay
 visualization
 traces-and-outputs
 ```

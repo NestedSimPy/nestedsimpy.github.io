@@ -98,7 +98,8 @@ run_single_path(*, trigger_index, branch_index, outer_seed=None, **overrides) ->
   silenced by default so forked runs don't spam stdout).
 - **`nested_run`** — run the configured nested simulation.
 - **`run_single_path`** — re-run one branch `(trigger_index, branch_index)`
-  deterministically, for inspecting a path a full run surfaced.
+  deterministically, for inspecting a path a full run surfaced. See
+  {doc}`Replay <../topical-guides/replay>`.
 
 ## Instrumented primitives
 
