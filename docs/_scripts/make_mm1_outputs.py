@@ -269,7 +269,7 @@ def table_inner(om: OutputManager) -> None:
     before = [r for r in rows if r.get("simulation_source") == "outer"][-4:]
     inner = [r for r in rows if r.get("simulation_source") == "inner"]
     out = [
-        (r.get("simulation_source"), _num(r.get("t")))
+        (r.get("simulation_source"), _num(r.get("t")), r.get("cust_id"))
         + tuple(_num(r.get(col), 0) for col, _ in STATE_COLUMNS)
         + (r.get("queue_event"),)
         for r in before + inner
@@ -282,7 +282,7 @@ def table_inner(om: OutputManager) -> None:
         f"{info.trigger_id}.</em></p>"
     )
     html = caption + "\n" + _scroll_table(
-        ["Simulation source", "Time"]
+        ["Simulation source", "Time", "Customer"]
         + [header for _, header in STATE_COLUMNS]
         + ["Event"],
         out,
