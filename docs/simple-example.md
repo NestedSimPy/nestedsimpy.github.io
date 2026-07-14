@@ -418,7 +418,11 @@ the triggering customer, its arrival time, the replication number, and more.
 The function may return NaN when the quantity is undefined for a branch (e.g. the triggering customer was not
 served within the horizon), and NaN branches are skipped in the aggregation.
 (The `type` field holds raw event names such as `request_granted`; the
-table's Event column shows their friendly labels, e.g. `service_start`.):
+table's Event column shows their friendly labels, e.g. `service_start`.)
+
+As an example, here is a user-written function that recomputes the first of
+those two columns — **Mean inner wait** — from the event log. Add it to the
+nested model at the top of this page, anywhere before `env.nested_run()`:
 
 ```python
 def user_wait(rows, ctx):
@@ -432,8 +436,9 @@ def user_wait(rows, ctx):
 
 env.register_metric("user_wait", user_wait)   # register BEFORE nested_run()
 env.nested_run()
-# the case table now carries inner_user_wait_mean / inner_user_wait_std --
-# for this metric, identical to the built-in mean inner wait column
+# the prediction table above gains two extra columns,
+# inner_user_wait_mean / inner_user_wait_std -- with values identical
+# to its Mean inner wait column
 ```
 
 Registering `user_wait` reproduces the built-in waiting-time column exactly —
