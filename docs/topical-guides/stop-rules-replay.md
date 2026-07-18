@@ -27,7 +27,9 @@ When both are given, whichever fires first ends the run. If neither is given,
 the outer run only ends when the model runs out of scheduled events — a model
 with an endless arrival generator would then never stop, so in practice always
 set at least one bound. The reason the outer run ended (`time_limit`,
-`arrival_limit`, or `no_events`) is recorded in the run's outer manifest.
+`arrival_limit`, or `no_events`) is recorded as the `stop_reason` in the
+outer manifest — the small `manifest.json` summary written next to the outer
+trace under `raw/` (see {doc}`Raw data <../api/raw-data>`).
 
 Note the asymmetry with the inner rules below: the outer stop accepts only
 these two bounds. `StartStopSpec` and custom stop events (next section) apply
@@ -71,7 +73,8 @@ Three behaviours are worth knowing before composing rules:
   stops at whichever fires first. Each branch records which rule ended it as a
   structured `stop_reason` in its manifest — `time_horizon` (from
   `relative_time`), `absolute_time`, `anchor_departed` (from
-  `triggering_customer_departs`), or `state_spec` (from `event=`).
+  `triggering_customer_departs`; the raw outputs call the triggering
+  customer the *anchor*), or `state_spec` (from `event=`).
 - **At least one rule is required.** A run with no inner stopping condition
   fails at the first trigger event with
   `RuntimeError: Configure at least one inner stopping condition`.
