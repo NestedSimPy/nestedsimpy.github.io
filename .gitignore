@@ -8,3 +8,6 @@ __pycache__/
 
 # OS
 .DS_Store
+
+# Claude session data - never commit (public repo)
+.claude/
