@@ -27,7 +27,9 @@ equivalents that support nested simulation:
 There is not currently a separate `NestedPriorityResource` class. The
 functionality of SimPy's `PriorityResource` can be worked around using
 `NestedPreemptiveResource`, which preserves SimPy's priority/preemption
-request path while adding tracing and branch hooks.
+request path while adding tracing and branch hooks. Pass `preempt=False` on
+each request to reproduce `PriorityResource`'s non-preemptive behaviour — the
+default `preempt=True` will interrupt an in-service customer.
 
 The wrapped objects take the same constructor arguments as their SimPy
 counterparts, plus one keyword argument: **`nested_id`**, a string naming the
