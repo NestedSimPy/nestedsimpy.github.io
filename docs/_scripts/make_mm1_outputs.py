@@ -1,7 +1,8 @@
 """Regenerate the Simple-example figures and tables from one nested run.
 
 The four figures (static outer, interactive outer, one inner, all inners) and the
-three dataset tables (one inner path, the outer path, the prediction table) on
+four dataset tables (one inner path, the outer path, the prediction table, and
+the user-metric excerpt) on
 ``simple-example.md`` are all produced from a single nested M/M/1 run that
 matches ``simpy_examples/mm1_nested.py`` (seed 42, independent branches). The
 plotted metric is the **queue length** at the server.
@@ -12,8 +13,9 @@ Usage (needs the nestedsimpy package on the path)::
 
 Outputs (overwritten) under docs/_static/:
   mm1-outer-static.svg, mm1-interactive.html, mm1-inner-one.svg, mm1-inner-all.svg
-  mm1-table-inner.html, mm1-table-outer.html, mm1-table-pred.html
-and the three tables are injected into simple-example.md between their markers.
+  mm1-table-inner.html, mm1-table-outer.html, mm1-table-pred.html,
+  mm1-table-user.html
+and the four tables are injected into simple-example.md between their markers.
 """
 
 from __future__ import annotations
@@ -87,12 +89,28 @@ def run_model(out_dir: str) -> str:
     env.set_inner_repetitions(BRANCHES)
     env.set_inner_stopping_condition(relative_time=INNER_HORIZON)
     env.set_outer_stopping_condition(timeout=SIM_TIME)
+
+    # The user-defined metric shown on the page (arguments named as in the
+    # docs: eventlog + inner_sim_context).
+    def user_wait(eventlog, inner_sim_context):
+        for row in eventlog:
+            if (row["simulation_source"] == "inner"
+                    and row["cust_id"] == inner_sim_context["triggering_customer_id"]
+                    and row["type"] == "request_granted"):
+                return row["t"] - inner_sim_context["anchor_arrival_time"]
+        return float("nan")            # not served within the horizon
+
+    env.register_metric("user_wait", user_wait)
     env.nested_run()
 
+    # nested_run packages automatically when metrics are registered (the
+    # exports then carry the user-metric columns); re-packaging here would
+    # overwrite them without the metric functions.
     for dirpath, _dirnames, _files in os.walk(out_dir):
         if os.path.basename(dirpath) == "raw":
             run_dir = os.path.dirname(dirpath)
-            package_run_outputs(run_dir)
+            if not os.path.isdir(os.path.join(run_dir, "exports")):
+                package_run_outputs(run_dir)
             return run_dir
     raise RuntimeError("no run directory produced")
 
@@ -295,17 +313,19 @@ def table_outer(om: OutputManager) -> None:
     """The outer sample path."""
 
     rows = om.export_outer_event_log()
+    # Same column order as the inner table (minus its Simulation source
+    # column): Time, Customer, the state columns, Event.
     out = [
-        (_num(r.get("t")),)
+        (_num(r.get("t")), r.get("cust_id"))
         + tuple(_num(r.get(col), 0) for col, _ in STATE_COLUMNS)
-        + (r.get("queue_event"), r.get("cust_id"))
+        + (r.get("queue_event"),)
         for r in rows
         if r.get(METRIC) not in (None, "")
     ]
     html = _scroll_table(
-        ["Time"]
+        ["Time", "Customer"]
         + [header for _, header in STATE_COLUMNS]
-        + ["Event", "Customer"],
+        + ["Event"],
         out,
     )
     (STATIC / "mm1-table-outer.html").write_text(html + "\n", encoding="utf-8")
@@ -356,6 +376,43 @@ def table_predictions(om: OutputManager) -> None:
     _inject("mm1-table-pred", html)
 
 
+def table_user(om: OutputManager) -> None:
+    """First rows of the prediction table with the user_wait columns."""
+
+    rows = [
+        r for r in om.export_outer_case_table()
+        if r.get("inner_num_branches") not in (None, "")
+    ]
+    # Start at customer 1: customer 0 entered service at the trigger instant
+    # itself (outer-side), so user_wait returns NaN in every branch while the
+    # built-in column reports an exact zero -- explained in the page text.
+    shown = rows[1:9]
+    out = [
+        (
+            r.get("cust_id"),
+            _num(r.get("inner_waiting_time_mean")),
+            _num(r.get("inner_user_wait_mean")),
+            _num(r.get("inner_user_wait_std")),
+        )
+        for r in shown
+    ]
+    caption = (
+        '<p class="ns-dataset-caption"><em>Prediction rows for customers '
+        f"1&ndash;{len(shown)} (of {len(rows)}).</em></p>"
+    )
+    html = caption + "\n" + _scroll_table(
+        [
+            "Customer",
+            "Mean inner wait",
+            "inner_user_wait_mean",
+            "inner_user_wait_std",
+        ],
+        out,
+    )
+    (STATIC / "mm1-table-user.html").write_text(html + "\n", encoding="utf-8")
+    _inject("mm1-table-user", html)
+
+
 def main() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         run_dir = run_model(os.path.join(tmp, "out"))
@@ -367,6 +424,7 @@ def main() -> None:
         table_inner(om)
         table_outer(om)
         table_predictions(om)
+        table_user(om)
 
 
 if __name__ == "__main__":

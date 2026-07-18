@@ -142,15 +142,15 @@ aggregated exactly like the built-ins. The {doc}`Simple example
 <../simple-example>` shows a worked metric (`user_wait`) that reproduces the
 built-in waiting time from the event-log rows.
 
-**The metric function.** `fn(rows, ctx)` must return a number (anything
-`float()` accepts) or `float("nan")`.
+**The metric function.** `fn(eventlog, inner_sim_context)` must return a
+number (anything `float()` accepts) or `float("nan")`.
 
-`rows` is the branch's full event log as a list of dicts — the outer lead-in
+`eventlog` is the branch's full event log as a list of dicts — the outer lead-in
 up to the trigger point followed by the inner branch — with the same columns
 as `export_inner_event_log`. Unlike CSVs read back from disk, the values are
 native Python objects (numbers, `None`), not strings.
 
-What `rows` contains:
+What `eventlog` rows contain:
 
 | Column | Meaning |
 | --- | --- |
@@ -163,7 +163,7 @@ What `rows` contains:
 | `(<id>)state_*` | The state of each nesting object after the event — one column group per object, prefixed with its `nested_id`. |
 | `run_kind`, `outer_id`, `j`, `k`, `anchor_cust_id`, ... | Bookkeeping columns identifying the run and branch each row belongs to (the same columns as in the exported CSVs). |
 
-`ctx` describes the branch. What `ctx` contains:
+`inner_sim_context` describes the branch. What it contains:
 
 | Key | Meaning |
 | --- | --- |
@@ -199,8 +199,9 @@ per-trigger `[all]-metrics.json` gains `<name>_mean` / `<name>_std`, and
    already are; a model-specific quantity (a cost, a score) becomes
    observable by tracking it in a `NestedContainer` -- its
    `(<id>)state_level` column then appears in every row.
-2. Scan `rows` for the events or state values you need, using `ctx` for the
-   branch's identity (which customer triggered it, when, which replication).
+2. Scan `eventlog` for the events or state values you need, using
+   `inner_sim_context` for the branch's identity (which customer triggered
+   it, when, which replication).
 3. Return one number -- or `float("nan")` whenever the quantity is undefined
    for this branch.
 4. Register it before the run: `env.register_metric("my_metric", fn)`.
@@ -209,9 +210,9 @@ A second example -- the branch's time-average number in system, computed by
 integrating the piecewise-constant state over the inner segment:
 
 ```python
-def avg_in_system(rows, ctx):
+def avg_in_system(eventlog, inner_sim_context):
     area, last_t, last_n = 0.0, None, None
-    for row in rows:
+    for row in eventlog:
         if row["simulation_source"] != "inner":
             continue                                # inner segment only
         n = row.get("(srv)state_num_customers_in_system")
@@ -222,7 +223,8 @@ def avg_in_system(rows, ctx):
         last_t, last_n = row["t"], n
     if last_t is None:
         return float("nan")                         # no inner activity
-    return area / (last_t - ctx["trigger_time"]) if last_t > ctx["trigger_time"] else float("nan")
+    start = inner_sim_context["trigger_time"]
+    return area / (last_t - start) if last_t > start else float("nan")
 
 env.register_metric("avg_in_system", avg_in_system)
 ```
