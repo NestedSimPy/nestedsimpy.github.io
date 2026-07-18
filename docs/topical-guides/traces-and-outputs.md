@@ -47,9 +47,10 @@ om.export_inner_event_log(trigger_id=0, inner_id=0)                  # rows
 om.export_inner_event_log(trigger_id=0, inner_id=0, path="inner.csv")
 ```
 
-`trigger_id` is the id of the trigger event — one of `om.trigger_ids`, which
-are the triggering customer ids — and `inner_id` selects the branch (`0` to
-`K-1`; each trigger's valid ids are listed by `om.triggers()`). The rows have
+`trigger_id` is the id of the trigger event — one of `om.trigger_ids`, the
+sequential indices along the outer path (`0` for the first trigger event, `1`
+for the second, ...) — and `inner_id` selects the branch (`0` to `K-1`; each
+trigger's valid ids are listed by `om.triggers()`). The rows have
 the same columns as `export_outer_event_log`, plus `simulation_source` as the first
 column: `outer` marks the shared history recorded before the trigger point, `inner` the
 branch itself.
@@ -69,8 +70,9 @@ Six columns are appended to every row: `inner_num_branches`,
 `inner_anchor_arrival_time_mean`, `inner_waiting_time_mean`,
 `inner_waiting_time_std`, `inner_service_completion_time_mean` and
 `inner_service_completion_time_std`. They are filled on exactly one row per
-trigger event (the triggering customer's row at the trigger time) and left empty
-everywhere else — so filtering the table to non-empty `inner_waiting_time_mean`
+trigger event (the triggering customer's row at the trigger time; for a
+trigger without one, the last row recorded before the trigger moment) and
+left empty everywhere else — so filtering the table to non-empty `inner_waiting_time_mean`
 yields one feature/label pair per trigger. (The mean is currently the only
 supported aggregate; the older spelling `export_outer(inner_aggregate="mean")`
 still works as an alias.)
@@ -78,8 +80,9 @@ still works as an alias.)
 ## The trigger events
 
 `export_triggers` keeps only the trigger events themselves — one row per
-trigger. Each row carries `trigger_id` and `anchor_cust_id` (the triggering
-customer), the trigger time `t`, the `boundary_event` that fired, the object's
+trigger. Each row carries `trigger_id` (the sequential trigger index) and
+`anchor_cust_id` (the triggering customer, blank for triggers without one —
+e.g. a state predicate firing on an empty system), the trigger time `t`, the `boundary_event` that fired, the object's
 `state_*` columns at the trigger moment, `num_branches` (how many inner
 simulations were launched there) and the averaged inner outcomes
 (`inner_waiting_time_mean`, `inner_service_completion_time_mean`, ...):
@@ -90,8 +93,9 @@ om.export_triggers("triggers.csv")     # ... and write a CSV
 ```
 
 The full column list, in order: `trigger_id`, `t`, `boundary_event`,
-`anchor_cust_id`, the `(<id>)state_*` columns copied from the outer row at the
-trigger moment, `num_branches`, then `inner_anchor_arrival_time_mean`,
+`anchor_cust_id`, the `(<id>)state_*` columns copied from the outer row at (or, for
+anchor-less triggers, immediately before) the trigger moment — blank when
+nothing had been recorded yet, e.g. a trigger at time 0 — `num_branches`, then `inner_anchor_arrival_time_mean`,
 `inner_waiting_time_mean`, `inner_waiting_time_std`,
 `inner_service_completion_time_mean` and `inner_service_completion_time_std`.
 
@@ -106,9 +110,9 @@ shows both. Packaging writes the packaged `exports/` in **three forms**, for
 three different needs:
 
 1. **Per-realization files** — one CSV *per inner simulation*,
-   `[seed][trigger,boundary][inner].csv` (the outer lead-in, then that inner's
-   own path), alongside the outer path `[seed]-outer.csv` and the per-trigger
-   metric JSONs. These are what `export_outer_event_log` /
+   `[seed][j=trigger][customer,boundary][k=inner][inner seed].csv` (the outer
+   lead-in, then that inner's own path), alongside the outer path
+   `[seed]-outer.csv` and the per-trigger metric JSONs. These are what `export_outer_event_log` /
    `export_inner_event_log` above read.
 2. **Consolidated tables** — the outer and *all* inners flattened into single
    files: `state_wide.csv` (one row per recorded state), `state_long.csv` (the
@@ -117,11 +121,12 @@ three different needs:
 3. **Your own metric** — whatever a postprocessor writes (see below); the
    bundled wait-time hook produces `user_waits.csv`, one waiting time per inner.
 
-Reading a per-realization name such as `[42][2,arrival][0].csv`: the outer
-seed was `42`, the trigger is the one whose triggering customer is `2`, fired by an
-`arrival` trigger event, and the last bracket is an internal branch identifier —
-it is *not* the `inner_id`, so prefer `om.trigger_ids` / `om.triggers()` over
-parsing file names.
+Reading a per-realization name such as `[42][j=1][2,arrival][k=0][7].csv`:
+the outer seed was `42`, this is trigger event `1` (the second trigger on the
+outer path), its triggering customer is `2` (`-` for triggers without one),
+the boundary that fired was an `arrival`, the branch is inner `0`, and the
+last bracket is that branch's seed. Prefer `om.trigger_ids` / `om.triggers()`
+over parsing file names.
 
 Inspect `raw/` when debugging a single branch; the raw event format is described
 under {doc}`Raw data <../api/raw-data>`.
@@ -162,12 +167,12 @@ What `rows` contains:
 
 | Key | Meaning |
 | --- | --- |
-| `trigger_id` | Id of the trigger event — the triggering customer's id. |
+| `trigger_id` | Id of the trigger event — the sequential index along the outer path (0, 1, 2, ...). |
 | `trigger_time` | Simulation time at which the trigger event fired. |
-| `triggering_customer_id` | The triggering customer's id (identical to `trigger_id`). |
-| `anchor_arrival_time` | Arrival time of the triggering customer. |
-| `boundary_event` | The event type that fired the trigger (e.g. `arrival`). |
-| `j` | Internal index of the trigger event within the run (the order in which triggers fired). |
+| `triggering_customer_id` | The triggering customer's id (`None` for triggers without one). |
+| `anchor_arrival_time` | Arrival time of the triggering customer (the trigger time itself when there is none). |
+| `boundary_event` | The event type that fired the trigger (e.g. `arrival`). With several conditions configured, this identifies which one fired. |
+| `j` | Alias of `trigger_id` (the order in which triggers fired). |
 | `replication_k` | The branch's replication number `k` — the same value as `inner_id`. |
 | `inner_seed` | Random seed used by this inner branch. |
 | `outer_seed` | Random seed of the outer simulation. |

@@ -1,6 +1,6 @@
 # Triggering events
 
-NestedSimPy branches when the configured nesting condition fires.
+NestedSimPy branches when a configured triggering condition fires.
 
 The main configuration calls are:
 
@@ -26,13 +26,13 @@ output columns (see {doc}`From SimPy to NestedSimPy <branching-model>`). If
 you never call `set_triggering_objects`, the default is a single object named
 `"srv"`; a run whose objects use other ids must set this explicitly.
 
-With **several** triggering objects, the configured condition is armed on each
-of them independently. Whichever object fires first causes the branching, and that
-object becomes the *triggering object of that trigger event* — the one the
-triggering customer and the state-based inner stop rules refer to (see
-{doc}`Stopping conditions <stop-rules-replay>`). The snapshot at the trigger point
-always captures the state of *all* the triggering objects, so the branches
-resume the full system consistently.
+With **several** triggering objects, the condition is armed on each object
+independently, and the first object to fire causes the branching. That object
+becomes the *triggering object of the trigger event*: the triggering customer
+and the state-based inner stop rules refer to it (see
+{doc}`Stopping conditions <stop-rules-replay>`). The snapshot taken at the
+trigger point still captures *all* the triggering objects, so every branch
+resumes the full system consistently.
 
 ## Arrival triggers
 
@@ -42,11 +42,13 @@ Arrival-based branching is the simplest mode and the most common starting point.
 env.set_triggering_conditions({"on": "arrival", "frequency": 1})
 ```
 
-That means branch on every arrival at the primary triggering object.
+That means branch on every arrival at the triggering object.
 
 You can also use `nth` instead of `frequency`.
 
-The condition is a plain dict with these keys:
+A condition is a plain dict with these keys (you can also pass a **list** of
+such dicts to arm several conditions at once — see “Several conditions at
+once” below):
 
 | Key | Type | Default | Meaning |
 | --- | --- | --- | --- |
@@ -123,9 +125,8 @@ This is useful when the trigger event of interest is not “the nth arrival” b
 something like “the queue first becomes nontrivial.”
 
 For `on="state_predicate"` the dict takes `predicate` (required) in addition to
-the shared keys above: here `resource` names which triggering object the
-predicate watches, and `frequency`/`nth` counts *rising edges* — with
-`"frequency": 2`, every second time the predicate flips from false to true.
+the shared keys above; `resource` names which triggering object the predicate
+watches.
 
 ### What the predicate receives
 
@@ -137,9 +138,28 @@ return `True` to branch; the trigger fires on the *rising edge*, i.e. the
 moment the predicate flips from false to true, so a queue that stays long does
 not re-trigger on every subsequent event.
 
-(The predicate may also accept `(state, resource)` or `(state, resource, env)`
-when it needs the object or the environment as extra context; the
-one-argument form is the common case.)
+The one-argument form is the common case, but the predicate may declare up to
+three parameters and NestedSimPy passes what it asks for:
+
+| Signature | What the predicate receives |
+| --- | --- |
+| `lambda state: ...` | just the state snapshot — enough for most conditions |
+| `lambda state, resource: ...` | plus the triggering object itself, for attributes the snapshot does not carry |
+| `lambda state, resource, env: ...` | plus the environment, to reach the rest of the model |
+
+For example, “the queue is at least as long as the server pool” needs the
+object's capacity, which is an attribute of the resource rather than a
+snapshot field:
+
+```python
+env.set_triggering_conditions(
+    {
+        "on": "state_predicate",
+        "resource": "srv",
+        "predicate": lambda state, resource: state["queue_len"] >= resource.capacity,
+    }
+)
+```
 
 For a `NestedResource` (and `NestedPreemptiveResource`) the snapshot contains:
 
@@ -180,10 +200,11 @@ require `state["current_time"] > 0`).
 
 ## Event triggers
 
-Event-based branching uses the lightweight event bus exposed by `publish_event`
-(importable from `nestedsimpy`). The model *publishes* a named event wherever a
-decision point occurs in its own logic; the trigger *subscribes* to that name
-and launches the inner simulations when a matching event arrives:
+Sometimes the natural moment to branch is not a queue event but a point in
+your own model logic — a control decision, a review epoch, a batch completing.
+Event triggers cover this case: the model *announces* the moment by calling
+`publish_event` (importable from `nestedsimpy`) with an event name, and the
+trigger fires whenever an event with that name is published:
 
 ```python
 from nestedsimpy import publish_event
@@ -205,25 +226,67 @@ env.set_triggering_conditions(
 
 How it works:
 
-- **`publish_event(name, payload)`** takes an event name and an optional
-  `payload` -- a plain dict that you, the publisher, fill with whatever
-  describes the moment (there are no required keys; `payload` defaults to an
-  empty dict).
-- **`name`** filters which published events the trigger listens to; other
-  event names are ignored.
-- **`predicate`** receives that same payload dict and returns `True` to fire.
-  Omit it to fire on every published event with that name. (The predicate may
-  optionally accept `(payload, resource)` or `(payload, resource, env)` if it
-  needs more context.)
-- **`nth`** (optional, like the other trigger kinds) fires only on every
-  n-th matching event.
+- **`publish_event(name, payload)`** — call it anywhere in your model code.
+  `name` is the announcement; `payload` is an optional plain dict you fill
+  with whatever describes the moment (no required keys; defaults to an empty
+  dict).
+- **`name`** in the condition selects which announcements this trigger
+  listens to; other event names are ignored.
+- **`predicate`** (optional) receives the payload dict and returns `True` to
+  fire. Omit it to fire on every announcement with that name. (As with state
+  predicates, it may also accept `(payload, resource)` or
+  `(payload, resource, env)` for extra context.)
+- **`frequency`/`nth`** (optional, as for the other trigger kinds) fires only
+  on every *n*-th matching announcement.
 
 Each firing launches the configured inner simulations at the moment of
-publication, exactly as an arrival trigger would. This is useful when the
-trigger event is model-defined -- a control decision, a review epoch, a batch
-completing -- rather than directly tied to a single queue primitive. After the
-run, each firing appears as one row in `OutputManager.export_triggers` (next
-section).
+publication, exactly as an arrival trigger would, and appears as one row in
+`OutputManager.export_triggers` after the run (see "Collecting the trigger
+events" below).
+
+## Several conditions at once
+
+`set_triggering_conditions` also accepts a **list** of condition dicts. Every
+condition in the list is armed at the same time, and whichever fires first
+causes the branching — an *any-of* combination:
+
+```python
+env.set_triggering_conditions(
+    [
+        {"on": "arrival", "frequency": 2},
+        {"on": "state_predicate", "predicate": lambda state: state["queue_len"] >= 2},
+    ]
+)
+```
+
+Details worth knowing:
+
+- Every trigger event records **which** condition fired: the `boundary_event`
+  column in the exported tables carries that condition's `on` value
+  (`"arrival"`, `"state_predicate"`, ...). See
+  {doc}`Exporting data <traces-and-outputs>`.
+- If two conditions are satisfied at the same instant, the one listed first
+  wins and the run continues with a single trigger event, not two.
+- After each trigger event all conditions re-arm together and their
+  `frequency` counters restart — the same restart rule as for a single
+  condition.
+- This composes with several triggering objects: every condition is armed on
+  every object, and the first (object, condition) pair to fire causes the
+  branching.
+
+To require several things to hold **at the same time** (an *and*
+combination), do not list separate conditions — put the whole requirement
+inside one predicate:
+
+```python
+env.set_triggering_conditions(
+    {
+        "on": "state_predicate",
+        "predicate": lambda state: state["queue_len"] >= 2
+        and state["in_service_customer_id"] is not None,
+    }
+)
+```
 
 ## Collecting the trigger events
 
@@ -241,9 +304,11 @@ See {doc}`Exporting data <traces-and-outputs>` for the full column list.
 
 ## Choosing a first trigger
 
+```{tip}
 If you are introducing NestedSimPy to an existing SimPy model:
 
 - start with arrival triggers,
 - switch to state predicates when queue conditions matter more than counts,
-- use event triggers when the natural decision point is already explicit in your
-  model logic.
+- use event triggers when the natural decision point is already explicit in
+  your model logic.
+```

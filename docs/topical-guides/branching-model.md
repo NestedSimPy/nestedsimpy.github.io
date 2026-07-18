@@ -145,7 +145,7 @@ Line by line, each call configures one aspect of the run:
 | `set_output_options(out_dir=..., gzip_trace=...)` | Where the run's outputs are written (`out_dir`, a directory path — each run creates a fresh subdirectory inside it) and whether the raw trace files are gzip-compressed (`gzip_trace`, default `True`; `False` keeps them human-readable). | {doc}`Exporting data <traces-and-outputs>` |
 | `set_rng(mode)` | How the inner branches draw randomness: `"independent"` or `"CRN"` — see below. | — |
 | `set_triggering_objects(nested_id=...)` | Which object(s) — by their `nested_id` — are watched for trigger events. Pass a list for several. | {doc}`Triggering events <branch-triggers>` |
-| `set_triggering_conditions(spec)` | *When* to branch: a dict such as `{"on": "arrival", "frequency": 1}` (branch at every arrival). `frequency=n` branches at every *n*-th occurrence. | {doc}`Triggering events <branch-triggers>` |
+| `set_triggering_conditions(spec)` | *When* to branch: a dict such as `{"on": "arrival", "frequency": 1}` (branch at every arrival), or a list of such dicts to arm several conditions at once. `frequency=n` branches at every *n*-th occurrence. | {doc}`Triggering events <branch-triggers>` |
 | `set_inner_repetitions(count)` | How many inner simulations to launch at each trigger event (a positive `int`). | — |
 | `set_inner_stopping_condition(...)` | When each inner branch stops — here after 5 time units past the trigger point, or as soon as the triggering customer finishes, whichever comes first. At least one inner rule is required. | {doc}`Stopping conditions <stop-rules-replay>` |
 | `set_outer_stopping_condition(timeout=...)` | When the outer simulation stops — here at time 10. | {doc}`Stopping conditions <stop-rules-replay>` |

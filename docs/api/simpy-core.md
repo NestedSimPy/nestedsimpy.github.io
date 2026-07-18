@@ -44,7 +44,8 @@ set_rng(mode='CRN', *, policy_fn=None)
 set_outer_seed(seed)
 set_inner_seed(seed)
 set_triggering_objects(*names, nested_id=None)   # which objects can trigger
-set_triggering_conditions(spec)                            # when a trigger fires a branch
+set_triggering_conditions(spec)                  # when a trigger fires a branch
+                                                 # (one condition dict, or a list: any-of)
 set_inner_stopping_condition(*, relative_time=None, absolute_time=None,
                             triggering_customer_departs=False, event=None)
 set_outer_stopping_condition(*, timeout=None, max_arrivals=None)
@@ -62,7 +63,9 @@ clear_branching()
 - **`set_triggering_objects`** — which instrumented object(s) are watched
   for triggers. See {doc}`Triggering events <../topical-guides/branch-triggers>`.
 - **`set_triggering_conditions`** — the trigger event that fires a branch (on an arrival,
-  a state predicate, or a published event).
+  a state predicate, or a published event). Accepts one condition dict or a
+  list of them — with a list, every condition is armed at the same time and whichever
+  fires first causes the branching.
 - **`set_inner_stopping_condition`** — when each inner branch stops (a relative
   or absolute time, the triggering customer departing, or a `StartStopSpec`). See
   {doc}`Stopping conditions <../topical-guides/stop-rules-replay>`.
@@ -224,7 +227,8 @@ close() -> None
 ## Types
 
 - **`BoundarySpec`** — a `TypedDict` describing how and when to trigger
-  branching (the value passed to `set_triggering_conditions`).
+  branching. `set_triggering_conditions` takes one such dict or a sequence of
+  them (any-of).
 - **`StartStopSpec`** — a declarative composition of inner stop rules
   (`time_ge`, `queue_ge`, `system_empty`, a `custom` predicate, `any_of`,
   `all_of`); passed as the `event=` of `set_inner_stopping_condition`.

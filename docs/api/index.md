@@ -74,7 +74,7 @@ nested_output/<experiment>/<outer_id>/
     outer/                   #   the outer run (trace.jsonl, manifest.json)
     j=0001/k=00/             #   one folder per branch (j = trigger, k = branch)
   exports/                   # packaged datasets, in three forms:
-    [seed][j,bnd][inner].csv    #   per-inner files (+ [seed]-outer.csv, metric JSONs)
+    [seed][j=..][cust,bnd][k=..][inner].csv  # per-inner files (+ [seed]-outer.csv, metric JSONs)
     state_wide.csv …            #   consolidated tables (state_wide/long, events)
     user_waits.csv              #   a postprocessor's own metric
 ```

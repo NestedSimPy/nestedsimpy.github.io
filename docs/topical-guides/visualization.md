@@ -20,21 +20,22 @@ has not been packaged yet, the manager packages it on first use.
 The trigger events are discovered automatically:
 
 ```python
-om.trigger_ids          # e.g. [0, 1, 2, ...]  (triggering customer ids)
-om.triggers()           # TriggerInfo(trigger_id, boundary, branch_time, inner_ids)
+om.trigger_ids          # e.g. [0, 1, 2, ...]  (sequential trigger indices)
+om.triggers()           # TriggerInfo(trigger_id, boundary, branch_time, inner_ids, anchor_cust_id)
 ```
 
-`trigger_ids` are the **triggering customer ids**, so they are not necessarily
-consecutive — a run that branches at every third arrival has ids `[2, 5, 8, ...]`.
-Every `trigger_id=` argument below expects one of these ids. `triggers()`
-returns one `TriggerInfo` per trigger event, carrying:
+`trigger_ids` are the **sequential trigger indices** along the outer path —
+`0` for the first trigger event, `1` for the second, and so on, whatever
+fired them. Every `trigger_id=` argument below expects one of these ids.
+`triggers()` returns one `TriggerInfo` per trigger event, carrying:
 
 | Field | Meaning |
 | --- | --- |
-| `trigger_id` | The triggering customer id (the same id space as `trigger_ids`). |
+| `trigger_id` | The sequential trigger index (the same id space as `trigger_ids`). |
 | `boundary` | Which trigger event fired (e.g. `"arrival"`). |
 | `branch_time` | The simulation time of the trigger. |
 | `inner_ids` | The ids of the inner simulations launched there, `[0, 1, ..., K-1]` — what `inner_id=` expects. |
+| `anchor_cust_id` | The triggering customer, or `None` for triggers without one. |
 
 The plotting methods rely on optional dependencies: the `*_interactive`
 methods (and `visualize_inner`) need **plotly**, and `visualize_outer_static`
