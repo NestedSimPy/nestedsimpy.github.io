@@ -21,8 +21,8 @@ At a high level, the runtime does five things:
   timeout wrappers.
 
 `NestedResource`, `NestedPreemptiveResource`, `NestedStore`, `NestedContainer`
-: Wrapped SimPy primitives that emit structured state transitions and watcher
-  callbacks. `NestedPreemptiveResource` is the priority/preemption-aware path;
+: SimPy classes wrapped to support branching into inner simulations and to
+  record their execution. `NestedPreemptiveResource` is the priority/preemption-aware path;
   there is no separate `NestedPriorityResource` wrapper.
 
 `safe_sleep` / `env.nested_timeout(...)`

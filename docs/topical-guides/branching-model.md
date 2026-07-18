@@ -12,8 +12,8 @@ keep the SimPy process functions and change the infrastructure around them.
 
 ## 1. Replacing SimPy objects with corresponding NestedSimPy objects
 
-Swap the SimPy environment, its primitives, and the run call for their
-branch-aware equivalents:
+Swap the SimPy environment, its primitives, and the run call for the
+equivalents that support nested simulation:
 
 | Plain SimPy | NestedSimPy |
 | --- | --- |
@@ -24,9 +24,10 @@ branch-aware equivalents:
 | `simpy.Container(...)` | `NestedContainer(...)` |
 | `env.run()` | `env.nested_run()` |
 
-There is not currently a separate `NestedPriorityResource` class. Priority-aware
-service is handled through `NestedPreemptiveResource`, which preserves SimPy's
-priority/preemption request path while adding tracing and branch hooks.
+There is not currently a separate `NestedPriorityResource` class. The
+functionality of SimPy's `PriorityResource` can be worked around using
+`NestedPreemptiveResource`, which preserves SimPy's priority/preemption
+request path while adding tracing and branch hooks.
 
 The wrapped objects take the same constructor arguments as their SimPy
 counterparts, plus one keyword argument: **`nested_id`**, a string naming the
@@ -42,45 +43,49 @@ refer to the object in the configuration calls of step 3 (e.g.
 in the exported data (e.g. `(srv)state_num_customers_in_queue` — see
 {doc}`Exporting data <traces-and-outputs>`). Each object registers itself with
 the environment under this id when constructed, so ids must be unique within a
-run. If omitted, a resource defaults to `nested_id="srv"` — fine for a
-single-resource model, but give every object an explicit, distinct id as soon
-as there is more than one.
+run. If omitted, ids are assigned automatically with running numbers: the
+first unnamed resource is `srv`, later ones `srv2`, `srv3`, ...; stores count
+`store`, `store2`, ... and containers `container`, `container2`, .... The
+automatic ids are distinct, but named configuration and readable outputs are
+easier with explicit ids, so name every object once a model has more than
+one.
 
 The wrapped objects play the same roles as before:
 
 `NestedEnvironment`
-: Stores branching configuration and exposes branch-aware entry points such as
+: Stores branching configuration and provides the nested-simulation entry points such as
   `nested_run()` and `run_single_path(...)`.
 
 `NestedResource`, `NestedPreemptiveResource`, `NestedStore`, `NestedContainer`
-: Wrapped SimPy primitives that emit structured state transitions and watcher
-  callbacks.
+: SimPy classes wrapped to support branching into inner simulations and to
+  record their execution.
 
 ## 2. Replacing the timeout function call
 
-The key behavioural change is how delays are written. In plain SimPy a delay is
-a number that has **already been drawn**:
+The key behavioural change is how delays are written. In SimPy, timeouts use
+deterministic values — the number is drawn before the call:
 
 ```python
 yield env.timeout(random.expovariate(rate))   # the value is fixed right here
 ```
 
-NestedSimPy takes the **distribution** instead:
+In contrast, NestedSimPy uses stochastic values through an alternative timeout
+call that takes the **distribution**:
 
 ```python
 yield env.nested_timeout({"distribution": "exponential", "lambda": rate})
 ```
 
-Passing the distribution — rather than a pre-sampled value — is what makes
-branching meaningful. When the outer simulation branches at a trigger event, any
-delay already in progress is **resampled** for each inner simulation, so the
-branches explore genuinely different futures instead of replaying one fixed
-draw. The resample is **conditional on the time already elapsed**: an
-exponential is memoryless, so its residual is a fresh exponential, while a
-uniform or normal delay is redrawn from its left-truncated tail — an in-progress
-service is *continued* correctly, not restarted.
+Whenever an inner simulation is invoked, NestedSimPy dynamically resamples the
+remaining timeout according to the specified distribution. This is critical
+for preventing bias in the inner simulation runs, which would propagate to the
+estimation of system performance metrics. The resample is **conditional on the
+time already elapsed**: an exponential is memoryless, so its residual is a
+fresh exponential, while a uniform or normal delay is redrawn from its
+left-truncated tail — an in-progress service is *continued* correctly, not
+restarted.
 
-Supported specifications:
+NestedSimPy supports the following probability distributions:
 
 | Distribution | Spec |
 | --- | --- |
@@ -95,9 +100,11 @@ Capped (truncated) exponential and integer-uniform variants are also available; 
 
 ### User-defined discrete distributions
 
-When a delay takes one of a few known values, enter the support and the
-matching probabilities — NestedSimPy takes care of the rest (validation,
-sampling, and the correct residual at a trigger point):
+In particular, the `discrete` specification allows the user to define
+arbitrary discrete probability distributions. When a delay takes one of a few
+known values, enter the support and the matching probabilities — NestedSimPy
+takes care of the rest (validation, sampling, and the correct residual at a
+trigger point):
 
 ```python
 yield env.nested_timeout(

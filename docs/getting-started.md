@@ -67,7 +67,7 @@ comparison.
 ## Mental Model
 
 Think of NestedSimPy as a layer that leaves your SimPy process logic in place
-but swaps in branch-aware infrastructure:
+but swaps in infrastructure that supports nested simulation:
 
 - `simpy.Environment` becomes `NestedEnvironment`,
 - `simpy.Resource` can become `NestedResource`,

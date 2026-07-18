@@ -23,8 +23,9 @@ The `nested_id` is the identifier you gave the object when constructing it —
 `NestedResource(env, capacity=1, nested_id="srv")` — and it is how the object
 is referred to everywhere else: in this call, in trigger specs, and in the
 output columns (see {doc}`From SimPy to NestedSimPy <branching-model>`). If
-you never call `set_triggering_objects`, the default is a single object named
-`"srv"`; a run whose objects use other ids must set this explicitly.
+you never call `set_triggering_objects`, the default watches the single
+object named `"srv"` — the automatic id of the first unnamed resource; a run
+whose objects use other ids must set this explicitly.
 
 With **several** triggering objects, the condition is armed on each object
 independently, and the first object to fire causes the branching. That object
