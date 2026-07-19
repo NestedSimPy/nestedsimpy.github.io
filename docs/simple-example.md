@@ -428,18 +428,15 @@ a list of rows, each a dict with the columns of the table shown under
 information about the broader inner simulation context (e.g. the ID of the
 triggering customer, or when that customer arrived).
 
-Below is an example of a user-defined function that manually recomputes the
-**Mean inner wait** column (in the raw event log the `type` field holds event
-names such as `request_granted`; the table's Event column shows their
-friendly labels, e.g. `service_start`). Add it to the nested model at the top
-of this page, anywhere before `env.nested_run()`:
+Below is an example of a user-defined function that manually computes the
+waiting time. Add it anywhere before `env.nested_run()`:
 
 ```python
 def user_wait(eventlog, inner_sim_context):
     for row in eventlog:
         if (row["simulation_source"] == "inner"
                 and row["cust_id"] == inner_sim_context["triggering_customer_id"]
-                and row["type"] == "request_granted"):
+                and row["type"] == "request_granted"):   # raw name of service_start
             return row["t"] - inner_sim_context["anchor_arrival_time"]
     return float("nan")            # not served within the horizon
 
