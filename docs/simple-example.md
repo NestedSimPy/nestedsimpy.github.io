@@ -433,11 +433,13 @@ waiting time. Add it anywhere before `env.nested_run()`:
 
 ```python
 def user_wait(eventlog, inner_sim_context):
+    # eventlog: the inner branch's event log (the table above);
+    # inner_sim_context: trigger info
     for row in eventlog:
         if (row["simulation_source"] == "inner"
-                and row["cust_id"] == inner_sim_context["triggering_customer_id"]
-                and row["type"] == "request_granted"):   # raw name of service_start
-            return row["t"] - inner_sim_context["anchor_arrival_time"]
+                and row["Customer"] == inner_sim_context["triggering_customer_id"]
+                and row["Event"] == "service_start"):
+            return row["Time"] - inner_sim_context["anchor_arrival_time"]
     return float("nan")            # not served within the horizon
 
 env.register_metric("user_wait", user_wait)   # register BEFORE nested_run()

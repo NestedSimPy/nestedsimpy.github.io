@@ -95,9 +95,9 @@ def run_model(out_dir: str) -> str:
     def user_wait(eventlog, inner_sim_context):
         for row in eventlog:
             if (row["simulation_source"] == "inner"
-                    and row["cust_id"] == inner_sim_context["triggering_customer_id"]
-                    and row["type"] == "request_granted"):
-                return row["t"] - inner_sim_context["anchor_arrival_time"]
+                    and row["Customer"] == inner_sim_context["triggering_customer_id"]
+                    and row["Event"] == "service_start"):
+                return row["Time"] - inner_sim_context["anchor_arrival_time"]
         return float("nan")            # not served within the horizon
 
     env.register_metric("user_wait", user_wait)

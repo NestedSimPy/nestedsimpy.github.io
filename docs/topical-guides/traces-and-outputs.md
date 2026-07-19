@@ -147,21 +147,24 @@ number (anything `float()` accepts) or `float("nan")`.
 
 `eventlog` is the branch's full event log as a list of dicts — the outer lead-in
 up to the trigger point followed by the inner branch — with the same columns
-as `export_inner_event_log`. Unlike CSVs read back from disk, the values are
-native Python objects (numbers, `None`), not strings.
+as `export_inner_event_log`, plus display-name keys matching the docs' table
+headers, so a metric can be written straight off a displayed table
+(`row["Customer"]`, `row["Event"] == "service_start"`, `row["Time"]`).
+Unlike CSVs read back from disk, the values are native Python objects
+(numbers, `None`), not strings.
 
-What `eventlog` rows contain:
+What `eventlog` rows contain (either spelling works in code):
 
-| Column | Meaning |
-| --- | --- |
-| `simulation_source` | `outer` for the lead-in rows recorded before the trigger point, `inner` for the branch itself. |
-| `t` | Simulation time of the event. |
-| `type` | Raw event name as recorded by the engine (e.g. `request_granted`). |
-| `queue_event` | The friendly event label — `arrival`, `service_start`, `service_departure`, ... |
-| `cust_id` | The customer the event belongs to. |
-| `nesting_object_id` | Which object emitted the event (its `nested_id`). |
-| `(<id>)state_*` | The state of each nesting object after the event — one column group per object, prefixed with its `nested_id` — plus one unprefixed `state_current_time`. |
-| `run_kind`, `outer_id`, `j`, `k`, `anchor_cust_id`, `nesting_object_type`, `additional_information` | Bookkeeping columns identifying the run and branch each row belongs to (the same columns as in the exported CSVs). |
+| Key | Also as | Meaning |
+| --- | --- | --- |
+| `Simulation source` | `simulation_source` | `outer` for the lead-in rows recorded before the trigger point, `inner` for the branch itself. |
+| `Time` | `t` | Simulation time of the event. |
+| `Customer` | `cust_id` | The customer the event belongs to. |
+| `Event` | `queue_event` | The friendly event label — `arrival`, `service_start`, `service_departure`, ... (the raw engine name stays in `type`, e.g. `request_granted`). |
+| `(<id>) # in queue` / `# in service` / `# in system` | `(<id>)state_num_customers_*` | The object's queue / service / system counts after the event — one group per object, prefixed with its `nested_id`. |
+| `(<id>)state_*` | — | The object's remaining state columns (plus one unprefixed `state_current_time`). |
+| `nesting_object_id` | — | Which object emitted the event (its `nested_id`). |
+| `run_kind`, `outer_id`, `j`, `k`, `anchor_cust_id`, `nesting_object_type`, `additional_information` | — | Bookkeeping columns identifying the run and branch each row belongs to (the same columns as in the exported CSVs). |
 
 `inner_sim_context` describes the branch. What it contains:
 
@@ -215,12 +218,12 @@ def avg_in_system(eventlog, inner_sim_context):
     for row in eventlog:
         if row["simulation_source"] != "inner":
             continue                                # inner segment only
-        n = row.get("(srv)state_num_customers_in_system")
+        n = row.get("(srv) # in system")
         if n is None:
             continue                                # row of another object
         if last_t is not None:
-            area += (row["t"] - last_t) * last_n    # exact for DES state
-        last_t, last_n = row["t"], n
+            area += (row["Time"] - last_t) * last_n   # exact for DES state
+        last_t, last_n = row["Time"], n
     if last_t is None:
         return float("nan")                         # no inner activity
     start = inner_sim_context["trigger_time"]
