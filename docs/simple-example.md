@@ -406,18 +406,12 @@ means the customer entered service immediately — not that it waited. (The **me
 ```
 
 ```{note}
-As the number of inner simulations grows, the estimates in each row converge
-to their theoretical values — a useful correctness check. A customer whose
-`(srv) # in system` is `n` has `n - 1` customers ahead of it (as noted above,
-the snapshot already counts the arriving customer), so its remaining wait is
-a sum of `n - 1` exponential service times: an Erlang(`n - 1`, `mu`), where
-`mu` is the service rate — 4 in this model — with mean `(n - 1)/mu`. Its
-completion time from arrival adds its own service: Erlang(`n`, `mu`), mean
-`n/mu`. With only 3 inner simulations the estimates above are noisy;
-re-running this model with 400 inner simulations per trigger matches the
-theory closely — averaged over the rows with `# in system` 5, the mean inner
-wait comes out 1.00 (theory 4/4 = 1.00) and the mean inner service time 1.24
-(theory 5/4 = 1.25).
+As the number of inner simulations grows, each row converges to theory: a
+customer with n in system has n - 1 customers ahead, so its wait is
+Erlang(n - 1, mu) with mean (n - 1)/mu, and its service completion time is
+Erlang(n, mu) with mean n/mu (the service rate mu is 4 here). With 400 inner
+simulations per trigger, the rows with 5 in system average a 1.00 wait
+(theory 1.00) and a 1.24 service time (theory 1.25).
 ```
 
 #### User-defined metrics
