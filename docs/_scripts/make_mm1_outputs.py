@@ -403,9 +403,9 @@ def table_user(om: OutputManager) -> None:
     html = caption + "\n" + _scroll_table(
         [
             "Customer",
-            "Mean inner wait",
-            "inner_user_wait_mean",
-            "inner_user_wait_std",
+            "Mean inner wait (existing)",
+            "inner_user_wait_mean (new)",
+            "inner_user_wait_std (new)",
         ],
         out,
     )
