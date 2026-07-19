@@ -475,18 +475,11 @@ shown):
 <!-- mm1-table-user:end -->
 ```
 
-The new mean column matches the built-in **Mean inner wait** exactly — the
-built-in metrics are pre-registered instances of the same mechanism — and any
-quantity observable in the event log (a container's level, a queue count) can
-become a metric the same way. Note that the user-defined function may return
-NaN, in which case that inner simulation run is ignored by the aggregation
-(e.g. the triggering customer was not served within the inner horizon). The
-excerpt starts at customer 1 for exactly this reason: customer 0 entered
-service at the trigger instant itself — in the outer simulation, before the
-inner simulations fork — so `user_wait` returns NaN in every one of them,
-while the built-in column reports its exact-zero wait. The full
-list of `eventlog` columns and `inner_sim_context` keys is in Using
-NestedSimPy → Exporting data: {ref}`user-defined-metrics`.
+Note that the user-defined function may return NaN — as `user_wait` does
+for customer 0, which entered service before the inner simulations fork — in
+which case that run is ignored by the aggregation. The full list of
+`eventlog` columns and `inner_sim_context` keys is in Using NestedSimPy →
+Exporting data: {ref}`user-defined-metrics`.
 
 ## Next
 
