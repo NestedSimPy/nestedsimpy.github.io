@@ -160,8 +160,8 @@ What `eventlog` rows contain:
 | `queue_event` | The friendly event label — `arrival`, `service_start`, `service_departure`, ... |
 | `cust_id` | The customer the event belongs to. |
 | `nesting_object_id` | Which object emitted the event (its `nested_id`). |
-| `(<id>)state_*` | The state of each nesting object after the event — one column group per object, prefixed with its `nested_id`. |
-| `run_kind`, `outer_id`, `j`, `k`, `anchor_cust_id`, ... | Bookkeeping columns identifying the run and branch each row belongs to (the same columns as in the exported CSVs). |
+| `(<id>)state_*` | The state of each nesting object after the event — one column group per object, prefixed with its `nested_id` — plus one unprefixed `state_current_time`. |
+| `run_kind`, `outer_id`, `j`, `k`, `anchor_cust_id`, `nesting_object_type`, `additional_information` | Bookkeeping columns identifying the run and branch each row belongs to (the same columns as in the exported CSVs). |
 
 `inner_sim_context` describes the branch. What it contains:
 
