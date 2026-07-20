@@ -475,8 +475,8 @@ shown):
 <!-- mm1-table-user:end -->
 ```
 
-Note that the user-defined function may return NaN, in which case that
-inner simulation run is ignored by the aggregation. The full list of
+Note that the user-defined function may return NaN; NaN values are simply
+left out when the mean and standard deviation are computed. The full list of
 `eventlog` columns and `inner_sim_context` keys is in Using NestedSimPy →
 Exporting data: {ref}`user-defined-metrics`.
 
