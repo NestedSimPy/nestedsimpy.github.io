@@ -64,8 +64,7 @@ The wrapped objects play the same roles as before:
 
 ## 2. Replacing the timeout function call
 
-The key behavioural change is how delays are written. In SimPy, timeouts use
-deterministic values:
+In SimPy, timeouts use deterministic values:
 
 ```python
 yield env.timeout(random.expovariate(rate))   # the value is fixed right here
@@ -81,11 +80,7 @@ yield env.nested_timeout({"distribution": "exponential", "lambda": rate})
 Whenever an inner simulation is invoked, NestedSimPy dynamically resamples the
 remaining timeout according to the specified distribution. This is critical
 for preventing bias in the inner simulation runs which would propagate to the
-estimation of system performance metrics. The resample is **conditional on the
-time already elapsed**: an exponential is memoryless, so its residual is a
-fresh exponential, while a uniform or normal delay is redrawn from its
-left-truncated tail — an in-progress service is *continued* correctly, not
-restarted.
+estimation of system performance metrics.
 
 NestedSimPy supports the following probability distributions:
 
@@ -102,11 +97,11 @@ Capped (truncated) exponential and integer-uniform variants are also available; 
 
 ### User-defined discrete distributions
 
-In particular, the `discrete` parameter allows the user to define arbitrary
-discrete probability distributions. When a delay takes one of a few
-known values, enter the support and the matching probabilities — NestedSimPy
-takes care of the rest (validation, sampling, and the correct residual at a
-trigger point):
+When a delay takes one of a few known values, enter the support and the
+matching probabilities — NestedSimPy takes care of the rest (validation,
+sampling, and the correct residual at a trigger point). In particular, the
+`discrete` parameter allows the user to define arbitrary discrete
+probability distributions:
 
 ```python
 yield env.nested_timeout(
