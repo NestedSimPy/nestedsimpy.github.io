@@ -59,8 +59,8 @@ The wrapped objects play the same roles as before:
   `nested_run()` and `run_single_path(...)`.
 
 `NestedResource`, `NestedPreemptiveResource`, `NestedStore`, `NestedContainer`
-: SimPy classes wrapped to support branching to inner simulation and to
-  record their execution.
+: Wrapped SimPy classes to support branching to inner simulation and
+  recording their execution.
 
 ## 2. Replacing the timeout function call
 
