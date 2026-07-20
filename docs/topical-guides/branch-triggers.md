@@ -9,23 +9,25 @@ The main configuration calls are:
 
 ## Triggering objects
 
-Triggering objects tell the runtime which resource, store, or container should
-be watched for trigger events.
+Triggering objects tell NestedSimPy which resource, store, or container
+should be watched for triggering events.
 
-Typical examples:
+Examples:
 
 ```python
 env.set_triggering_objects(nested_id="srv")
 env.set_triggering_objects(nested_id=["srv_a", "srv_b"])
 ```
 
-The `nested_id` is the identifier you gave the object when constructing it —
-`NestedResource(env, capacity=1, nested_id="srv")` — and it is how the object
-is referred to everywhere else: in this call, in trigger specs, and in the
-output columns (see {doc}`From SimPy to NestedSimPy <branching-model>`). If
-you never call `set_triggering_objects`, the default watches the single
-object named `"srv"` — the automatic id of the first unnamed resource; a run
-whose objects use other ids must set this explicitly.
+In the first example, events related to the NestedSimPy object whose ID is
+`"srv"` generate triggering events. In the second example, two objects
+generate triggering events. Recall that `nested_id` is the identifier
+assigned to NestedSimPy objects when constructing them. For example:
+`NestedResource(env, capacity=1, nested_id="srv")`. The same identifier is
+used for multiple functionalities, such as defining the triggering events or
+reporting (see {doc}`From SimPy to NestedSimPy <branching-model>`). If you
+never call `set_triggering_objects`, the default is a single object named
+`"srv"`; a run whose objects use other ids must set this explicitly.
 
 With **several** triggering objects, the condition is armed on each object
 independently, and the first object to fire causes the branching. That object
