@@ -183,7 +183,9 @@ What `eventlog` rows contain (either spelling works in code):
 
 **Missing values.** Returning `float("nan")` (or `None`) marks the branch's
 value as missing — it is stored as JSON `null` and skipped by the mean/std
-aggregation, exactly like a missing built-in `waiting_time`. If `fn` raises,
+aggregation, exactly like a missing built-in `waiting_time`. (The Simple
+example's `user_wait` hits this for customer 0: it entered service before
+the inner simulations fork, so no inner run contains its service start.) If `fn` raises,
 or returns something `float()` cannot convert, or returns a non-finite
 `float("inf")` / `float("-inf")`, a warning is emitted (once per metric name
 per packaging pass) and the value is likewise recorded as missing; the run
