@@ -93,15 +93,11 @@ NestedSimPy supports the following probability distributions:
 | Deterministic | `{"distribution": "deterministic", "value": d}` |
 | Discrete | `{"distribution": "discrete", "support": [...], "probabilities": [...]}` |
 
-Capped (truncated) exponential and integer-uniform variants are also available; see `nestedsimpy.sleep.resolve_distribution` for the full set.
-
-### User-defined discrete distributions
-
-When a delay takes one of a few known values, enter the support and the
-matching probabilities — NestedSimPy takes care of the rest (validation,
-sampling, and the correct residual at a trigger point). In particular, the
-`discrete` parameter allows the user to define arbitrary discrete
-probability distributions:
+In particular, the `discrete` parameter allows the user to define arbitrary
+discrete probability distributions: when a delay takes one of a few known
+values, enter the support and the matching probabilities — NestedSimPy takes
+care of the rest (validation, sampling, and the correct residual at a
+trigger point):
 
 ```python
 yield env.nested_timeout(
@@ -119,6 +115,9 @@ anything else raises a clear `ValueError`). When an inner simulation resumes
 such a delay mid-flight, the residual is drawn from the support values still
 reachable — those greater than the time already elapsed — with their
 probabilities renormalised.
+
+Capped (truncated) exponential and integer-uniform variants are also
+available; see `nestedsimpy.sleep.resolve_distribution` for the full set.
 
 ## 3. Configuring the nested simulation parameters
 
