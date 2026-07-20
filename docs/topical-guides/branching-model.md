@@ -26,10 +26,9 @@ equivalents that support nested simulation:
 
 There is not currently a separate `NestedPriorityResource` class. The
 functionality of SimPy's `PriorityResource` can be worked around using
-`NestedPreemptiveResource`, which preserves SimPy's priority/preemption
-request path while adding tracing and branch hooks. Pass `preempt=False` on
-each request to reproduce `PriorityResource`'s non-preemptive behaviour — the
-default `preempt=True` will interrupt an in-service customer.
+`NestedPreemptiveResource`. Pass `preempt=False` on each request to reproduce
+`PriorityResource`'s non-preemptive behaviour — the default `preempt=True`
+will interrupt an in-service customer.
 
 The wrapped objects take the same constructor arguments as their SimPy
 counterparts, plus one keyword argument: **`nested_id`**, a string naming the
@@ -55,11 +54,12 @@ one.
 The wrapped objects play the same roles as before:
 
 `NestedEnvironment`
-: Stores branching configuration and provides the nested-simulation entry points such as
+: Stores branching configuration and provides nested simulation support —
+  entry points such as
   `nested_run()` and `run_single_path(...)`.
 
 `NestedResource`, `NestedPreemptiveResource`, `NestedStore`, `NestedContainer`
-: SimPy classes wrapped to support branching into inner simulations and to
+: SimPy classes wrapped to support branching to inner simulation and to
   record their execution.
 
 ## 2. Replacing the timeout function call
