@@ -28,8 +28,8 @@ the outer run only ends when the model runs out of scheduled events — a model
 with an endless arrival generator would then never stop, so in practice always
 set at least one bound. The reason the outer run ended (`time_limit`,
 `arrival_limit`, or `no_events`) is recorded as the `stop_reason` in the
-outer manifest — the small `manifest.json` summary written next to the outer
-trace under `raw/` (see {doc}`Raw data <../api/raw-data>`).
+outer run's summary file, `manifest.json`, next to the outer trace under
+`raw/` (see {doc}`Raw data <../api/raw-data>`).
 
 Note the asymmetry with the inner rules below: the outer stop accepts only
 these two bounds. `StartStopSpec` and custom stop events (next section) apply
@@ -72,9 +72,8 @@ Three behaviours are worth knowing before composing rules:
 - **First one wins.** All configured rules are combined with OR: the branch
   stops at whichever fires first. Each branch records which rule ended it as a
   structured `stop_reason` in its manifest — `time_horizon` (from
-  `relative_time`), `absolute_time`, `anchor_departed` (from
-  `triggering_customer_departs`; the raw outputs call the triggering
-  customer the *anchor*), or `state_spec` (from `event=`).
+  `relative_time`), `absolute_time`, `triggering_customer_departed` (from
+  `triggering_customer_departs`), or `state_spec` (from `event=`).
 - **At least one rule is required.** A run with no inner stopping condition
   fails at the first trigger event with
   `RuntimeError: Configure at least one inner stopping condition`.
@@ -261,12 +260,13 @@ for example `all_of=[StartStopSpec(time_ge=5.0), StartStopSpec(any_of=[...])]`.
 
 You can also hand `event=` a raw SimPy event, or a callable that builds one.
 The callable is invoked once per branch, right after the trigger point, and may accept
-`(env)`, `(env, resource)`, or `(env, resource, anchor_cust_id)` — where
-`resource` is the triggering object and `anchor_cust_id` the triggering customer's
-id. It must return a SimPy event; the branch stops when that event fires:
+`(env)`, `(env, resource)`, or `(env, resource, triggering_customer_id)` —
+where `resource` is the triggering object and `triggering_customer_id` the
+triggering customer's id. It must return a SimPy event; the branch stops when
+that event fires:
 
 ```python
-def branch_deadline(env, resource, anchor_cust_id):
+def branch_deadline(env, resource, triggering_customer_id):
     # Any SimPy event works; here: 1.5 time units after the trigger point.
     return env.timeout(1.5)
 
