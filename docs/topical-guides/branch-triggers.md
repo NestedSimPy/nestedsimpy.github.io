@@ -202,19 +202,12 @@ with that name is published:
 ```python
 from nestedsimpy import publish_event
 
-def controller(env):
+def reviews(env):
     while True:
         yield env.timeout(1.0)
-        # Anywhere in your model code: announce a decision point by name.
-        publish_event("control_signal", {"kind": "go", "time": env.now})
+        publish_event("review")          # announce each review moment
 
-env.set_triggering_conditions(
-    {
-        "on": "event",
-        "name": "control_signal",
-        "predicate": lambda payload: payload["kind"] == "go",
-    }
-)
+env.set_triggering_conditions({"on": "event", "name": "review"})
 ```
 
 How it works:
