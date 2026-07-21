@@ -29,13 +29,11 @@ reporting (see {doc}`From SimPy to NestedSimPy <branching-model>`). If you
 never call `set_triggering_objects`, the default is a single object named
 `"srv"`; a run whose objects use other ids must set this explicitly.
 
-With **several** triggering objects, the condition is armed on each object
-independently, and the first object to fire causes the branching. That object
-becomes the *triggering object of the trigger event*: the triggering customer
-and the state-based inner stop rules refer to it (see
-{doc}`Stopping conditions <stop-rules-replay>`). The snapshot taken at the
-trigger point still captures *all* the triggering objects, so every branch
-resumes the full system consistently.
+With **several** triggering objects, each object is watched independently
+and whichever fires first causes the branching. That object supplies the
+triggering customer and drives the state-based inner stopping rules (see
+{doc}`Stopping conditions <stop-rules-replay>`). The snapshot covers *all*
+the objects, so every branch resumes the full system.
 
 ## Arrival triggers
 
