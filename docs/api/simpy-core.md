@@ -89,7 +89,7 @@ set_postprocessor(fn, *, output_name='user_metrics.json', **options)
 set_post_processing_options(**options)
 set_user_output_enabled(enabled)
 nested_run(**overrides) -> None
-run_single_path(*, trigger_index, branch_index, outer_seed=None, **overrides) -> None
+run_single_path(*, trigger_id, inner_id, outer_seed=None, **overrides) -> None
 ```
 
 - **`set_postprocessor`** — register a user hook that runs after packaging to
@@ -100,7 +100,7 @@ run_single_path(*, trigger_index, branch_index, outer_seed=None, **overrides) ->
 - **`set_user_output_enabled`** — toggle the example `print`s (inner branches are
   silenced by default so forked runs don't spam stdout).
 - **`nested_run`** — run the configured nested simulation.
-- **`run_single_path`** — re-run one branch `(trigger_index, branch_index)`
+- **`run_single_path`** — re-run one inner simulation `(trigger_id, inner_id)`
   deterministically, for inspecting a path a full run surfaced. See
   {doc}`Replay <../topical-guides/replay>`.
 
