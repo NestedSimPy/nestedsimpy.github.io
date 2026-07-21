@@ -139,18 +139,10 @@ return `True` to branch; the trigger fires on the *rising edge*, i.e. the
 moment the predicate flips from false to true, so a queue that stays long does
 not re-trigger on every subsequent event.
 
-The one-argument form is the common case, but the predicate may declare up to
-three parameters and NestedSimPy passes what it asks for:
-
-| Signature | What the predicate receives |
-| --- | --- |
-| `lambda state: ...` | just the state snapshot — enough for most conditions |
-| `lambda state, resource: ...` | plus the triggering object itself, for attributes the snapshot does not carry |
-| `lambda state, resource, env: ...` | plus the environment, to reach the rest of the model |
-
-For example, “the queue is at least as long as the server pool” needs the
-object's capacity, which is an attribute of the resource rather than a
-snapshot field:
+The one-argument form is the common case. The predicate may also accept the
+triggering object as a second argument, for attributes the snapshot does not
+carry — for example, “the queue is at least as long as the server pool”
+needs the object's capacity:
 
 ```python
 env.set_triggering_conditions(
