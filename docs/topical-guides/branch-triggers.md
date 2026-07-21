@@ -196,8 +196,8 @@ require `state["current_time"] > 0`).
 Sometimes the natural moment to branch is not a queue event but a point in
 your own model logic — a control decision, a review epoch, a batch completing.
 Event triggers cover this case: the model *announces* the moment by calling
-`publish_event` (importable from `nestedsimpy`) with an event name, and the
-trigger fires whenever an event with that name is published:
+`publish_event` with an event name, and the trigger fires whenever an event
+with that name is published:
 
 ```python
 from nestedsimpy import publish_event
