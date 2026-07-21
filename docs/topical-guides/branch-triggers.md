@@ -226,9 +226,7 @@ How it works:
 - **`name`** in the condition selects which announcements this trigger
   listens to; other event names are ignored.
 - **`predicate`** (optional) receives the payload dict and returns `True` to
-  fire. Omit it to fire on every announcement with that name. (As with state
-  predicates, it may also accept `(payload, resource)` or
-  `(payload, resource, env)` for extra context.)
+  fire. Omit it to fire on every announcement with that name.
 - **`frequency`/`nth`** (optional, as for the other trigger kinds) fires only
   on every *n*-th matching announcement.
 
