@@ -35,6 +35,15 @@ triggering customer and drives the state-based inner stopping rules (see
 {doc}`Stopping conditions <stop-rules-replay>`). The snapshot covers *all*
 the objects, so every branch resumes the full system.
 
+## The default for decision models
+
+A model whose decision points are `env.decide` calls needs no triggering
+configuration at all: with candidate actions declared, the engine
+branches on the event `decide` publishes (`"review"` by default). Write
+`set_triggering_conditions({"on": "event", "name": ...})` yourself only
+for a custom `event=` name, or to branch on other events too. See
+{doc}`Choosing actions by lookahead <lookahead-actions>`.
+
 ## Arrival triggers
 
 Arrival-based branching is the simplest mode and the most common starting point.

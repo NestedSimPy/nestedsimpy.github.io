@@ -163,3 +163,15 @@ sets them all explicitly. To make the run reproducible, also fix the seed with
 `set_rng` chooses how the branches sample: `"independent"` gives each inner its
 own random stream (so they explore different futures), while `"CRN"` shares one
 stream across branches (useful when comparing policies on the same randomness).
+
+## When the decision itself is the point
+
+If your model does not just observe the future but must *choose* at
+certain moments (how much to order, whether to admit), the decision
+line replaces the policy call and everything else above stays the same:
+
+```python
+order = yield from env.decide(base_policy, state)
+```
+
+See {doc}`Choosing actions by lookahead <lookahead-actions>`.

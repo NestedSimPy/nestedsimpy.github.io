@@ -53,6 +53,30 @@ set_output_options(*, out_dir='./out/simpy', gzip_trace=True, ...)
 clear_branching()
 ```
 
+**Lookahead actions**
+
+```python
+decide(fn, state, *, event="review")             # a decision point (yield from)
+set_inner_actions(actions, *, metric=None, minimize=True,
+                  outer_run_mode=None)           # declare the candidates
+record(name, value)                              # a value branches are scored by
+get_inner_results_by_action(metric=None)         # per-decision scores per action
+best_inner_action(trigger=None, metric=None)     # the per-decision pick
+settle()                                         # let same-instant events finish
+```
+
+- **`decide`** — the decision line: publishes its event (the branch trigger),
+  waits while the engine forks and scores one branch per (action,
+  replication), and returns the decision. Must be driven with `yield from`.
+  See {doc}`Choosing actions by lookahead <../topical-guides/lookahead-actions>`.
+- **`set_inner_actions`** — the candidates. `None` means the base policy's own
+  decision; every other action is complete and executed as written.
+  `outer_run_mode="rollout"` executes each pick; `"base_policy"` scores
+  without executing.
+- **`record`** — with `metric="cost"`, branches are scored by the sum of their
+  own recorded `"cost"` values; `register_metric` with the same name overrides
+  the scoring function.
+
 - **`set_inner_repetitions`** — how many inner simulations launch at each
   trigger event.
 - **`set_rng`** — RNG strategy: `'CRN'` (common random numbers across branches)
