@@ -26,6 +26,13 @@ What are triggering events and how to define them?
 Defining when the outer and inner simulation stop.
 ```
 
+```{grid-item-card} Choosing actions by lookahead
+:link: lookahead-actions
+:link-type: doc
+
+Trying candidate actions in inner simulations and executing the best.
+```
+
 ```{grid-item-card} Replay
 :link: replay
 :link-type: doc
@@ -55,6 +62,7 @@ Exporting the nested simulation output.
 branching-model
 branch-triggers
 stop-rules-replay
+lookahead-actions
 replay
 visualization
 traces-and-outputs
