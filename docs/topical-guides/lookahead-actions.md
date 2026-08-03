@@ -1,7 +1,7 @@
 # Choosing actions by lookahead
 
 NestedSimPy can use its inner simulations to *choose* between actions,
-not only to evaluate the future. At a decision point, the engine forks
+not only to evaluate the future. At a decision point, the engine launches
 one inner simulation per candidate action, lets each branch take its
 candidate once and then follow your base policy, scores every branch
 over a lookahead window, and executes the action with the best average.
@@ -80,7 +80,7 @@ as above, nothing extra is needed.
 | --- | --- |
 | `set_inner_actions(ACTIONS, metric="cost", outer_run_mode="rollout")` | declare the candidates, score branches by their summed `"cost"` records, execute the best at each decision |
 | `outer_run_mode="base_policy"` | score every decision but keep the real run on its base policy — collect per-action data without changing the trajectory |
-| `set_inner_stopping_condition(relative_time=H)` | each branch runs `H` time units past its fork — the lookahead window |
+| `set_inner_stopping_condition(relative_time=H)` | each branch runs `H` time units past the trigger point — the lookahead window |
 | `set_inner_repetitions(K)` | `K` branches per action; the score is their mean |
 | `minimize=False` | pick the argmax instead — for reward metrics |
 

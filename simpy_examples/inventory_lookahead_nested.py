@@ -55,7 +55,7 @@ def periods(env, state):
         state["cost"] += period_cost
 
         # The decision: publishes a "review" event (the branch trigger),
-        # the engine forks one inner simulation per (action, replication)
+        # the engine launches one inner simulation per (action, replication)
         # and this line returns the winning quantity -- or the branch's
         # own candidate inside a branch, or base_policy(state) where
         # nothing applies.
