@@ -99,6 +99,17 @@ best = env.best_inner_action(trigger=0, metric="cost")
 scores per action; `best_inner_action` is the per-decision argmin (or
 argmax). The decision executed in the real run always equals it.
 
+Every run with declared actions also writes four CSV files to a
+`rollout/` folder in the run directory, one zoom level each:
+`actions.csv` (per decision and action: mean, spread, replications,
+picked), `picks.csv` (the executed pick per decision; an empty
+`picked_action` cell is the base policy), `branches.csv` (one row per
+inner simulation, with its seed and stop reason), and `decisions.csv`
+(every decision inside every branch). `env.print_rollout_summary()`
+prints the per-decision scoreboard, and
+`nestedsimpy.reporting.write_rollout_plot(env)` draws the per-action
+means with the executed picks starred.
+
 ## What to expect
 
 Lookahead selection inherits your base policy and repairs its
