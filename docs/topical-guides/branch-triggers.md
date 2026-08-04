@@ -38,8 +38,10 @@ the objects, so every branch resumes the full system.
 ## The default for decision models
 
 A model whose decision points are `env.decide` calls needs no triggering
-configuration at all: with candidate actions declared, the engine
-branches on the event `decide` publishes (`"review"` by default). Write
+configuration at all: with candidate actions declared, NestedSimPy
+branches on the event `decide` publishes (`"review"` by default). Event
+triggers are not tied to a triggering object, so the `"srv"` default
+above does not apply here. Write
 `set_triggering_conditions({"on": "event", "name": ...})` yourself only
 for a custom `event=` name, or to branch on other events too. See
 {doc}`Choosing actions by lookahead <lookahead-actions>`.

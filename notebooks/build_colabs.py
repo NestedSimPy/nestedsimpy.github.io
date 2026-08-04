@@ -97,7 +97,7 @@ EXAMPLES = {
         primitive="env.decide + set_inner_actions",
         url=None,
         blurb="a periodic stock whose order decision is chosen by trying each "
-              "candidate quantity in inner simulations (`env.decide`)",
+              "candidate quantity in inner simulations",
         inspect_rollout=True,
     ),
 }
@@ -202,8 +202,8 @@ def build(name: str, meta: dict) -> dict:
         intro = md(
             f"# NestedSimPy — {meta['title']}",
             "",
-            f"[NestedSimPy](https://nestedsimpy.github.io/) — {meta['blurb']}. "
-            f"This example uses `{meta['primitive']}`.",
+            f"This notebook runs a NestedSimPy-specific example: {meta['blurb']}. "
+            f"It uses `env.decide` and `set_inner_actions`.",
             "",
             f"See the [example page](https://nestedsimpy.github.io/official-parity/{meta['page']}.html) "
             f"for the side-by-side plain/nested code.",

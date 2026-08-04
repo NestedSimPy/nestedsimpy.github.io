@@ -168,12 +168,12 @@ stream across branches (useful when comparing policies on the same randomness).
 
 Steps 1-3 cover a model that observes the future. If your model must
 also *choose* at certain moments (how much to order, whether to admit),
-three more changes convert the decision itself -- everything above
-stays exactly as it is.
+three more changes convert the decision itself — everything else
+above stays as it is.
 
 **4a. Declare the candidates.** One entry per candidate decision, in
 the shape your policy returns; `None` is the policy's own decision and
-should stay in the list so "change nothing" always competes:
+should stay in the list:
 
 ```python
 ACTIONS = [None, 0, 5, 10]
@@ -190,8 +190,10 @@ order = yield from env.decide(base_policy, state) # after
 
 **4c. Record the cost and declare the actions in the configuration.**
 One `env.record("cost", ...)` line wherever cost arises, and one extra
-configuration call -- no triggering configuration is needed, because
-the engine branches on the event `decide` publishes:
+configuration call. No triggering configuration is needed (see
+{doc}`Triggering events <branch-triggers>`) — if decisions are your
+only branch points, drop the `set_triggering_objects` /
+`set_triggering_conditions` lines from step 3:
 
 ```python
 env.record("cost", period_cost)

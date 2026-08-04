@@ -66,7 +66,7 @@ settle()                                         # let same-instant events finis
 ```
 
 - **`decide`** — the decision line: publishes its event (the branch trigger),
-  waits while the engine forks and scores one branch per (action,
+  waits while NestedSimPy launches and scores one branch per (action,
   replication), and returns the decision. Must be driven with `yield from`.
   See {doc}`Choosing actions by lookahead <../topical-guides/lookahead-actions>`.
 - **`set_inner_actions`** — the candidates. `None` means the base policy's own
@@ -76,6 +76,12 @@ settle()                                         # let same-instant events finis
 - **`record`** — with `metric="cost"`, branches are scored by the sum of their
   own recorded `"cost"` values; `register_metric` with the same name overrides
   the scoring function.
+- **`get_inner_results_by_action`** — a dict keyed by decision index; each
+  value maps an action to its list of branch scores.
+- **`best_inner_action`** — the lowest-scoring action at one decision (the
+  highest with `minimize=False`).
+- **`settle`** — yield it to let everything already scheduled at the current
+  instant finish before the model observes state.
 
 - **`set_inner_repetitions`** — how many inner simulations launch at each
   trigger event.

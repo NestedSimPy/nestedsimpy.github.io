@@ -8,18 +8,19 @@ Covers:
 
 Scenario:
   A stock faces Poisson demand each period. After demand, an order
-  decision: the engine tries each candidate quantity in inner
+  decision: NestedSimPy tries each candidate quantity in inner
   simulations (candidate first, the order-up-to rule afterwards) and
   executes the one with the lowest average cost. None is the
-  order-up-to rule running as its own candidate.
+  order-up-to rule running as its own candidate. Each branch draws
+  its own demand stream (numpy is reseeded per branch).
 """
 
-from _imports import *
+from _imports import *  # NestedSimPy names + shared example helpers
 
 import numpy as np
 
 RANDOM_SEED = 42
-PERIODS = 8                # review periods in the real run
+PERIODS = 8                # review periods in the outer run
 MEAN_DEMAND = 5.0          # Poisson demand per period
 HOLD_COST = 1.0            # per unit on hand per period
 SHORTAGE_COST = 9.0        # per unit short per period (lost sales)
@@ -40,7 +41,7 @@ def base_policy(state):
 
 def periods(env, state):
     while True:
-        yield env.timeout(1.0)
+        yield env.timeout(1.0)      # period length is fixed: no nested_timeout needed
         landing = int(state["pipeline"].level)      # last period's order
         if landing:
             state["pipeline"].get(landing)
@@ -54,11 +55,8 @@ def periods(env, state):
         env.record("cost", period_cost)             # scores the branches
         state["cost"] += period_cost
 
-        # The decision: publishes a "review" event (the branch trigger),
-        # the engine launches one inner simulation per (action, replication)
-        # and this line returns the winning quantity -- or the branch's
-        # own candidate inside a branch, or base_policy(state) where
-        # nothing applies.
+        # The decision: tries each action in inner branches and returns
+        # the winner (a branch executes its own candidate instead).
         order = yield from env.decide(base_policy, state)
         if order > 0:
             state["pipeline"].put(order)            # arrives next period
@@ -75,9 +73,9 @@ def run():
     }
     env.process(periods(env, state))
 
-    # No triggering configuration: with actions declared, the engine
+    # No triggering configuration: with actions declared, NestedSimPy
     # branches on the event decide publishes.
-    env.set_outer_stopping_condition(timeout=PERIODS + 0.5)
+    env.set_outer_stopping_condition(timeout=PERIODS + 0.5)  # past the last review
     env.set_inner_stopping_condition(relative_time=float(LOOKAHEAD))
     env.set_inner_repetitions(REPS)
     env.set_rng("independent")
