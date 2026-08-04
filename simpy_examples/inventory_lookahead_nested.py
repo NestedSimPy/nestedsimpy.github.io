@@ -1,20 +1,19 @@
 """
-Periodic-review inventory with lookahead order decisions.
+Periodic-review inventory example.
 
 Covers:
 
-- Lookahead actions: env.decide, set_inner_actions, outer_run_mode
-- Scoring branches with recorded values (metric="cost")
+- A periodic process with an order decision each period
+- Containers: Container
 
 Scenario:
   A stock faces Poisson demand each period. After demand, an order
-  decision: NestedSimPy tries each candidate quantity in inner
-  simulations (candidate first, the order-up-to rule afterwards) and
-  executes the one with the lowest average cost. None is the
-  order-up-to rule running as its own candidate. Each branch draws
-  its own demand stream (numpy is reseeded per branch). On-hand stock
-  and the pipeline are both containers, so the outer trajectory of
-  either can be plotted from the run.
+  decision: the order-up-to rule looks at the inventory position (on
+  hand plus in the pipeline) and orders the shortfall. Orders arrive
+  one period later. Holding and shortage costs accrue per period.
+  This is the lookahead version: env.decide tries each candidate
+  order quantity in inner simulations and executes the one with the
+  lowest average cost.
 """
 
 from _imports import *  # NestedSimPy names + shared example helpers
@@ -22,11 +21,11 @@ from _imports import *  # NestedSimPy names + shared example helpers
 import numpy as np
 
 RANDOM_SEED = 42
-PERIODS = 8                # review periods in the outer run
+PERIODS = 8                # review periods
 MEAN_DEMAND = 5.0          # Poisson demand per period
 HOLD_COST = 1.0            # per unit on hand per period
 SHORTAGE_COST = 9.0        # per unit short per period (lost sales)
-ORDER_UP_TO = 10           # the base rule's target position
+ORDER_UP_TO = 10           # the rule's target position
 ACTIONS = [None, 0, 5, 10]  # None = the base rule's own decision
 LOOKAHEAD = 4              # periods each inner branch runs
 REPS = 4                   # inner branches per candidate
@@ -43,7 +42,7 @@ def base_policy(state):
 
 def periods(env, state):
     while True:
-        yield env.timeout(1.0)      # period length is fixed: no nested_timeout needed
+        yield env.timeout(1.0)
         landing = int(state["pipeline"].level)      # last period's order
         if landing:
             state["pipeline"].get(landing)
@@ -59,8 +58,6 @@ def periods(env, state):
         env.record("cost", period_cost)             # scores the branches
         state["cost"] += period_cost
 
-        # The decision: tries each action in inner branches and returns
-        # the best-scoring one (a branch executes its own candidate).
         order = yield from env.decide(base_policy, state)
         if order > 0:
             state["pipeline"].put(order)            # arrives next period
@@ -78,9 +75,8 @@ def run():
     }
     env.process(periods(env, state))
 
-    # No triggering configuration: with actions declared, NestedSimPy
-    # branches on the event decide publishes.
-    env.set_outer_stopping_condition(timeout=PERIODS + 0.5)  # past the last review
+    # No trigger configuration: NestedSimPy branches on decide's event.
+    env.set_outer_stopping_condition(timeout=PERIODS + 0.5)
     env.set_inner_stopping_condition(relative_time=float(LOOKAHEAD))
     env.set_inner_repetitions(REPS)
     env.set_rng("independent")

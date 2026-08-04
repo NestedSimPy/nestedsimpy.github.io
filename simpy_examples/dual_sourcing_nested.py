@@ -1,38 +1,28 @@
 """
-Dual-sourcing inventory with lookahead expediting.
+Dual-sourcing inventory example -- lookahead expediting.
 
 Covers:
 
-- The two-argument decision form: env.decide(lookahead_policy, state)
-  for coupled decision variables
-- Lookahead actions: set_inner_actions, outer_run_mode="rollout"
-- Redrawable delays: nested_timeout
+- Continuous review with endogenous lead times (orders queue in a
+  production line, so ordering more lengthens the lead times)
+- Resources: Resource (two single-server production stages in tandem)
 
 Scenario:
   The dual-sourcing model of Song, Xiao, Zhang and Zipkin (2017),
   "Optimal Policies for a Dual-Sourcing Inventory Problem with
   Endogenous Stochastic Leadtimes", Operations Research 65(2):379-395.
-  Same model as the plain version; the base rule is still single
-  sourcing. The question "how many units to expedite right now" is
-  answered by lookahead: at each demand epoch (and once at t=0),
-  NestedSimPy tries each expedite count in inner simulations launched
-  from the live production line and executes the best-scoring one.
-  Deliveries replenish under the base rule, which keeps the decision
-  count linear in demand.
-
-  The two decision variables are coupled -- the regular order tops the
-  position up to S_REG only AFTER the expedite count is known -- so an
-  action cannot be a fixed (regular, expedited) tuple. The policy
-  keeps the two-argument form lookahead_policy(state, action) and
-  completes the decision itself; None stays in ACTIONS as the base
-  rule's own candidate.
-
-  Endogenous lead times are the point: an order's delay depends on the
-  queue it joins, so there is no lead-time distribution to write down
-  -- but a launched branch carries the whole production line with it,
-  units in service included. The three exponential sleeps (demand
-  interarrivals, both service times) are declared nested_timeout
-  distributions, so at a fork every pending sleep is resampled.
+  A single product faces unit Poisson demand with full backlogging.
+  The regular supply channel is a two-stage tandem production line
+  (one unit at a time, exponential service at each stage), so lead
+  times are endogenous: ordering more congests the line and lengthens
+  them, and orders never cross. An expedited order skips stage 1 and
+  joins stage 2 directly, for a premium per unit. The policy here is
+  single sourcing: after every demand and every delivery, top the
+  inventory position up to S_REG with regular orders, never expedite
+  -- so every unit rides the congested two-stage line.
+  This is the lookahead version: at each demand epoch (and once at
+  t=0), env.decide tries each expedite count in inner simulations
+  launched from the live production line and executes the best one.
 """
 
 from _imports import *  # NestedSimPy names + shared example helpers
@@ -113,12 +103,12 @@ def produced_unit(env, sim, expedited):
     if not expedited:
         with sim["stage1"].request() as turn:
             yield turn
-            yield env.nested_timeout(STAGE1_DIST)   # redrawable service
+            yield env.nested_timeout(STAGE1_DIST)
         state.stage1 -= 1
         state.stage2 += 1
     with sim["stage2"].request() as turn:
         yield turn
-        yield env.nested_timeout(STAGE2_DIST)       # redrawable service
+        yield env.nested_timeout(STAGE2_DIST)
     state.stage2 -= 1
     accrue(env, state, sim["costs"], sim["last_accrual"])
     state.net += 1                                  # delivery
@@ -126,7 +116,7 @@ def produced_unit(env, sim, expedited):
 
 
 def review(env, sim, decide):
-    """One review: decide (demand epochs) or follow the base rule."""
+    """Consult the policy and launch its orders into the supply system."""
     state = sim["state"]
     if decide:
         regular, expedited = yield from env.decide(lookahead_policy, state)
@@ -150,7 +140,7 @@ def review(env, sim, decide):
 
 def demand_process(env, sim):
     while True:
-        yield env.nested_timeout(DEMAND_DIST)       # redrawable interarrival
+        yield env.nested_timeout(DEMAND_DIST)
         state = sim["state"]
         accrue(env, state, sim["costs"], sim["last_accrual"])
         state.net -= 1                              # backlog if negative
@@ -171,8 +161,7 @@ def run():
     env.process(demand_process(env, sim))
     env.process(review(env, sim, decide=True))   # initial decision at t=0
 
-    # No triggering configuration: with actions declared, NestedSimPy
-    # branches on the event decide publishes.
+    # No trigger configuration: NestedSimPy branches on decide's event.
     env.set_outer_stopping_condition(timeout=HORIZON)
     env.set_inner_stopping_condition(relative_time=INNER_HORIZON)
     env.set_inner_repetitions(INNER_REPS)
