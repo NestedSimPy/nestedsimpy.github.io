@@ -98,7 +98,7 @@ EXAMPLES = {
         url=None,
         blurb="the dual-sourcing inventory model of Song, Xiao, Zhang and "
               "Zipkin (2017), where lead times are endogenous and each "
-              "demand epoch decides whether to expedite",
+              "review decides whether to expedite",
         inspect_rollout=True,
     ),
     "inventory_lookahead": dict(

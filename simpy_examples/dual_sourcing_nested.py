@@ -20,9 +20,9 @@ Scenario:
   single sourcing: after every demand and every delivery, top the
   inventory position up to S_REG with regular orders, never expedite
   -- so every unit rides the congested two-stage line.
-  This is the lookahead version: at each demand epoch (and once at
-  t=0), env.decide tries each candidate order in inner simulations
-  launched from the live production line and executes the best one.
+  This is the lookahead version: at every review, env.decide tries
+  each candidate order in inner simulations launched from the live
+  production line and executes the best one.
 """
 
 from _imports import *  # NestedSimPy names + shared example helpers
@@ -100,16 +100,13 @@ def produced_unit(env, sim, expedited):
     state.stage2 -= 1
     accrue(env, state, sim["costs"], sim["last_accrual"])
     state.net += 1                                  # delivery
-    yield from review(env, sim, decide=False)
+    yield from review(env, sim)
 
 
-def review(env, sim, decide):
+def review(env, sim):
     """Consult the policy and launch its orders into the supply system."""
     state = sim["state"]
-    if decide:
-        regular, expedited = yield from env.decide(base_policy, state)
-    else:
-        regular, expedited = base_policy(state)
+    regular, expedited = yield from env.decide(base_policy, state)
     sim["counts"]["regular"] += regular
     sim["counts"]["expedited"] += expedited
     if expedited:
@@ -132,7 +129,7 @@ def demand_process(env, sim):
         state = sim["state"]
         accrue(env, state, sim["costs"], sim["last_accrual"])
         state.net -= 1                              # backlog if negative
-        yield from review(env, sim, decide=True)
+        yield from review(env, sim)
 
 
 def run():
@@ -147,7 +144,7 @@ def run():
         "last_accrual": [0.0],
     }
     env.process(demand_process(env, sim))
-    env.process(review(env, sim, decide=True))   # initial decision at t=0
+    env.process(review(env, sim))       # initial ordering decision at t=0
 
     # No trigger configuration: NestedSimPy branches on decide's event.
     env.set_outer_stopping_condition(timeout=HORIZON)

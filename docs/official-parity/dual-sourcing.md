@@ -11,8 +11,8 @@ ride a two-stage tandem production line, so lead times are endogenous
 (ordering more congests the line), and an expedited order skips stage 1
 for a premium per unit. The plain version follows the single-sourcing
 base rule — top the inventory position up to `S_REG` with regular
-orders, never expedite. The nested version decides at each demand
-epoch whether to expedite, by trying each candidate order in inner
+orders, never expedite. The nested version decides at each review
+whether to expedite, by trying each candidate order in inner
 simulations launched from the live production line.
 
 ```{tip}
@@ -76,11 +76,3 @@ See {doc}`Choosing actions by lookahead
 a two-argument decision form for models whose decision variables are
 coupled.
 
-Measured over ten paired seeds at the file's horizon, single sourcing
-averages 501.0 (standard error 216.6 — heavy-tailed, one congestion
-spiral reached 2373) against 390.5 (89.9) for the lookahead run, which
-wins pointwise on only three seeds of ten. The comparison reads as
-insurance: on a typical seed the expedite premiums cost a little, and
-on the spiral seeds expediting breaks the congestion before it
-compounds, cutting the worst run from 2373 to 1163 — and with it the
-mean and the variance.

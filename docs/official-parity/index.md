@@ -34,7 +34,7 @@ and Stefan Scherfke); see {doc}`../about` for full license and attribution.
 - **{doc}`Dual Sourcing with Lookahead Expediting <dual-sourcing>`** — a
   NestedSimPy-specific example (not from the SimPy documentation): the
   dual-sourcing inventory model of Song, Xiao, Zhang and Zipkin (2017), where
-  lead times are endogenous and each demand epoch decides whether to expedite.
+  lead times are endogenous and each review decides whether to expedite.
   Illustrates tuple actions and redrawable `nested_timeout` delays.
 
 ```{toctree}
