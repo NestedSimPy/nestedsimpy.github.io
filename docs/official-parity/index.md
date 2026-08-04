@@ -2,8 +2,9 @@
 
 The [SimPy documentation](https://simpy.readthedocs.io/en/latest/examples/index.html)
 provides multiple examples of discrete-event simulations. We demonstrate how each
-of these examples can be modified and executed using nested simulation. Every
-example is shown as a **plain** SimPy baseline and a **nested** NestedSimPy version.
+of these examples can be modified and executed using nested simulation, and add
+one NestedSimPy-specific example at the end. Every example is shown as a
+**plain** SimPy baseline and a **nested** NestedSimPy version.
 
 The SimPy examples are distributed under the MIT License (© 2013 Ontje Lünsdorf
 and Stefan Scherfke); see {doc}`../about` for full license and attribution.

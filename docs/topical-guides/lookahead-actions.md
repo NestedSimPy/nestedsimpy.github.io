@@ -5,7 +5,9 @@ not only to evaluate the future. At a decision point, the engine launches
 one inner simulation per candidate action, lets each branch take its
 candidate once and then follow your base policy, scores every branch
 over a lookahead window, and executes the action with the best average.
-The real run continues, and the same happens at the next decision.
+The real run continues, and the same happens at the next decision. In
+dynamic optimization this is known as a **rollout policy** -- hence
+`outer_run_mode="rollout"` below.
 
 ## The two contracts
 

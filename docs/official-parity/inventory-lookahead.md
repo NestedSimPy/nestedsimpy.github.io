@@ -10,7 +10,8 @@ at every review, each candidate order quantity is tried in inner
 simulations — the candidate once, the order-up-to rule afterwards — and
 the quantity with the lowest average cost is executed. `None` in the
 candidate list is the order-up-to rule running as its own candidate, so
-"change nothing" always competes.
+"change nothing" always competes. In dynamic optimization this way of
+choosing actions is known as a **rollout policy**.
 
 ```{tip}
 **Run it live:** [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NestedSimPy/nestedsimpy.github.io/blob/main/notebooks/NestedSimPy_inventory_lookahead.ipynb)
