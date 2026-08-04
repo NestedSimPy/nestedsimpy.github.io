@@ -92,6 +92,14 @@ EXAMPLES = {
         url="https://simpy.readthedocs.io/en/latest/examples/process_communication.html",
         blurb="producer/consumer processes talking over a `Store`",
     ),
+    "inventory_lookahead": dict(
+        title="Inventory with Lookahead Decisions", page="inventory-lookahead",
+        primitive="env.decide + set_inner_actions",
+        url=None,
+        blurb="a periodic stock whose order decision is chosen by trying each "
+              "candidate quantity in inner simulations (`env.decide`)",
+        inspect_rollout=True,
+    ),
 }
 
 
@@ -157,7 +165,23 @@ def build(name: str, meta: dict) -> dict:
         f"!python {script}"
     )
 
-    inspect = (
+    if meta.get("inspect_rollout"):
+        inspect = (
+            "import glob, os\n"
+            "import pandas as pd\n"
+            "\n"
+            'run = os.path.dirname(glob.glob("simpy_examples/inventory_lookahead/**/rollout", recursive=True)[0])\n'
+            "\n"
+            "# One CSV per zoom level: per-action scores, the executed picks,\n"
+            "# one row per inner simulation, every decision inside every branch.\n"
+            'picks = pd.read_csv(f"{run}/rollout/picks.csv")\n'
+            'actions = pd.read_csv(f"{run}/rollout/actions.csv")\n'
+            'print(picks.to_string(index=False))\n'
+            'print()\n'
+            'print(actions.head(8).to_string(index=False))  # an empty action cell is the base policy\n'
+        )
+    else:
+        inspect = (
         "import glob, os\n"
         f'run = os.path.dirname(glob.glob("{out_glob}", recursive=True)[0])\n'
         "\n"
@@ -172,10 +196,20 @@ def build(name: str, meta: dict) -> dict:
         '\n'
         'om.export_outer_event_log("outer.csv")   # the outer event log as a CSV\n'
         'print("wrote outer.csv")'
-    )
+        )
 
-    cells = [
-        md(
+    if meta["url"] is None:
+        intro = md(
+            f"# NestedSimPy — {meta['title']}",
+            "",
+            f"[NestedSimPy](https://nestedsimpy.github.io/) — {meta['blurb']}. "
+            f"This example uses `{meta['primitive']}`.",
+            "",
+            f"See the [example page](https://nestedsimpy.github.io/official-parity/{meta['page']}.html) "
+            f"for the side-by-side plain/nested code.",
+        )
+    else:
+        intro = md(
             f"# NestedSimPy — {meta['title']}",
             "",
             f"[NestedSimPy](https://nestedsimpy.github.io/) adapts SimPy's official "
@@ -185,7 +219,9 @@ def build(name: str, meta: dict) -> dict:
             "",
             f"See the [example page](https://nestedsimpy.github.io/official-parity/{meta['page']}.html) "
             f"for the side-by-side plain/nested code.",
-        ),
+        )
+    cells = [
+        intro,
         md("## 1. Install",
            "",
            "_Pre-release: NestedSimPy installs from a hosted wheel. "

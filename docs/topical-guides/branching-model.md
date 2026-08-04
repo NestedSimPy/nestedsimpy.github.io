@@ -164,14 +164,40 @@ sets them all explicitly. To make the run reproducible, also fix the seed with
 own random stream (so they explore different futures), while `"CRN"` shares one
 stream across branches (useful when comparing policies on the same randomness).
 
-## When the decision itself is the point
+## 4. When the model also makes decisions
 
-If your model does not just observe the future but must *choose* at
-certain moments (how much to order, whether to admit), the decision
-line replaces the policy call and everything else above stays the same:
+Steps 1-3 cover a model that observes the future. If your model must
+also *choose* at certain moments (how much to order, whether to admit),
+three more changes convert the decision itself -- everything above
+stays exactly as it is.
+
+**4a. Declare the candidates.** One entry per candidate decision, in
+the shape your policy returns; `None` is the policy's own decision and
+should stay in the list so "change nothing" always competes:
 
 ```python
-order = yield from env.decide(base_policy, state)
+ACTIONS = [None, 0, 5, 10]
 ```
 
-See {doc}`Choosing actions by lookahead <lookahead-actions>`.
+**4b. Replace the policy call with the decision line.** The policy
+object itself goes in, unchanged, and `yield from` is required (every
+caller on the path to a decision needs it too):
+
+```python
+order = base_policy(state)                        # before
+order = yield from env.decide(base_policy, state) # after
+```
+
+**4c. Record the cost and declare the actions in the configuration.**
+One `env.record("cost", ...)` line wherever cost arises, and one extra
+configuration call -- no triggering configuration is needed, because
+the engine branches on the event `decide` publishes:
+
+```python
+env.record("cost", period_cost)
+env.set_inner_actions(ACTIONS, metric="cost", outer_run_mode="rollout")
+```
+
+See {doc}`Choosing actions by lookahead <lookahead-actions>` for the
+full contract, and the worked pair in
+{doc}`Inventory with Lookahead Decisions <../official-parity/inventory-lookahead>`.

@@ -26,6 +26,10 @@ and Stefan Scherfke); see {doc}`../about` for full license and attribution.
 - **{doc}`Process Communication <process-communication>`** — producer and
   consumer processes exchange messages through a store. Illustrates asynchronous
   `NestedStore` communication.
+- **{doc}`Inventory with Lookahead Decisions <inventory-lookahead>`** — a
+  NestedSimPy-specific example (not from the SimPy documentation): a periodic
+  stock whose order decision is chosen by trying each candidate quantity in
+  inner simulations. Illustrates `env.decide` and `set_inner_actions`.
 
 ```{toctree}
 :hidden:
@@ -38,4 +42,5 @@ gas-station
 machine-shop
 movie-reneging
 process-communication
+inventory-lookahead
 ```
