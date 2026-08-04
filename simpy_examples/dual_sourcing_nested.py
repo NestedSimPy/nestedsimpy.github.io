@@ -162,8 +162,7 @@ def simulate(params: Params, policy, seed: int, *,
         costs["backorder"] += p.backorder_cost * max(-state.net, 0) * dt
         costs["pipeline"] += (p.stage1_holding * state.stage1
                               + p.stage2_holding * state.stage2) * dt
-        if increment:
-            env.record("cost", increment)           # expose to the branches
+        env.record("cost", increment)               # expose to the branches
         last_accrual[0] = env.now
 
     def produced_unit(emergency: bool):
@@ -195,8 +194,7 @@ def simulate(params: Params, policy, seed: int, *,
         counts["emergency"] += emergency
         spend = normal * p.normal_cost + emergency * p.emergency_cost
         costs["ordering"] += spend
-        if spend:
-            env.record("cost", spend)               # branches pay for orders
+        env.record("cost", spend)                   # branches pay for orders
         # Pipeline counts are updated here, at order time, so that any
         # later review at the same instant already sees these orders.
         accrue()

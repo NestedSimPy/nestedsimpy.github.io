@@ -179,7 +179,7 @@ def build(name: str, meta: dict) -> dict:
             "import glob, os\n"
             "import pandas as pd\n"
             "\n"
-            'run = os.path.dirname(glob.glob("simpy_examples/inventory_lookahead/**/rollout", recursive=True)[0])\n'
+            f'run = os.path.dirname(glob.glob("simpy_examples/{name}/**/rollout", recursive=True)[0])\n'
             "\n"
             "# The four rollout CSVs, coarsest to finest: per-action scores, the picks,\n"
             "# one row per inner simulation, every decision inside every branch.\n"
