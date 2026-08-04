@@ -16,6 +16,7 @@ nested_output/<experiment>/<outer_id>/
         trace.jsonl    # an inner event stream
         manifest.json
   exports/             # CSVs packaged from raw/
+  rollout/             # lookahead runs only: manifest.json + 4 CSVs
 ```
 
 ## Trace events
@@ -62,11 +63,15 @@ means and standard deviations across its branches (the source of
 
 ## Lookahead CSVs
 
-A run with declared actions also writes a `rollout/` folder, four CSV
-files from coarsest to finest:
+A run with declared actions also writes a `rollout/` folder: a
+`manifest.json` describing what produced the files (`actions`,
+`metric`, `minimize`, `outer_run_mode`, `picks_executed`, `k`,
+`replications_per_action`, `decision_count`) and four CSV files from
+coarsest to finest:
 
 - `actions.csv` — one row per (decision, action): `trigger`, `time`,
-  `action`, `mean`, `std`, `n` (replications), `picked`.
+  `action`, `mean`, `std`, `n` (replications), `picked`. As everywhere
+  in these files, an empty `action` cell is the base policy.
 - `picks.csv` — one row per decision: `trigger`, `time`,
   `picked_action`, `mean`. An empty `picked_action` cell is the base
   policy.
@@ -74,9 +79,11 @@ files from coarsest to finest:
   (`j<decision>-a<action>-k<replication>`), `trigger`, `fork_time`,
   `action`, `replication`, `value` (the branch's score), `seed`,
   `end_time`, `events`, `stop_reason`.
-- `decisions.csv` — one row per decision made *inside* a branch. Each
-  branch's first decision is its candidate action; the rest come from
-  the base policy.
+- `decisions.csv` — one row per decision made *inside* a branch:
+  `inner_id`, `trigger`, `action`, `replication`, `t`, `decision`,
+  plus one `state_<key>` column per feature when `set_state_features`
+  is on. Each branch's first decision is its candidate action; the
+  rest come from the base policy.
 
 ## Reading it back
 

@@ -104,14 +104,29 @@ write_rollout_plot(env, path=None, *, metric=None, minimize=None, title=None) ->
 - **`env.print_rollout_summary`** — print a per-decision summary of a run with
   declared actions: one line per decision with each action's mean score; the
   pick is starred.
-- **`env.export_rollout`** — write the four lookahead CSV files (see
-  {doc}`Raw data <raw-data>`) and return their paths keyed by name. Called
+- **`env.export_rollout`** — write `manifest.json` and the four lookahead
+  CSV files (see {doc}`Raw data <raw-data>`) and return their paths keyed by
+  name (including `"manifest"`). Called
   automatically at the end of `nested_run` when actions were declared, so it
   is only needed for a second export to another directory; returns `None`
   when the run declared no actions.
 - **`write_rollout_plot`** — one HTML file (plotly.js loads from a CDN): the
   per-action mean score per decision with standard-error bars, the picks
   starred.
+- On a lookahead run, `triggers()` and the trigger markers are synthesized
+  from the `rollout/` CSVs (branch records are consolidated there);
+  per-branch views such as `visualize_inner` raise a `KeyError` explaining
+  that, pointing to `rollout()` instead.
+- **`load_rollout(source, *, outer_id=None)`** — read a run's `rollout/`
+  folder back: the manifest plus the four tables (pandas DataFrames when
+  pandas is installed, lists of dict rows otherwise); `None` when the run
+  declared no actions. `OutputManager.rollout()` is the same call on an
+  open run.
+- **`paired_runs(run_a, run_b, seeds, *, labels, minimize=True)`** /
+  **`print_paired_runs`** — run two variants on the same seeds and compare
+  them pairwise: per-variant means with standard errors, the paired
+  difference, win and tie counts. The natural companion to
+  `outer_run_mode="base_policy"`.
 
 ## OutputManager
 
@@ -122,15 +137,16 @@ A post-hoc interface over a packaged run folder — see
 ```python
 OutputManager(folder, *, outer_id=None, resource_id=None, metric=None)
 
-triggers() -> list[TriggerInfo]          # TriggerInfo(trigger_id, boundary, branch_time, inner_ids)
+triggers() -> list[TriggerInfo]          # TriggerInfo(trigger_id, boundary, branch_time, inner_ids, anchor_cust_id)
 trigger_ids -> list[int]                 # property
 
 visualize_outer_static(path=None, *, start=None, end=None,
-                       show_triggering_events=True, metric=None,
-                       nested_id=None) -> plt.Figure
+                       show_triggering_events=True, show_decisions=False,
+                       metric=None, nested_id=None) -> plt.Figure
 visualize_outer_interactive(path=None, *, start=None, end=None,
-                            show_triggering_events=True, metric=None,
-                            nested_id=None) -> go.Figure
+                            show_triggering_events=True, show_decisions=False,
+                            metric=None, nested_id=None) -> go.Figure
+rollout() -> dict | None                 # this run's lookahead tables (load_rollout)
 visualize_inner(trigger_id, inner_id=None, path=None, *, relative_start=None,
                 relative_end=None, metric=None, nested_id=None,
                 show_outer_context=True) -> go.Figure

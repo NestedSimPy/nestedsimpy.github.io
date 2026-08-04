@@ -76,6 +76,7 @@ nested_output/<experiment>/<outer_id>/
   exports/                   # packaged datasets, in three forms:
     [seed][j=..][cust,bnd][k=..][inner].csv  # per-inner files (+ [seed]-outer.csv, metric JSONs)
     state_wide.csv …            #   consolidated tables (state_wide/long, events)
+  rollout/                   # lookahead runs: manifest.json + 4 CSVs
     user_waits.csv              #   a postprocessor's own metric
 ```
 

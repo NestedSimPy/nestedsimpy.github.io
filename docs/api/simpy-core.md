@@ -86,6 +86,9 @@ get_inner_results_by_action(metric=None)         # per-decision scores per actio
 best_inner_action(*, minimize=True,
                   trigger=None, metric=None)     # the per-decision pick
 settle()                                         # let same-instant events finish
+set_state_features(fn)                           # capture features at each decision
+last_run_dir                                     # property: where nested_run wrote
+outer_decisions() -> list[(t, decision, feats)]  # the outer run's decisions
 ```
 
 - **`decide`** — the decision line: publishes its event (the branch trigger),
@@ -105,6 +108,15 @@ settle()                                         # let same-instant events finis
   highest with `minimize=False`).
 - **`settle`** — yield it to let everything already scheduled at the current
   instant finish before the model observes state.
+- **`set_state_features`** — ``fn(state)`` returns a dict of numeric features;
+  every decision (outer and in every branch) records them, and
+  `decisions.csv` gains one `state_<key>` column per feature — the
+  (state, action, value) rows offline policy learning needs. `metric=` on
+  `set_inner_actions` requires `outer_run_mode` (alone it raises
+  `ValueError`), and only `k=1` is available in this package.
+- **`last_run_dir`** / **`outer_decisions`** — where the last `nested_run`
+  wrote, and the outer run's own (time, decision, features) triples —
+  the in-memory companions to the run directory and `decisions.csv`.
 
 ```{note}
 `configure_branching(...)` and `set_outer_timeout(...)` are one-call /

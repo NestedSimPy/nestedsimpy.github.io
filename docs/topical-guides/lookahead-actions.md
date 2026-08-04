@@ -117,8 +117,10 @@ lowest-scoring action at that decision (the highest with
 `minimize=False`); in rollout mode, the decision executed in the outer
 run always equals it.
 
-Every run with declared actions also writes four CSV files to a
-`rollout/` folder in the run directory: `actions.csv` (per decision and
+Every run with declared actions also writes a `rollout/` folder in
+the run directory — a `manifest.json` recording what produced the
+files (including whether the picks were executed) and four CSV
+files: `actions.csv` (per decision and
 action: mean, standard deviation, replications, picked), `picks.csv`
 (the pick per decision, executed in rollout mode; an empty
 `picked_action` cell is the base policy), `branches.csv` (one row per
@@ -127,7 +129,11 @@ inner simulation, with its seed and stop reason), and `decisions.csv`
 {doc}`Raw data <../api/raw-data>`.
 `env.print_rollout_summary()` prints the per-decision summary, and
 `nestedsimpy.reporting.write_rollout_plot(env)` draws the per-action
-means with the executed picks starred.
+means with the executed picks starred. To read the folder back,
+`nestedsimpy.reporting.load_rollout(run_dir)` (or
+`OutputManager.rollout()`) returns the manifest and the four tables;
+to compare the base policy against the lookahead run on the same
+seeds, use `nestedsimpy.reporting.paired_runs`.
 
 ## What to expect
 
