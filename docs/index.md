@@ -82,7 +82,7 @@ Management are:
    policy: at the moment of decision-making we pause, simulate a few
    alternative courses of action, and choose the action whose simulation yields
    the best performance. Nested simulation lets the user quickly implement such
-   policies.
+   policies; see {doc}`Choosing actions by lookahead <topical-guides/lookahead-actions>`.
 
 ## Explore the docs
 
