@@ -26,7 +26,7 @@ ORDER_UP_TO = 10           # the rule's target position
 
 def base_policy(state):
     """Order up to ORDER_UP_TO on the inventory position."""
-    position = state["net_inventory"] + int(state["pipeline"].level)
+    position = int(state["stock"].level) + int(state["pipeline"].level)
     return max(0, ORDER_UP_TO - position)
 
 
@@ -36,11 +36,13 @@ def periods(env, state):
         landing = int(state["pipeline"].level)      # last period's order
         if landing:
             state["pipeline"].get(landing)
-            state["net_inventory"] += landing
-        state["net_inventory"] -= int(np.random.poisson(MEAN_DEMAND))
-        on_hand = max(state["net_inventory"], 0)
-        short = max(-state["net_inventory"], 0)
-        state["net_inventory"] = on_hand            # lost sales
+            state["stock"].put(landing)
+        demand = int(np.random.poisson(MEAN_DEMAND))
+        sales = min(int(state["stock"].level), demand)
+        if sales:
+            state["stock"].get(sales)
+        on_hand = int(state["stock"].level)
+        short = demand - sales                      # lost sales
 
         period_cost = HOLD_COST * on_hand + SHORTAGE_COST * short
         state["cost"] += period_cost
@@ -54,7 +56,7 @@ def run():
     np.random.seed(RANDOM_SEED)
     env = simpy.Environment()
     state = {
-        "net_inventory": 10,
+        "stock": simpy.Container(env, capacity=float("inf"), init=10),
         "pipeline": simpy.Container(env, capacity=float("inf"), init=0),
         "cost": 0.0,
     }

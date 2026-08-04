@@ -12,7 +12,9 @@ Scenario:
   simulations (candidate first, the order-up-to rule afterwards) and
   executes the one with the lowest average cost. None is the
   order-up-to rule running as its own candidate. Each branch draws
-  its own demand stream (numpy is reseeded per branch).
+  its own demand stream (numpy is reseeded per branch). On-hand stock
+  and the pipeline are both containers, so the outer trajectory of
+  either can be plotted from the run.
 """
 
 from _imports import *  # NestedSimPy names + shared example helpers
@@ -35,7 +37,7 @@ NESTED_OUTPUT_FOLDER = set_nested_output_folder("simpy_examples",
 
 def base_policy(state):
     """Order up to ORDER_UP_TO on the inventory position."""
-    position = state["net_inventory"] + int(state["pipeline"].level)
+    position = int(state["stock"].level) + int(state["pipeline"].level)
     return max(0, ORDER_UP_TO - position)
 
 
@@ -45,18 +47,20 @@ def periods(env, state):
         landing = int(state["pipeline"].level)      # last period's order
         if landing:
             state["pipeline"].get(landing)
-            state["net_inventory"] += landing
-        state["net_inventory"] -= int(np.random.poisson(MEAN_DEMAND))
-        on_hand = max(state["net_inventory"], 0)
-        short = max(-state["net_inventory"], 0)
-        state["net_inventory"] = on_hand            # lost sales
+            state["stock"].put(landing)
+        demand = int(np.random.poisson(MEAN_DEMAND))
+        sales = min(int(state["stock"].level), demand)
+        if sales:
+            state["stock"].get(sales)
+        on_hand = int(state["stock"].level)
+        short = demand - sales                      # lost sales
 
         period_cost = HOLD_COST * on_hand + SHORTAGE_COST * short
         env.record("cost", period_cost)             # scores the branches
         state["cost"] += period_cost
 
         # The decision: tries each action in inner branches and returns
-        # the winner (a branch executes its own candidate instead).
+        # the best-scoring one (a branch executes its own candidate).
         order = yield from env.decide(base_policy, state)
         if order > 0:
             state["pipeline"].put(order)            # arrives next period
@@ -66,7 +70,8 @@ def run():
     np.random.seed(RANDOM_SEED)
     env = NestedEnvironment()
     state = {
-        "net_inventory": 10,
+        "stock": NestedContainer(env, capacity=float("inf"), init=10,
+                                 nested_id="stock"),
         "pipeline": NestedContainer(env, capacity=float("inf"), init=0,
                                     nested_id="pipeline"),
         "cost": 0.0,
