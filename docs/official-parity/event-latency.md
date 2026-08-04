@@ -36,5 +36,5 @@ communication channels.
 
 ## Discussion
 
-Going from an existing SimPy code to NestedSimPy only requires importing the NestedSimPy package, replacing SimPy objects with NestedSimPy objects, modifying timeout commands, and configuring the nested simulation parameters.
+The cable's internal `simpy.Store` becomes a `NestedStore` with `nested_id="cable_store"`, and branching triggers on `store_put` — each message entering the cable. The cable delay and the sender's interval become deterministic `env.nested_timeout` calls, and the `put` into the store is now yielded. Messages change from plain strings to dicts carrying an `item_id`, so individual items can be followed through the store. The general conversion steps are in {doc}`From SimPy to NestedSimPy <../topical-guides/branching-model>`.
 

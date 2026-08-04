@@ -35,5 +35,5 @@ is sold out, customers waiting for that title leave the queue.
 
 ## Discussion
 
-Going from an existing SimPy code to NestedSimPy only requires importing the NestedSimPy package, replacing SimPy objects with NestedSimPy objects, modifying timeout commands, and configuring the nested simulation parameters.
+The ticket counter becomes a `NestedResource` with `nested_id="counter"` (constructed with `snapshot=False`), and the `Theater` dataclass annotation changes accordingly. The exponential moviegoer interarrival time becomes an `env.nested_timeout` carrying its rate, so it is re-sampled inside branches, while the fixed argue-and-leave and ticket-purchase delays are wrapped as deterministic values. Each moviegoer gets a `cust_id` from an `itertools.count` and passes it as `job_id` on the counter request. The general conversion steps are in {doc}`From SimPy to NestedSimPy <../topical-guides/branching-model>`.
 

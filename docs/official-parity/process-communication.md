@@ -36,5 +36,5 @@ process.
 
 ## Discussion
 
-Going from an existing SimPy code to NestedSimPy only requires importing the NestedSimPy package, replacing SimPy objects with NestedSimPy objects, modifying timeout commands, and configuring the nested simulation parameters.
+Both scenarios replace `simpy.Store` pipes with `NestedStore` objects: the one-to-one pipe is registered as `nested_id="pipe"`, and `BroadcastPipe` gives each output connection its own id (`bc_pipe_out0`, `bc_pipe_out1`) so the one-to-many run can pass the whole list to `set_triggering_objects`; branching triggers on `store_put` in both cases. Messages change from tuples to dicts with an `item_id` and `sent_time`, and the transmission and consumer-work delays become deterministic `env.nested_timeout` calls with the `random.randint` draw kept outside. Each run also attaches `wait_time_hook` with `set_postprocessor`, adding a wait-time summary to the exported outputs. The general conversion steps are in {doc}`From SimPy to NestedSimPy <../topical-guides/branching-model>`.
 

@@ -36,5 +36,5 @@ falls below a threshold.
 
 ## Discussion
 
-Going from an existing SimPy code to NestedSimPy only requires importing the NestedSimPy package, replacing SimPy objects with NestedSimPy objects, modifying timeout commands, and configuring the nested simulation parameters.
+Two objects are converted: the pumps become a `NestedResource` with `nested_id="gas_station"` and the shared fuel reservoir becomes a `NestedContainer` with `nested_id="station_tank"`; branching triggers on every fifth arrival at the pumps. All four delays — refueling, the 10-second control check, the tank-truck travel time, and the car interarrival time — become deterministic `env.nested_timeout` calls, with the random interarrival still drawn by `random.randint` before being wrapped. Each car passes a `job_id` on its pump request, which identifies the customer in the recorded trace. The general conversion steps are in {doc}`From SimPy to NestedSimPy <../topical-guides/branching-model>`.
 

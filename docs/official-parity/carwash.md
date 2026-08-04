@@ -36,5 +36,5 @@ leave when finished.
 
 ## Discussion
 
-Going from an existing SimPy code to NestedSimPy only requires importing the NestedSimPy package, replacing SimPy objects with NestedSimPy objects, modifying timeout commands, and configuring the nested simulation parameters.
+The washing machines become a `NestedResource` with `nested_id="wash"`; because it is created inside the `Carwash` class, it is wrapped in `env.register` so the environment can find it by id during branching. Both delays become deterministic `env.nested_timeout` calls — the wash time is the constant `WASHTIME`, and the interarrival time is still drawn with `random.randint` and then passed as a fixed value. The `Carwash` is now constructed in `main` rather than inside `setup`, so the resource exists when the triggering configuration names it. The general conversion steps are in {doc}`From SimPy to NestedSimPy <../topical-guides/branching-model>`.
 

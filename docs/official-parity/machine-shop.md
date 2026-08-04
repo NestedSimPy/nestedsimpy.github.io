@@ -36,5 +36,5 @@ can preempt lower-priority tasks.
 
 ## Discussion
 
-Going from an existing SimPy code to NestedSimPy only requires importing the NestedSimPy package, replacing SimPy objects with NestedSimPy objects, modifying timeout commands, and configuring the nested simulation parameters.
+The repairman — a `simpy.PreemptiveResource` — becomes a `NestedPreemptiveResource` with `nested_id="repairman"`, and both the machines and the other-jobs process pass a `job_id` on their priority requests (the machine index, or ids counted from 10000), so competing jobs stay distinguishable in the trace. The exponential time to failure becomes an `env.nested_timeout` carrying its rate, so breakdowns are re-sampled inside branches; the part-processing delay keeps its explicit `done_in` bookkeeping — needed to resume after preemption — and is wrapped, like the repair and other-job delays, as a deterministic value. The general conversion steps are in {doc}`From SimPy to NestedSimPy <../topical-guides/branching-model>`.
 

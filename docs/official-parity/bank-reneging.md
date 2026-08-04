@@ -36,5 +36,5 @@ patience runs out first.
 
 ## Discussion
 
-Going from an existing SimPy code to NestedSimPy only requires importing the NestedSimPy package, replacing SimPy objects with NestedSimPy objects, modifying timeout commands, and configuring the nested simulation parameters.
+The `simpy.Environment` becomes a `NestedEnvironment`, and the counter becomes a `NestedResource` with `nested_id="counter"` — the id that `set_triggering_objects` refers to, with branching on every arrival. All three delays — the exponential interarrival time, the uniform patience, and the exponential service time — become `env.nested_timeout` calls that carry their distribution parameters, so inner simulations re-sample the remaining delay instead of reusing a fixed draw. The patience event returned by `nested_timeout` is yielded directly in the reneging condition `req | patience`. The general conversion steps are in {doc}`From SimPy to NestedSimPy <../topical-guides/branching-model>`.
 
