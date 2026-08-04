@@ -97,9 +97,8 @@ EXAMPLES = {
         primitive="env.decide + set_inner_actions",
         url=None,
         blurb="the dual-sourcing inventory model of Song, Xiao, Zhang and "
-              "Zipkin (2017), where lead times are endogenous and each review "
-              "decides how many units to expedite (the two-argument "
-              "`fn(state, action)` decision form)",
+              "Zipkin (2017), where lead times are endogenous and each "
+              "demand epoch decides whether to expedite",
         inspect_rollout=True,
     ),
     "inventory_lookahead": dict(

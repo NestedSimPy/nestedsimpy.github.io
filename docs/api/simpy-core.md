@@ -94,6 +94,8 @@ outer_decisions() -> list[(t, decision, feats)]  # the outer run's decisions
 - **`decide`** — the decision line: publishes its event (the branch trigger),
   waits while NestedSimPy launches and scores one branch per (action,
   replication), and returns the decision. Must be driven with `yield from`.
+  `fn` is normally the base policy itself, `fn(state)`; a two-argument
+  `fn(state, action)` serves decisions whose variables are coupled.
   See {doc}`Choosing actions by lookahead <../topical-guides/lookahead-actions>`.
 - **`set_inner_actions`** — the candidates. `None` means the base policy's own
   decision; every other action is complete and executed as written.

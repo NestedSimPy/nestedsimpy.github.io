@@ -11,8 +11,8 @@ ride a two-stage tandem production line, so lead times are endogenous
 (ordering more congests the line), and an expedited order skips stage 1
 for a premium per unit. The plain version follows the single-sourcing
 base rule — top the inventory position up to `S_REG` with regular
-orders, never expedite. The nested version decides at each review how
-many units to expedite, by trying each expedite count in inner
+orders, never expedite. The nested version decides at each demand
+epoch whether to expedite, by trying each candidate order in inner
 simulations launched from the live production line.
 
 ```{tip}
@@ -43,34 +43,26 @@ simulations launched from the live production line.
 
 ## Discussion
 
-This pair is the worked example of the **two-argument decision form**.
-The decision here has two variables — how many units to order regular
-and how many to expedite — and they are coupled: the regular order tops
-the position up to `S_REG` only *after* the expedite count is known. A
-fixed tuple like `(3, 1)` cannot express the candidate "expedite 1",
-because the right regular quantity depends on the state at the moment
-of the decision. So instead of passing the base policy and letting
-NestedSimPy execute the action as given, the model keeps a policy with
-a second parameter and completes the decision itself:
+The policy function is the plain file's `base_policy`, unchanged, and
+it goes into the decision line as is:
 
 ```python
-def lookahead_policy(state, action):
-    if action is None:
-        return base_policy(state)
-    expedited = int(action)
-    regular = max(0, S_REG - state.position - expedited)
-    return regular, expedited
+ACTIONS = [None, (0, 1), (1, 1)]
 
-regular, expedited = yield from env.decide(lookahead_policy, state)
+regular, expedited = yield from env.decide(base_policy, state)
 ```
 
-An action is now just the expedite count, and `None` stays in `ACTIONS`
-as usual — the base rule running as its own candidate; the policy maps
-it to `base_policy(state)`. Everything else is the standard rollout
-setup: `set_inner_actions(ACTIONS, metric="cost",
-outer_run_mode="rollout")`, one `env.record("cost", ...)` stream that
-scores the branches, and no triggering configuration, since
-NestedSimPy branches on the event `decide` publishes.
+Each action is a complete `(regular, expedited)` order, in the shape
+the policy returns, and a branch executes its candidate exactly as
+written: `(0, 1)` expedites a unit instead of ordering it normally,
+`(1, 1)` expedites one on top of a regular order, and `None` is the
+base rule running as its own candidate. After that one order, every
+branch follows the base rule, so the comparison isolates the decision
+at hand. Everything else is the standard rollout setup:
+`set_inner_actions(ACTIONS, metric="cost", outer_run_mode="rollout")`,
+one `env.record("cost", ...)` stream that scores the branches, and no
+triggering configuration, since NestedSimPy branches on the event
+`decide` publishes.
 
 Endogenous lead times are why this model needs nested simulation at
 all: an order's delay depends on the queue it joins, so there is no
@@ -81,12 +73,14 @@ at a branch point every pending sleep is resampled.
 
 See {doc}`Choosing actions by lookahead
 <../topical-guides/lookahead-actions>` for the full contract, including
-when the plain one-argument form is enough.
+a two-argument decision form for models whose decision variables are
+coupled.
 
 Measured over ten paired seeds at the file's horizon, single sourcing
 averages 501.0 (standard error 216.6 — heavy-tailed, one congestion
-spiral reached 2372) against 355.8 (51.8) for the lookahead run, which
-wins pointwise on only two seeds of ten. The comparison reads as
+spiral reached 2373) against 390.5 (89.9) for the lookahead run, which
+wins pointwise on only three seeds of ten. The comparison reads as
 insurance: on a typical seed the expedite premiums cost a little, and
 on the spiral seeds expediting breaks the congestion before it
-compounds, collapsing the tail and with it the mean and the variance.
+compounds, cutting the worst run from 2373 to 1163 — and with it the
+mean and the variance.

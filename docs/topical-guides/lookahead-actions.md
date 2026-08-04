@@ -20,6 +20,10 @@ Everything on this page follows from two rules:
 - **An action** is either `None` ("the base policy decides") or a
   complete decision, executed exactly as written.
 
+One situation bends the first rule — a decision whose variables can
+only be computed together; see {ref}`coupled-decision-variables`
+below.
+
 ## What you write
 
 You write four things. The snippets below come from the worked pair in
@@ -101,6 +105,38 @@ the worked pair, nothing extra is needed.
 To score branches by something other than a recorded sum, register your
 own metric of the same name with `env.register_metric` before
 `set_inner_actions`; the registered one wins.
+
+(coupled-decision-variables)=
+## Coupled decision variables
+
+Sometimes one variable of a decision can only be computed after
+another is chosen. Take a dual-sourcing stock whose regular order tops
+the inventory position up to `S_REG` — the right regular quantity
+depends on how many units are expedited in the same decision, and on
+the state at that moment, so a complete `(regular, expedited)` tuple
+cannot be written into a static list.
+
+For this case `env.decide` also accepts a policy with a second
+parameter. Declare only the free variable as the actions, and let the
+policy complete the decision:
+
+```python
+ACTIONS = [None, 1, 2]      # units to expedite now
+
+def lookahead_policy(state, action):
+    if action is None:
+        return base_policy(state)
+    expedited = int(action)
+    regular = max(0, S_REG - state.position - expedited)
+    return regular, expedited
+
+regular, expedited = yield from env.decide(lookahead_policy, state)
+```
+
+Each branch calls the policy with its assigned action, and the outer
+run executes what the policy returned for the winning one. `None`
+keeps its meaning — the base rule's own decision — and everything else
+on this page applies unchanged.
 
 ## Reading the results
 

@@ -21,7 +21,7 @@ Scenario:
   inventory position up to S_REG with regular orders, never expedite
   -- so every unit rides the congested two-stage line.
   This is the lookahead version: at each demand epoch (and once at
-  t=0), env.decide tries each expedite count in inner simulations
+  t=0), env.decide tries each candidate order in inner simulations
   launched from the live production line and executes the best one.
 """
 
@@ -42,7 +42,10 @@ HORIZON = 30.0           # length of one run
 INIT_NET = 10            # on-hand stock at time 0, empty pipeline
 S_REG = 10               # order up to S_REG on the position (regular)
 
-ACTIONS = [None, 1, 2]   # units to expedite now; None = the base rule
+# One entry per candidate decision, in the shape the policy returns:
+# (regular, expedited).  None is the base rule's own decision; the
+# other two expedite a unit instead of, or on top of, a regular order.
+ACTIONS = [None, (0, 1), (1, 1)]
 INNER_HORIZON = 4.0      # lookahead window, in time units
 INNER_REPS = 12          # replications per action
 
@@ -68,21 +71,6 @@ class State:
 def base_policy(state):
     """Single sourcing: top the position up to S_REG, never expedite."""
     return max(0, S_REG - state.position), 0
-
-
-def lookahead_policy(state, action):
-    """Complete the assigned action with the model's own coupling rule.
-
-    The two decision variables are coupled (regular tops up to S_REG
-    AFTER the expedite count is known), so a bare action cannot say
-    both -- this policy takes the two-argument form and completes the
-    decision itself. The action is the number of units to expedite
-    now; None is the base rule's own decision."""
-    if action is None:
-        return base_policy(state)
-    expedited = int(action)
-    regular = max(0, S_REG - state.position - expedited)
-    return regular, expedited
 
 
 def accrue(env, state, costs, last_accrual):
@@ -119,7 +107,7 @@ def review(env, sim, decide):
     """Consult the policy and launch its orders into the supply system."""
     state = sim["state"]
     if decide:
-        regular, expedited = yield from env.decide(lookahead_policy, state)
+        regular, expedited = yield from env.decide(base_policy, state)
     else:
         regular, expedited = base_policy(state)
     sim["counts"]["regular"] += regular
@@ -177,7 +165,7 @@ def run():
 
 if __name__ == "__main__":
     total, sim, env = run()
-    print(f"rollout over {len(ACTIONS)} expedite levels: "
+    print(f"rollout over {len(ACTIONS)} candidates: "
           f"total cost {total:.1f} over {HORIZON:.0f} "
           f"({total / HORIZON:.2f} per unit time)")
     print(f"  ordered {sim['counts']['regular']} regular, "
