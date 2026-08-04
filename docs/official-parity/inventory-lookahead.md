@@ -52,10 +52,8 @@ The candidates are declared with
 no triggering configuration is needed (see {doc}`Triggering events
 <../topical-guides/branch-triggers>`). One
 `env.record("cost", period_cost)` line exposes each period's cost so
-branches can be scored, and the run writes a `rollout/` folder with
-four CSV files, from coarsest to finest: per-action scores, executed
-picks, one row per inner simulation, and every decision inside every
-branch.
+branches can be scored, and the run writes a `rollout/` folder with the
+four lookahead CSV files (see {doc}`Raw data <../api/raw-data>`).
 
 See {doc}`Choosing actions by lookahead
 <../topical-guides/lookahead-actions>` for the full contract.

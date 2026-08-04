@@ -96,7 +96,7 @@ EXAMPLES = {
         title="Inventory with Lookahead Decisions", page="inventory-lookahead",
         primitive="env.decide + set_inner_actions",
         url=None,
-        blurb="a periodic stock whose order decision is chosen by trying each "
+        blurb="a periodic-review stock whose order decision is chosen by trying each "
               "candidate quantity in inner simulations",
         inspect_rollout=True,
     ),
@@ -172,7 +172,7 @@ def build(name: str, meta: dict) -> dict:
             "\n"
             'run = os.path.dirname(glob.glob("simpy_examples/inventory_lookahead/**/rollout", recursive=True)[0])\n'
             "\n"
-            "# One CSV per zoom level: per-action scores, the executed picks,\n"
+            "# The four rollout CSVs, coarsest to finest: per-action scores, the picks,\n"
             "# one row per inner simulation, every decision inside every branch.\n"
             'picks = pd.read_csv(f"{run}/rollout/picks.csv")\n'
             'actions = pd.read_csv(f"{run}/rollout/actions.csv")\n'
@@ -230,7 +230,10 @@ def build(name: str, meta: dict) -> dict:
         md("## 2. Run the nested example",
            "",
            "The model is written to a file and run as a subprocess; the output below "
-           "is the **outer** trajectory and matches the plain SimPy example."),
+           + ("is the **outer** trajectory. In rollout mode it executes the "
+              "lookahead picks, so it can differ from the plain example."
+              if meta.get("inspect_rollout") else
+              "is the **outer** trajectory and matches the plain SimPy example.")),
         code(writefile),
         code(run),
         md("## 3. Inspect the run",

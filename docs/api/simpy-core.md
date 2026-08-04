@@ -53,36 +53,6 @@ set_output_options(*, out_dir='./out/simpy', gzip_trace=True, ...)
 clear_branching()
 ```
 
-**Lookahead actions**
-
-```python
-decide(fn, state, *, event="review")             # a decision point (yield from)
-set_inner_actions(actions, *, metric=None, minimize=True,
-                  outer_run_mode=None)           # declare the candidates
-record(name, value)                              # a value branches are scored by
-get_inner_results_by_action(metric=None)         # per-decision scores per action
-best_inner_action(trigger=None, metric=None)     # the per-decision pick
-settle()                                         # let same-instant events finish
-```
-
-- **`decide`** — the decision line: publishes its event (the branch trigger),
-  waits while NestedSimPy launches and scores one branch per (action,
-  replication), and returns the decision. Must be driven with `yield from`.
-  See {doc}`Choosing actions by lookahead <../topical-guides/lookahead-actions>`.
-- **`set_inner_actions`** — the candidates. `None` means the base policy's own
-  decision; every other action is complete and executed as written.
-  `outer_run_mode="rollout"` executes each pick; `"base_policy"` scores
-  without executing.
-- **`record`** — with `metric="cost"`, branches are scored by the sum of their
-  own recorded `"cost"` values; `register_metric` with the same name overrides
-  the scoring function.
-- **`get_inner_results_by_action`** — a dict keyed by decision index; each
-  value maps an action to its list of branch scores.
-- **`best_inner_action`** — the lowest-scoring action at one decision (the
-  highest with `minimize=False`).
-- **`settle`** — yield it to let everything already scheduled at the current
-  instant finish before the model observes state.
-
 - **`set_inner_repetitions`** — how many inner simulations launch at each
   trigger event.
 - **`set_rng`** — RNG strategy: `'CRN'` (common random numbers across branches)
@@ -104,6 +74,37 @@ settle()                                         # let same-instant events finis
 - **`set_output_options`** — where traces are written, whether they are gzipped,
   and the branch-record layout.
 - **`clear_branching`** — forget the stored branching configuration.
+
+**Lookahead actions**
+
+```python
+decide(fn, state, *, event="review")             # a decision point (yield from)
+set_inner_actions(actions, *, metric=None, minimize=True,
+                  outer_run_mode=None, ...)      # declare the candidates
+record(name, value)                              # a value branches are scored by
+get_inner_results_by_action(metric=None)         # per-decision scores per action
+best_inner_action(*, minimize=True,
+                  trigger=None, metric=None)     # the per-decision pick
+settle()                                         # let same-instant events finish
+```
+
+- **`decide`** — the decision line: publishes its event (the branch trigger),
+  waits while NestedSimPy launches and scores one branch per (action,
+  replication), and returns the decision. Must be driven with `yield from`.
+  See {doc}`Choosing actions by lookahead <../topical-guides/lookahead-actions>`.
+- **`set_inner_actions`** — the candidates. `None` means the base policy's own
+  decision; every other action is complete and executed as written.
+  `outer_run_mode="rollout"` executes each pick; `"base_policy"` scores
+  without executing.
+- **`record`** — with `metric="cost"`, branches are scored by the sum of their
+  own recorded `"cost"` values; `register_metric` with the same name overrides
+  the scoring function.
+- **`get_inner_results_by_action`** — a dict keyed by decision index; each
+  value maps an action to its list of branch scores.
+- **`best_inner_action`** — the lowest-scoring action at one decision (the
+  highest with `minimize=False`).
+- **`settle`** — yield it to let everything already scheduled at the current
+  instant finish before the model observes state.
 
 ```{note}
 `configure_branching(...)` and `set_outer_timeout(...)` are one-call /

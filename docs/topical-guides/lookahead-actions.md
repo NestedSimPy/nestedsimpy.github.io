@@ -2,9 +2,10 @@
 
 NestedSimPy can also use its inner simulations to *choose* between
 actions. At a decision point, NestedSimPy launches one inner simulation
-per candidate action, lets each branch take its candidate once and then
-follow your base policy (your plain model's rule), scores every
-branch over a lookahead window, and executes the action with the best average. The outer run continues,
+per candidate action, and lets each branch take its candidate once and
+then follow your base policy (your plain model's rule). Every branch is
+scored over a lookahead window, and the action with the best average is
+executed. The outer run continues,
 and the same happens at the next decision. In dynamic optimization this
 is known as a **rollout policy** — hence `outer_run_mode="rollout"`
 below.
@@ -27,7 +28,7 @@ You write four things. The snippets below come from the worked pair in
 with demand each period, then an order decision — and that page has the
 full runnable files.
 
-**The actions.** One entry per candidate, in the shape the policy
+**The actions.** Give one entry per candidate, in the shape the policy
 returns. Keep `None` in the list so "let the base rule decide" always
 competes:
 
@@ -110,28 +111,30 @@ best = env.best_inner_action(trigger=0, metric="cost")
 
 `get_inner_results_by_action` returns a dict keyed by decision index
 (0, 1, ...); each value maps an action to its list of branch scores
-(`None` for a branch that recorded nothing). `best_inner_action` is the
+(a branch that recorded nothing scores `0.0`; `None` marks a metric
+that could not be evaluated). `best_inner_action` is the
 lowest-scoring action at that decision (the highest with
 `minimize=False`); in rollout mode, the decision executed in the outer
 run always equals it.
 
 Every run with declared actions also writes four CSV files to a
-`rollout/` folder in the run directory, from coarsest to finest:
-`actions.csv` (per decision and action: mean, standard deviation,
-replications, picked), `picks.csv` (the executed pick per decision; an
-empty `picked_action` cell is the base policy), `branches.csv` (one row
-per inner simulation, with its seed and stop reason), and
-`decisions.csv` (every decision inside every branch).
-`env.print_rollout_summary()` prints the per-decision scoreboard, and
+`rollout/` folder in the run directory: `actions.csv` (per decision and
+action: mean, standard deviation, replications, picked), `picks.csv`
+(the pick per decision, executed in rollout mode; an empty
+`picked_action` cell is the base policy), `branches.csv` (one row per
+inner simulation, with its seed and stop reason), and `decisions.csv`
+(every decision inside every branch) — column details in
+{doc}`Raw data <../api/raw-data>`.
+`env.print_rollout_summary()` prints the per-decision summary, and
 `nestedsimpy.reporting.write_rollout_plot(env)` draws the per-action
 means with the executed picks starred.
 
 ## What to expect
 
-Lookahead selection inherits your base policy and corrects its
-mistakes. Against a mistuned base rule it can help substantially;
-against a well-tuned one it roughly ties, because the noisy per-action
-estimates no longer differ enough to exploit. Two settings control the
+The picks start from your base policy and change only where the
+estimates disagree with it. The gain depends on the base rule: a
+mistuned rule leaves mistakes to correct, while against a well-tuned
+one the noisy per-action estimates rarely change the pick. Two settings control the
 trade-off: a longer window covers more of each action's consequences
 but adds noise, and more replications per action steady the comparison
 at the price of computation. When in doubt, keep the window short and

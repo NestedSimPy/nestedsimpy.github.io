@@ -96,20 +96,22 @@ write_dynamic_plot(source, *, outer_id=None, output_path=None,
 ## Lookahead runs
 
 ```python
-env.print_rollout_summary()
-env.export_rollout(dir=None, metric=None, minimize=None) -> Path | None
-write_rollout_plot(env, path=None, *, metric=None, minimize=None, title=None) -> Path
+env.print_rollout_summary(metric=None, minimize=None)
+env.export_rollout(dir=None, *, metric=None, minimize=None) -> dict[str, Path] | None
+write_rollout_plot(env, path=None, *, metric=None, minimize=None, title=None) -> Path | None
 ```
 
-- **`env.print_rollout_summary`** — print the per-decision scoreboard of a run
-  with declared actions: one line per decision, the mean score of every action,
-  the executed pick starred.
+- **`env.print_rollout_summary`** — print a per-decision summary of a run with
+  declared actions: one line per decision with each action's mean score; the
+  pick is starred.
 - **`env.export_rollout`** — write the four lookahead CSV files (see
-  {doc}`Raw data <raw-data>`); called automatically at the end of
-  `nested_run` when actions were declared, so it is only needed for a second
-  export to another directory. Returns `None` when the run declared no actions.
-- **`write_rollout_plot`** — one self-contained HTML: the per-action mean
-  score per decision with standard-error bars, the executed picks starred.
+  {doc}`Raw data <raw-data>`) and return their paths keyed by name. Called
+  automatically at the end of `nested_run` when actions were declared, so it
+  is only needed for a second export to another directory; returns `None`
+  when the run declared no actions.
+- **`write_rollout_plot`** — one HTML file (plotly.js loads from a CDN): the
+  per-action mean score per decision with standard-error bars, the picks
+  starred.
 
 ## OutputManager
 

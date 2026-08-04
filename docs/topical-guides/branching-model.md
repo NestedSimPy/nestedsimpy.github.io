@@ -166,12 +166,12 @@ stream across branches (useful when comparing policies on the same randomness).
 
 ## 4. When the model also makes decisions
 
-Steps 1-3 cover a model that observes the future. If your model must
+Steps 1-3 cover models without decision points. If your model must
 also *choose* at certain moments (how much to order, whether to admit),
 three more changes convert the decision itself — everything else
 above stays as it is.
 
-**4a. Declare the candidates.** One entry per candidate decision, in
+**4a. Declare the candidates.** Give one entry per candidate decision, in
 the shape your policy returns; `None` is the policy's own decision and
 should stay in the list:
 

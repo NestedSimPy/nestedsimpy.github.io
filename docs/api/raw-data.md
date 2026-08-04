@@ -65,15 +65,18 @@ means and standard deviations across its branches (the source of
 A run with declared actions also writes a `rollout/` folder, four CSV
 files from coarsest to finest:
 
-- `actions.csv` — one row per (decision, action): `mean`, `std`, `n`
-  (replications), `picked`.
-- `picks.csv` — one row per decision: `time`, `picked_action`, `mean`.
-  An empty `picked_action` cell is the base policy.
+- `actions.csv` — one row per (decision, action): `trigger`, `time`,
+  `action`, `mean`, `std`, `n` (replications), `picked`.
+- `picks.csv` — one row per decision: `trigger`, `time`,
+  `picked_action`, `mean`. An empty `picked_action` cell is the base
+  policy.
 - `branches.csv` — one row per inner simulation: `inner_id`
-  (`j<decision>-a<action>-k<replication>`), its score, `seed`,
-  `end_time`, `events`, and `stop_reason`.
-- `decisions.csv` — one row per decision made *inside* a branch: the
-  candidate first, the base policy afterwards.
+  (`j<decision>-a<action>-k<replication>`), `trigger`, `fork_time`,
+  `action`, `replication`, `value` (the branch's score), `seed`,
+  `end_time`, `events`, `stop_reason`.
+- `decisions.csv` — one row per decision made *inside* a branch. Each
+  branch's first decision is its candidate action; the rest come from
+  the base policy.
 
 ## Reading it back
 
