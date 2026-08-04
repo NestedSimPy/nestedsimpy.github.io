@@ -92,6 +92,16 @@ EXAMPLES = {
         url="https://simpy.readthedocs.io/en/latest/examples/process_communication.html",
         blurb="producer/consumer processes talking over a `Store`",
     ),
+    "dual_sourcing": dict(
+        title="Dual Sourcing with Lookahead Expediting", page="dual-sourcing",
+        primitive="env.decide + set_inner_actions",
+        url=None,
+        blurb="the dual-sourcing inventory model of Song, Xiao, Zhang and "
+              "Zipkin (2017), where lead times are endogenous and each review "
+              "decides how many units to expedite (the two-argument "
+              "`fn(state, action)` decision form)",
+        inspect_rollout=True,
+    ),
     "inventory_lookahead": dict(
         title="Inventory with Lookahead Decisions", page="inventory-lookahead",
         primitive="env.decide + set_inner_actions",
@@ -109,7 +119,7 @@ def deshim(name: str) -> str:
     text = (EXAMPLES_DIR / f"{name}_nested.py").read_text(encoding="utf-8")
     out = []
     for line in text.splitlines():
-        if line.strip() == "from _imports import *":
+        if line.strip().startswith("from _imports import *"):
             continue
         # process_communication pulls wait_time_hook from a local tools module;
         # use the packaged one instead.
@@ -238,8 +248,11 @@ def build(name: str, meta: dict) -> dict:
         code(run),
         md("## 3. Inspect the run",
            "",
-           "`OutputManager` reads the run folder and reports the trigger events, "
-           "plots the outer trajectory, and exports the sample path."),
+           ("The lookahead CSVs are read back with pandas: the executed "
+            "picks and the per-action score table."
+            if meta.get("inspect_rollout") else
+            "`OutputManager` reads the run folder and reports the trigger events, "
+            "plots the outer trajectory, and exports the sample path.")),
         code(inspect),
     ]
 

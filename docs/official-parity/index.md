@@ -3,7 +3,7 @@
 The [SimPy documentation](https://simpy.readthedocs.io/en/latest/examples/index.html)
 provides multiple examples of discrete-event simulations. We demonstrate how each
 of these examples can be modified and executed using nested simulation, and add
-one NestedSimPy-specific example at the end. Every example is shown as a
+two NestedSimPy-specific examples at the end. Every example is shown as a
 **plain** SimPy baseline and a **nested** NestedSimPy version.
 
 The SimPy examples are distributed under the MIT License (© 2013 Ontje Lünsdorf
@@ -31,6 +31,11 @@ and Stefan Scherfke); see {doc}`../about` for full license and attribution.
   NestedSimPy-specific example (not from the SimPy documentation): a periodic
   stock whose order decision is chosen by trying each candidate quantity in
   inner simulations. Illustrates `env.decide` and `set_inner_actions`.
+- **{doc}`Dual Sourcing with Lookahead Expediting <dual-sourcing>`** — a
+  NestedSimPy-specific example (not from the SimPy documentation): the
+  dual-sourcing inventory model of Song, Xiao, Zhang and Zipkin (2017), where
+  lead times are endogenous and each review decides how many units to expedite.
+  Illustrates the two-argument `fn(state, action)` decision form.
 
 ```{toctree}
 :hidden:
@@ -44,4 +49,5 @@ machine-shop
 movie-reneging
 process-communication
 inventory-lookahead
+dual-sourcing
 ```
