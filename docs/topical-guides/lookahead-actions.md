@@ -26,11 +26,28 @@ below.
 
 ## What you write
 
-You write four things. The snippets below come from the worked pair in
+You write five things, and the first your plain model already has.
+The snippets below come from the worked pair in
 {doc}`Inventory with Lookahead Decisions
 <../official-parity/inventory-lookahead>` — a periodic-review stock
 with demand each period, then an order decision — and that page has the
 full runnable files.
+
+**The policy.** Any function of the state that returns one complete
+decision — usually the one your plain model already has. This template
+is the whole requirement:
+
+```python
+def base_policy(state):
+    """Order up to ORDER_UP_TO on the inventory position."""
+    position = int(state["stock"].level) + int(state["pipeline"].level)
+    return max(0, ORDER_UP_TO - position)
+```
+
+A policy that decides several variables returns them as one tuple, for
+example `return normal, emergency` — still one complete decision. A
+callable object works the same way, so a policy class with parameters
+of its own can go straight in.
 
 **The actions.** Give one entry per candidate, in the shape the policy
 returns. Keep `None` in the list so "let the base rule decide" always
