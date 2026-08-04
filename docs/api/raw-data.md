@@ -60,6 +60,21 @@ outcome in that branch — `anchor_cust_id`, `k`, `anchor_arrival_time`,
 means and standard deviations across its branches (the source of
 `OutputManager.export_outer_case_table()`).
 
+## Lookahead CSVs
+
+A run with declared actions also writes a `rollout/` folder, four CSV
+files from coarsest to finest:
+
+- `actions.csv` — one row per (decision, action): `mean`, `std`, `n`
+  (replications), `picked`.
+- `picks.csv` — one row per decision: `time`, `picked_action`, `mean`.
+  An empty `picked_action` cell is the base policy.
+- `branches.csv` — one row per inner simulation: `inner_id`
+  (`j<decision>-a<action>-k<replication>`), its score, `seed`,
+  `end_time`, `events`, and `stop_reason`.
+- `decisions.csv` — one row per decision made *inside* a branch: the
+  candidate first, the base policy afterwards.
+
 ## Reading it back
 
 You rarely need to parse `raw/` by hand: `package_run_outputs(...)` builds the

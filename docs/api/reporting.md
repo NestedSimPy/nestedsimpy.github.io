@@ -93,6 +93,24 @@ write_dynamic_plot(source, *, outer_id=None, output_path=None,
 - **`write_static_plot` / `write_dynamic_plot`** — render and write the static /
   interactive branch plot HTML, returning the output path.
 
+## Lookahead runs
+
+```python
+env.print_rollout_summary()
+env.export_rollout(dir=None, metric=None, minimize=None) -> Path | None
+write_rollout_plot(env, path=None, *, metric=None, minimize=None, title=None) -> Path
+```
+
+- **`env.print_rollout_summary`** — print the per-decision scoreboard of a run
+  with declared actions: one line per decision, the mean score of every action,
+  the executed pick starred.
+- **`env.export_rollout`** — write the four lookahead CSV files (see
+  {doc}`Raw data <raw-data>`); called automatically at the end of
+  `nested_run` when actions were declared, so it is only needed for a second
+  export to another directory. Returns `None` when the run declared no actions.
+- **`write_rollout_plot`** — one self-contained HTML: the per-action mean
+  score per decision with standard-error bars, the executed picks starred.
+
 ## OutputManager
 
 A post-hoc interface over a packaged run folder — see
