@@ -6,13 +6,14 @@ A NestedSimPy-specific example (not from the SimPy documentation): the
 dual-sourcing inventory model of Song, Xiao, Zhang and Zipkin (2017),
 "Optimal Policies for a Dual-Sourcing Inventory Problem with Endogenous
 Stochastic Leadtimes", *Operations Research* 65(2):379–395. A single
-product faces unit Poisson demand with full backlogging; regular orders
+product faces unit Poisson demand with full backlogging; normal orders
 ride a two-stage tandem production line, so lead times are endogenous
-(ordering more congests the line), and an expedited order skips stage 1
-for a premium per unit. The plain version follows the single-sourcing
-base rule — top the inventory position up to `S_REG` with regular
-orders, never expedite. The nested version decides at each review
-whether to expedite, by trying each candidate order in inner
+(ordering more congests the line), and an emergency order skips stage 1
+at a higher per-unit cost. Both files run the paper's Table 5 instance
+(h=1, b=60, h2=2) under its best Dual-Index policy (s1=30, s2=12),
+whose exact cost rate the paper reports as 99.89. The plain version
+follows that policy as written; the nested version hands each review's
+decision to `env.decide`, trying each candidate order in inner
 simulations launched from the live production line.
 
 ```{tip}
@@ -43,22 +44,23 @@ simulations launched from the live production line.
 
 ## Discussion
 
-The policy function is the plain file's `base_policy`, unchanged, and
-it goes into the decision line as is:
+The policy is the paper's `DualIndexPolicy`, the same object in both
+files, and it goes into the decision line as is:
 
 ```python
 ACTIONS = [None, (0, 1), (1, 1)]
 
-regular, expedited = yield from env.decide(base_policy, state)
+normal, emergency = yield from env.decide(policy, state)
 ```
 
-Each action is a complete `(regular, expedited)` order, in the shape
+Each action is a complete `(normal, emergency)` order, in the shape
 the policy returns, and a branch executes its candidate exactly as
-written: `(0, 1)` expedites a unit instead of ordering it normally,
-`(1, 1)` expedites one on top of a regular order, and `None` is the
-base rule running as its own candidate. After that one order, every
-branch follows the base rule, so the comparison isolates the decision
-at hand. Everything else is the standard rollout setup:
+written: `None` is the policy's own decision — here `(0, 0)` or
+`(1, 0)` at almost every review, since reviews follow each demand and
+each delivery — and the other two expedite a unit instead of, or on
+top of, a normal order. After that one order, every branch follows the
+policy, so the comparison isolates the decision at hand. Everything
+else is the standard rollout setup:
 `set_inner_actions(ACTIONS, metric="cost", outer_run_mode="rollout")`,
 one `env.record("cost", ...)` stream that scores the branches, and no
 triggering configuration, since NestedSimPy branches on the event
