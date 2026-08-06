@@ -55,7 +55,7 @@ from dataclasses import dataclass
 import numpy as np
 
 # One entry per candidate decision, in the shape the policy returns:
-# (normal, emergency).  None is the base policy's own decision -- here
+# (normal, emergency).  None is the baseline policy's decision -- here
 # (0, 0) or (1, 0) at almost every review, since reviews follow each
 # demand and each delivery.  The other two expedite a unit instead of
 # ordering it normally, and expedite one on top of the normal order.

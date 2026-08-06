@@ -26,7 +26,7 @@ MEAN_DEMAND = 5.0          # Poisson demand per period
 HOLD_COST = 1.0            # per unit on hand per period
 SHORTAGE_COST = 9.0        # per unit short per period (lost sales)
 ORDER_UP_TO = 10           # the rule's target position
-ACTIONS = [None, 0, 5, 10]  # None = the base rule's own decision
+ACTIONS = [None, 0, 5, 10]  # None = the baseline rule's decision
 LOOKAHEAD = 4              # periods each inner branch runs
 REPS = 4                   # inner branches per candidate
 

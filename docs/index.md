@@ -10,7 +10,7 @@ Simulation within Simulation
 :::
 
 NestedSimPy is an extension to [SimPy](https://simpy.readthedocs.io/) that
-supplements it with **nested simulation**, **rollout**, and **policy-lookahead**
+supplements it with **nested simulation** and **rollout (policy-lookahead)**
 capabilities. The package is **not** part of the SimPy project.
 
 :::{div} ns-cta-row
@@ -75,7 +75,8 @@ Management are:
    discern whether the best-performing method is optimal or whether better
    methods can be developed. We can use nested simulation to simulate service
    systems and compute the average waiting times, which provides **optimal
-   predictions** (when the performance metric is MSE).
+   predictions** (when the performance metric is MSE), thereby allowing us to
+   estimate the optimality gap of predictive models.
 
 2. **Implementation of rollout (lookahead) policies for dynamic optimization.**
    A commonly used policy in dynamic optimization is the rollout, or lookahead,

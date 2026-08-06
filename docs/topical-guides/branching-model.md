@@ -200,6 +200,5 @@ env.record("cost", period_cost)
 env.set_inner_actions(ACTIONS, metric="cost", outer_run_mode="rollout")
 ```
 
-See {doc}`Choosing actions by lookahead <lookahead-actions>` for the
-full contract, and the worked pair in
-{doc}`Inventory with Lookahead Decisions <../official-parity/inventory-lookahead>`.
+See {doc}`Implementing lookahead policies <lookahead-actions>` for the
+full contract and its worked example.

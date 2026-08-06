@@ -71,9 +71,9 @@ coarsest to finest:
 
 - `actions.csv` — one row per (decision, action): `trigger`, `time`,
   `action`, `mean`, `std`, `n` (replications), `picked`. As everywhere
-  in these files, an empty `action` cell is the base policy.
+  in these files, an empty `action` cell is the baseline policy.
 - `picks.csv` — one row per decision: `trigger`, `time`,
-  `picked_action`, `mean`. An empty `picked_action` cell is the base
+  `picked_action`, `mean`. An empty `picked_action` cell is the baseline
   policy.
 - `branches.csv` — one row per inner simulation: `inner_id`
   (`j<decision>-a<action>-k<replication>`), `trigger`, `fork_time`,
@@ -83,7 +83,7 @@ coarsest to finest:
   `inner_id`, `trigger`, `action`, `replication`, `t`, `decision`,
   plus one `state_<key>` column per feature when `set_state_features`
   is on. Each branch's first decision is its candidate action; the
-  rest come from the base policy.
+  rest come from the baseline policy.
 
 ## Reading it back
 

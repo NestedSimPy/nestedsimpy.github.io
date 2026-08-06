@@ -57,52 +57,53 @@ def set_nested_output_folder(*parts):
 
 EXAMPLES = {
     "bank_reneging": dict(
-        title="Bank Renege", page="bank-reneging", primitive="NestedResource",
+        title="Bank Renege", page="official-parity/bank-reneging", primitive="NestedResource",
         url="https://simpy.readthedocs.io/en/latest/examples/bank_renege.html",
         blurb="a counter with reneging customers (a `Resource` plus condition events)",
     ),
     "carwash": dict(
-        title="Carwash", page="carwash", primitive="NestedResource",
+        title="Carwash", page="official-parity/carwash", primitive="NestedResource",
         url="https://simpy.readthedocs.io/en/latest/examples/carwash.html",
         blurb="cars sharing a bank of washing machines (a `Resource`)",
     ),
     "event_latency": dict(
-        title="Event Latency", page="event-latency", primitive="NestedStore",
+        title="Event Latency", page="official-parity/event-latency", primitive="NestedStore",
         url="https://simpy.readthedocs.io/en/latest/examples/latency.html",
         blurb="a delayed message channel built on a `Store`",
     ),
     "gas_station": dict(
-        title="Gas Station Refueling", page="gas-station",
+        title="Gas Station Refueling", page="official-parity/gas-station",
         primitive="NestedResource + NestedContainer",
         url="https://simpy.readthedocs.io/en/latest/examples/gas_station_refuel.html",
         blurb="cars refuelling from a shared tank (a `Resource` and a `Container`)",
     ),
     "machine_shop": dict(
-        title="Machine Shop", page="machine-shop", primitive="NestedPreemptiveResource",
+        title="Machine Shop", page="official-parity/machine-shop", primitive="NestedPreemptiveResource",
         url="https://simpy.readthedocs.io/en/latest/examples/machine_shop.html",
         blurb="machines that break down and a repairman (a `PreemptiveResource`)",
     ),
     "movie_reneging": dict(
-        title="Movie Renege", page="movie-reneging", primitive="NestedResource",
+        title="Movie Renege", page="official-parity/movie-reneging", primitive="NestedResource",
         url="https://simpy.readthedocs.io/en/latest/examples/movie_renege.html",
         blurb="moviegoers queueing for tickets and leaving when a film sells out",
     ),
     "process_communication": dict(
-        title="Process Communication", page="process-communication", primitive="NestedStore",
+        title="Process Communication", page="official-parity/process-communication", primitive="NestedStore",
         url="https://simpy.readthedocs.io/en/latest/examples/process_communication.html",
         blurb="producer/consumer processes talking over a `Store`",
     ),
     "dual_sourcing": dict(
-        title="Dual Sourcing with Lookahead Expediting", page="dual-sourcing",
+        title="Dual Sourcing with Lookahead Expediting", page="official-parity/dual-sourcing",
         primitive="env.decide + set_inner_actions",
         url=None,
         blurb="the dual-sourcing inventory model of Song, Xiao, Zhang and "
               "Zipkin (2017), where lead times are endogenous and each "
-              "review decides whether to expedite",
+              "decision epoch decides whether to place a normal or an "
+              "expedited order",
         inspect_rollout=True,
     ),
     "inventory_lookahead": dict(
-        title="Inventory with Lookahead Decisions", page="inventory-lookahead",
+        title="Inventory with Lookahead Decisions", page="topical-guides/lookahead-actions",
         primitive="env.decide + set_inner_actions",
         url=None,
         blurb="a periodic-review stock whose order decision is chosen by trying each "
@@ -214,7 +215,7 @@ def build(name: str, meta: dict) -> dict:
             f"This notebook runs a NestedSimPy-specific example: {meta['blurb']}. "
             f"It uses `env.decide` and `set_inner_actions`.",
             "",
-            f"See the [example page](https://nestedsimpy.github.io/official-parity/{meta['page']}.html) "
+            f"See the [example page](https://nestedsimpy.github.io/{meta['page']}.html) "
             f"for the side-by-side plain/nested code.",
         )
     else:
@@ -226,7 +227,7 @@ def build(name: str, meta: dict) -> dict:
             f"behavior is unchanged while inner branches are launched at each trigger "
             f"event. This example uses `{meta['primitive']}`.",
             "",
-            f"See the [example page](https://nestedsimpy.github.io/official-parity/{meta['page']}.html) "
+            f"See the [example page](https://nestedsimpy.github.io/{meta['page']}.html) "
             f"for the side-by-side plain/nested code.",
         )
     cells = [

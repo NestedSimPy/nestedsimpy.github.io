@@ -103,9 +103,9 @@ simulation resumes.
 `visualize_inner(trigger_id, inner_id)` plots one inner branch. The grey line is
 the outer context up to the trigger point (at time 0 on this axis); the coloured line is
 the inner simulation that continues from there. Trigger events are numbered in
-the order they fire (`trigger_id` 0 is the first). In this run every arrival
-triggers, so trigger event 16 below is the one that fired at customer 16's
-arrival.
+the order they are executed (`trigger_id` 0 is the first). In this run every
+arrival triggers, so trigger event 16 below is the one executed at customer
+16's arrival.
 
 ```{figure} _static/mm1-inner-one.svg
 :alt: A single inner simulation launched at a trigger event
@@ -125,9 +125,10 @@ futures**, so their queue lengths diverge after the trigger point.
 
 ### Data
 
-`OutputManager` also exports the run as tables of two kinds: **event logs** —
-one row per simulation event, giving a sample path of the run — and **case
-tables** — one row per case (here, per customer), giving its predicted outcomes.
+`OutputManager` also exports the run as tables of two kinds: **event logs**,
+consisting of one row per simulation event, providing a sample path of the
+run — and **case tables**, consisting of one row per case (here, per
+customer), providing its predicted outcomes.
 
 #### Exporting event logs
 
@@ -149,7 +150,7 @@ way.
 ##### One inner sample path
 
 `export_inner_event_log(trigger_id, inner_id)` returns one inner
-simulation's event log. **Simulation source** says where each row comes
+simulation's event log. **Simulation source** indicates where each row comes
 from — `outer` before the trigger point, `inner` after it — and `(srv)` is
 the server's `nested_id` (scroll it):
 
@@ -446,7 +447,7 @@ env.register_metric("user_wait", user_wait)   # register BEFORE nested_run()
 env.nested_run()
 ```
 
-Adding this code gives the prediction table two **new** columns, named
+Running this code adds two **new** columns to the prediction table, named
 after the registered metric (`user_wait` -> `inner_user_wait_mean` and
 `inner_user_wait_std`): the mean and standard deviation of `user_wait` over
 each trigger event's three inner simulations. Below they are shown next to
@@ -476,7 +477,7 @@ shown):
 ```
 
 Note that the user-defined function may return NaN; NaN values are simply
-left out when the mean and standard deviation are computed. The full list of
+ignored when the mean and standard deviation are computed. The full list of
 `eventlog` columns and `inner_sim_context` keys is in Using NestedSimPy →
 Exporting data: {ref}`user-defined-metrics`.
 

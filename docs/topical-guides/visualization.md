@@ -67,7 +67,7 @@ keywords:
 | `path` | `str` / `Path` | `None` | Also write the figure to disk: an HTML file for the interactive variant, an image (`.png`, `.svg`, ...) for the static one. Without it the figure is only returned. |
 | `start`, `end` | `float` | `None` | Clip the time axis to `[start, end]` (simulation time). Either may be omitted. |
 | `show_triggering_events` | `bool` | `True` | Draw a dotted vertical marker at each trigger point inside the window. |
-| `show_decisions` | `bool` | `False` | For a run with declared actions: mark each decision and label it with the picked action ("base" for the base policy); gray when the picks were computed but not executed. Outer plots only. |
+| `show_decisions` | `bool` | `False` | For a run with declared actions: mark each decision and label it with the picked action ("base" for the baseline policy); gray when the picks were computed but not executed. Outer plots only. |
 | `metric` | `str` or callable | number in system | *What* to plot — see {ref}`choosing-object-metric` below. |
 | `nested_id` | `str` | auto-detected | *Which* object to plot — see {ref}`choosing-object-metric` below. |
 
