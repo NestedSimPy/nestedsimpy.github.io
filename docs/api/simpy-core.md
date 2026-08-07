@@ -96,7 +96,7 @@ outer_decisions() -> list[(t, decision, feats)]  # the outer run's decisions
   replication), and returns the decision. Must be driven with `yield from`.
   `fn` is normally the baseline policy itself, `fn(state)`; a two-argument
   `fn(state, action)` serves decisions whose variables are coupled.
-  See {doc}`Choosing actions by lookahead <../topical-guides/lookahead-actions>`.
+  See {doc}`Implementing lookahead policies <../topical-guides/lookahead-actions>`.
 - **`set_inner_actions`** — the candidates. `None` means the baseline policy's own
   decision; every other action is complete and executed as written.
   `outer_run_mode="rollout"` executes each pick; `"base_policy"` scores

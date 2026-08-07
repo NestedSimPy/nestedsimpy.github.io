@@ -97,9 +97,9 @@ EXAMPLES = {
         primitive="env.decide + set_inner_actions",
         url=None,
         blurb="the dual-sourcing inventory model of Song, Xiao, Zhang and "
-              "Zipkin (2017), where lead times are endogenous and each "
-              "decision epoch decides whether to place a normal or an "
-              "expedited order",
+              "Zipkin (2017), where lead times are endogenous and in each "
+              "decision epoch the decision-maker decides whether to place a "
+              "normal or an expedited order",
         inspect_rollout=True,
     ),
     "inventory_lookahead": dict(
@@ -188,7 +188,7 @@ def build(name: str, meta: dict) -> dict:
             'actions = pd.read_csv(f"{run}/rollout/actions.csv")\n'
             'print(picks.to_string(index=False))\n'
             'print()\n'
-            'print(actions.head(8).to_string(index=False))  # an empty action cell is the base policy\n'
+            'print(actions.head(8).to_string(index=False))  # an empty action cell is the baseline policy\n'
         )
     else:
         inspect = (

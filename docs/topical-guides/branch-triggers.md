@@ -44,7 +44,7 @@ triggers are not tied to a triggering object, so the `"srv"` default
 above does not apply here. Write
 `set_triggering_conditions({"on": "event", "name": ...})` yourself only
 for a custom `event=` name, or to branch on other events too. See
-{doc}`Choosing actions by lookahead <lookahead-actions>`.
+{doc}`Implementing lookahead policies <lookahead-actions>`.
 
 ## Arrival triggers
 

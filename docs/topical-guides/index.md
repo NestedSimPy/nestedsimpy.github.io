@@ -26,11 +26,11 @@ What are triggering events and how to define them?
 Defining when the outer and inner simulation stop.
 ```
 
-```{grid-item-card} Choosing actions by lookahead
+```{grid-item-card} Implementing lookahead policies
 :link: lookahead-actions
 :link-type: doc
 
-Trying candidate actions in inner simulations and executing the best.
+Executing and evaluating a rollout of a baseline policy.
 ```
 
 ```{grid-item-card} Replay

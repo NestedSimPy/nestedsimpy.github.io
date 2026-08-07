@@ -252,7 +252,7 @@ def simulate(params: Params, policy, seed: int, *,
 
 if __name__ == "__main__":
     params = Params(horizon=25.0, warmup=0.0)
-    policy = DualIndexPolicy(s1=30, s2=12)      # the paper's best DI base
+    policy = DualIndexPolicy(s1=30, s2=12)      # the paper's best DI baseline
     r = simulate(params, policy, seed=1, out_dir=NESTED_OUTPUT_FOLDER)
     print(f"rollout over {len(ACTIONS)} candidates on {policy!r}: "
           f"total cost {r['total_cost']:.1f} over {params.horizon:.0f} "

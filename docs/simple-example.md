@@ -127,7 +127,7 @@ futures**, so their queue lengths diverge after the trigger point.
 
 `OutputManager` also exports the run as tables of two kinds: **event logs**,
 consisting of one row per simulation event, providing a sample path of the
-run — and **case tables**, consisting of one row per case (here, per
+run, and **case tables**, consisting of one row per case (here, per
 customer), providing its predicted outcomes.
 
 #### Exporting event logs

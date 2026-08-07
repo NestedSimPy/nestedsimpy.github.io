@@ -21,7 +21,7 @@ Implementing a rollout takes three elements:
    system state (the state object is the user's own). The policy never
    sees an action and never returns `None` — the lookahead machinery is
    invisible from inside it. Each `decide` call marks a decision moment.
-2. **Register the actions.** `set_inner_actions(ACTIONS, metric="cost")`
+2. **Register the actions.** `set_inner_actions(ACTIONS, metric="cost", ...)`
    declares the alternatives to the baseline policy. An action is either
    `None` ("the baseline policy decides") or a complete decision,
    executed exactly as written. At each decision moment NestedSimPy
@@ -245,7 +245,7 @@ raise the replications first.
 
 ## A larger example
 
-For a model with more at stake —
+For a larger model —
 the dual-sourcing inventory model of Song, Xiao, Zhang and Zipkin
 (2017), with endogenous lead times and the paper's own Dual-Index
 policy as the baseline — see {doc}`Dual Sourcing with Lookahead
