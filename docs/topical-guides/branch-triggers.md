@@ -260,11 +260,11 @@ Details worth knowing:
   column in the exported tables carries that condition's `on` value
   (`"arrival"`, `"state_predicate"`, ...). See
   {doc}`Exporting data <traces-and-outputs>`.
-- If two conditions are satisfied at the same instant, the one listed first
-  wins and the run continues with a single trigger event, not two.
-- After each trigger event all conditions re-arm together and their
-  `frequency` counters restart — the same restart rule as for a single
-  condition.
+- If two conditions are satisfied at the same instant, each fires its own
+  trigger event: the one listed first is handled first, and the other is
+  queued and handled at the same simulation time — no occurrence is lost.
+- `frequency` counters count every occurrence of the run continuously;
+  handling a trigger event does not restart any condition's count.
 - This composes with several triggering objects: every condition is armed on
   every object, and the first (object, condition) pair to fire causes the
   branching.
