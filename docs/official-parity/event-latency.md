@@ -31,7 +31,6 @@ communication channels.
 
 ```{codeannotate} ../../simpy_examples/event_latency_plain.py ../../simpy_examples/event_latency_nested.py
 :title: simpy_examples/event_latency_nested.py
-:context: 3
 ```
 
 ## Discussion

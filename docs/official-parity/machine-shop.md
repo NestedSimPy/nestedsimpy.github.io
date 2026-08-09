@@ -31,7 +31,6 @@ can preempt lower-priority tasks.
 
 ```{codeannotate} ../../simpy_examples/machine_shop_plain.py ../../simpy_examples/machine_shop_nested.py
 :title: simpy_examples/machine_shop_nested.py
-:context: 3
 ```
 
 ## Discussion

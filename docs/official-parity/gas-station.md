@@ -31,7 +31,6 @@ falls below a threshold.
 
 ```{codeannotate} ../../simpy_examples/gas_station_plain.py ../../simpy_examples/gas_station_nested.py
 :title: simpy_examples/gas_station_nested.py
-:context: 3
 ```
 
 ## Discussion

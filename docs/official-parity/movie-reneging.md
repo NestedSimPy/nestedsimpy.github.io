@@ -30,7 +30,6 @@ is sold out, customers waiting for that title leave the queue.
 
 ```{codeannotate} ../../simpy_examples/movie_reneging_plain.py ../../simpy_examples/movie_reneging_nested.py
 :title: simpy_examples/movie_reneging_nested.py
-:context: 3
 ```
 
 ## Discussion

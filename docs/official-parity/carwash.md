@@ -31,7 +31,6 @@ leave when finished.
 
 ```{codeannotate} ../../simpy_examples/carwash_plain.py ../../simpy_examples/carwash_nested.py
 :title: simpy_examples/carwash_nested.py
-:context: 3
 ```
 
 ## Discussion

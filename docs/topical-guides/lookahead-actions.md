@@ -139,7 +139,6 @@ The full file, with every change against the plain version highlighted:
 
 ```{codeannotate} ../../simpy_examples/inventory_lookahead_plain.py ../../simpy_examples/inventory_lookahead_nested.py
 :title: simpy_examples/inventory_lookahead_nested.py
-:context: 3
 ```
 
 ## One rule about `yield from`

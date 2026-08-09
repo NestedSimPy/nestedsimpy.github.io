@@ -31,7 +31,6 @@ process.
 
 ```{codeannotate} ../../simpy_examples/process_communication_plain.py ../../simpy_examples/process_communication_nested.py
 :title: simpy_examples/process_communication_nested.py
-:context: 3
 ```
 
 ## Discussion

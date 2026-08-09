@@ -31,7 +31,6 @@ patience runs out first.
 
 ```{codeannotate} ../../simpy_examples/bank_reneging_plain.py ../../simpy_examples/bank_reneging_nested.py
 :title: simpy_examples/bank_reneging_nested.py
-:context: 3
 ```
 
 ## Discussion

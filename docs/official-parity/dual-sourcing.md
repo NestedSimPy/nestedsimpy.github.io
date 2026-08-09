@@ -48,7 +48,6 @@ line.
 
 ```{codeannotate} ../../simpy_examples/dual_sourcing_plain.py ../../simpy_examples/dual_sourcing_nested.py
 :title: simpy_examples/dual_sourcing_nested.py
-:context: 3
 ```
 
 ## Discussion
