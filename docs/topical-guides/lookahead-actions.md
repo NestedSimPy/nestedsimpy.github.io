@@ -245,12 +245,15 @@ raise the replications first.
 ## How this is validated
 
 The test suite pins the lookahead machinery against results computed by
-hand, not against stored outputs of earlier runs. A single-decision
-newsvendor model (overage cost 1, underage cost 3, demand 0 or 4 with
-probabilities 0.25/0.75) has a closed-form optimum -- the critical
-fractile gives order-up-to y\* = 4 -- and an exactly computable expected
-cost for every candidate. One seeded run of the test, 64 replications
-per action:
+hand, not against stored outputs of earlier runs.
+
+**Single decision.** The classical newsvendor model -- one ordering
+decision under uncertain demand, overage cost 1 and underage cost 3 per
+unit, demand 0 or 4 with probabilities 0.25/0.75 -- has a closed-form
+optimum: the critical-ratio formula gives order-up-to y\* = 4, and the
+expected cost of every candidate is an exact finite sum (see any
+inventory text, e.g. Porteus, *Foundations of Stochastic Inventory
+Theory*, 2002). One seeded run of the test, 64 replications per action:
 
 | order-up-to y | 0 | 1 | 2 | 3 | **4** | 5 | 6 |
 |---|---|---|---|---|---|---|---|
@@ -258,17 +261,29 @@ per action:
 | simulated score | 9.19 | 7.13 | 5.06 | 3.00 | **0.94** | 1.94 | 2.94 |
 
 NestedSimPy executed y = 4, the theoretical optimum; every score sits
-within its analytic confidence bound, and the sweep variants place the
+within its analytic confidence bound, and sweep variants place the
 optimum at the top, bottom and middle of the grid (y\* = 4, 0, 2) with
-the executed pick matching each time. A multi-period companion uses the
-base-stock result of inventory theory: with the provably optimal
-order-up-to policy as the baseline, the executed picks over five
-consecutive decisions came out `[4, 4, 4, 4, 4]` -- and `[1, 1, 1, 1, 1]`
-in a mirrored cost setting whose optimum is low in the grid. Under
-common random numbers some comparisons are exact identities rather than
-statistical ones: the score gap between adjacent order levels must equal
-the unit overage cost, and the suite observed 1.0000000000 at every one
-of the five decisions.
+the executed pick matching each time.
+
+**Five consecutive decisions.** A multi-period companion runs the same
+shop for five periods with backlogged demand and free, instant
+replenishment. Under those conditions the provably optimal policy
+orders up to the same critical level every period (Veinott,
+"Optimal Policy for a Multi-Product, Dynamic, Nonstationary Inventory
+Problem", *Management Science* 12(3):206-222,
+[1965](https://pubsonline.informs.org/doi/10.1287/mnsc.12.3.206));
+with zero ordering cost that level is again the critical-ratio y\*.
+The executed pick must equal it at every decision, in two mirrored
+cost settings:
+
+| setting | theoretical y\* | executed picks (5 decisions) | adjacent-level score gap |
+|---|---|---|---|
+| shortage expensive | 4 | `[4, 4, 4, 4, 4]` | 1.0000000000 at all five (theory: exactly the unit overage cost) |
+| holding expensive | 1 | `[1, 1, 1, 1, 1]` | 1.0000000000 at all five (theory: exactly the unit underage cost) |
+
+The exact gaps are common-random-numbers identities: the baseline
+re-aligns every branch at the next review, so the two-period scores
+differ only by the current period's cost, path by path.
 
 ## A larger example
 
