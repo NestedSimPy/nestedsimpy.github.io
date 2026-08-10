@@ -242,6 +242,24 @@ but adds noise, and more replications per action steady the comparison
 at the price of computation. When in doubt, keep the window short and
 raise the replications first.
 
+## How this is validated
+
+The test suite pins the lookahead machinery against results that can be
+computed by hand, not against stored outputs of earlier runs. A
+single-decision newsvendor model has a closed-form optimum (the critical
+fractile) and exactly computable expected costs: the tests assert that
+the action NestedSimPy executes equals that optimum and that every
+per-action score lies within an analytic confidence bound of its exact
+value, across three cost/demand settings whose optima sit at the top,
+bottom and middle of the action grid. A multi-period companion uses the
+base-stock result of inventory theory: with the provably optimal
+order-up-to policy as the baseline, the executed pick must equal the
+theoretical level at every one of five consecutive decisions, in two
+mirrored cost settings. Under common random numbers some of these
+comparisons are exact identities rather than statistical ones -- for
+example, the score gap between adjacent order levels must equal the unit
+overage cost to float precision -- and the suite asserts them as exact.
+
 ## A larger example
 
 For a larger model —
