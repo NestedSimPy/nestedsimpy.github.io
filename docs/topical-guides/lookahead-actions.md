@@ -276,10 +276,10 @@ with zero ordering cost that level is again the critical-ratio y\*.
 The executed pick must equal it at every decision, in two mirrored
 cost settings:
 
-| setting | theoretical y\* | executed picks (5 decisions) | adjacent-level score gap |
+| setting | theoretical y\* | executed picks (5 decisions) | score gap between neighbouring levels |
 |---|---|---|---|
-| shortage expensive | 4 | `[4, 4, 4, 4, 4]` | 1.0000000000 at all five (theory: exactly the unit overage cost) |
-| holding expensive | 1 | `[1, 1, 1, 1, 1]` | 1.0000000000 at all five (theory: exactly the unit underage cost) |
+| shortage expensive | 4 | `[4, 4, 4, 4, 4]` | score(5) − score(4) = 1.0000000000 at all five decisions (theory: ordering one unit above y\* costs exactly the unit overage cost more) |
+| holding expensive | 1 | `[1, 1, 1, 1, 1]` | score(0) − score(1) = 1.0000000000 at all five decisions (theory: ordering one unit below y\* costs exactly the unit underage cost more) |
 
 The exact gaps are common-random-numbers identities: the baseline
 re-aligns every branch at the next review, so the two-period scores
