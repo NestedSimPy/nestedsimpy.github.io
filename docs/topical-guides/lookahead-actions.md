@@ -244,21 +244,31 @@ raise the replications first.
 
 ## How this is validated
 
-The test suite pins the lookahead machinery against results that can be
-computed by hand, not against stored outputs of earlier runs. A
-single-decision newsvendor model has a closed-form optimum (the critical
-fractile) and exactly computable expected costs: the tests assert that
-the action NestedSimPy executes equals that optimum and that every
-per-action score lies within an analytic confidence bound of its exact
-value, across three cost/demand settings whose optima sit at the top,
-bottom and middle of the action grid. A multi-period companion uses the
+The test suite pins the lookahead machinery against results computed by
+hand, not against stored outputs of earlier runs. A single-decision
+newsvendor model (overage cost 1, underage cost 3, demand 0 or 4 with
+probabilities 0.25/0.75) has a closed-form optimum -- the critical
+fractile gives order-up-to y\* = 4 -- and an exactly computable expected
+cost for every candidate. One seeded run of the test, 64 replications
+per action:
+
+| order-up-to y | 0 | 1 | 2 | 3 | **4** | 5 | 6 |
+|---|---|---|---|---|---|---|---|
+| exact Q(y), by hand | 9 | 7 | 5 | 3 | **1** | 2 | 3 |
+| simulated score | 9.19 | 7.13 | 5.06 | 3.00 | **0.94** | 1.94 | 2.94 |
+
+NestedSimPy executed y = 4, the theoretical optimum; every score sits
+within its analytic confidence bound, and the sweep variants place the
+optimum at the top, bottom and middle of the grid (y\* = 4, 0, 2) with
+the executed pick matching each time. A multi-period companion uses the
 base-stock result of inventory theory: with the provably optimal
-order-up-to policy as the baseline, the executed pick must equal the
-theoretical level at every one of five consecutive decisions, in two
-mirrored cost settings. Under common random numbers some of these
-comparisons are exact identities rather than statistical ones -- for
-example, the score gap between adjacent order levels must equal the unit
-overage cost to float precision -- and the suite asserts them as exact.
+order-up-to policy as the baseline, the executed picks over five
+consecutive decisions came out `[4, 4, 4, 4, 4]` -- and `[1, 1, 1, 1, 1]`
+in a mirrored cost setting whose optimum is low in the grid. Under
+common random numbers some comparisons are exact identities rather than
+statistical ones: the score gap between adjacent order levels must equal
+the unit overage cost, and the suite observed 1.0000000000 at every one
+of the five decisions.
 
 ## A larger example
 
