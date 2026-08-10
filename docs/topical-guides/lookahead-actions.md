@@ -266,7 +266,7 @@ optimum at the top, bottom and middle of the grid (y\* = 4, 0, 2) with
 the executed pick matching each time.
 
 **Five consecutive decisions.** A multi-period companion runs the same
-shop for five periods with backlogged demand and free, instant
+kind of shop for five periods with backlogged demand and free, instant
 replenishment. Under those conditions the provably optimal policy
 orders up to the same critical level every period (Veinott,
 "Optimal Policy for a Multi-Product, Dynamic, Nonstationary Inventory
