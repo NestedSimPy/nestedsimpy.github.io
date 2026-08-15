@@ -26,8 +26,8 @@ MEAN_DEMAND = 5.0          # Poisson demand per period
 HOLD_COST = 1.0            # per unit on hand per period
 SHORTAGE_COST = 9.0        # per unit short per period (lost sales)
 ORDER_UP_TO = 10           # the rule's target position
-ACTIONS = [0, 5, 10]   # the baseline rule's own order competes automatically
-INNER_HORIZON = 4          # periods each inner branch runs
+ACTIONS = [0, 5, 10]       # the baseline policy's order competes automatically
+INNER_HORIZON = 4          # the lookahead window, in periods
 INNER_REPS = 4             # inner branches per candidate
 
 NESTED_OUTPUT_FOLDER = set_nested_output_folder("simpy_examples",

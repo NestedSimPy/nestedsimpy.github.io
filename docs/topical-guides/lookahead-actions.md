@@ -118,12 +118,13 @@ automatically; the output tables show it as `base_policy`.
 file:
 
 ```python
-env.set_outer_stopping_condition(timeout=8.5)
-env.set_inner_stopping_condition(relative_time=4.0)  # lookahead window
-env.set_inner_repetitions(4)                         # branches per action
+env.set_outer_stopping_condition(timeout=PERIODS + 0.5)
+env.set_inner_stopping_condition(relative_time=float(INNER_HORIZON))
+env.set_inner_repetitions(INNER_REPS)
 env.set_rng("independent")
-env.set_outer_seed(42)
+env.set_outer_seed(RANDOM_SEED)
 env.set_inner_actions(ACTIONS, metric="cost", outer_run_mode="rollout")
+env.set_output_options(out_dir=NESTED_OUTPUT_FOLDER, gzip_trace=False)
 env.nested_run()
 ```
 
@@ -138,7 +139,7 @@ writes four CSV tables to the run directory. `picks.csv` is the story
 of the run — what each decision chose (`base_policy` means no
 override: the rule's own order was best):
 
-| decision epoch | time | picked action | score of the pick |
+| `trigger` (decision epoch) | `time` | `picked_action` | `mean` (the pick's score) |
 |---|---|---|---|
 | 0 | 1.0 | `base_policy` | 10.75 |
 | 1 | 2.0 | `base_policy` | 17.00 |
@@ -156,8 +157,7 @@ first one: `base_policy`: 10.8 (picked), `0`: 11.8, `5`: 13.2, `10`:
 `env.get_inner_results_by_action(metric="cost")` returns the same
 scores keyed by decision and action, `env.best_inner_action(...)` the
 winner, and `env.print_rollout_summary()` prints the per-decision
-boards; `nestedsimpy.reporting` adds plot and load helpers
-(`write_rollout_plot`, `load_rollout`, `paired_runs`).
+boards. Plot and load helpers live in `nestedsimpy.reporting`.
 
 ## The configuration calls
 
@@ -171,7 +171,8 @@ boards; `nestedsimpy.reporting` adds plot and load helpers
 | `set_inner_actions(..., minimize=False)` | pick the highest-scoring action instead — for reward metrics |
 
 To score branches by something other than a recorded sum, register a
-metric of the same name with `env.register_metric` before the run.
+metric of the same name with `env.register_metric`
+({doc}`API reference <../api/simpy-core>`) before the run.
 
 ## What to expect
 

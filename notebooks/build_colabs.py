@@ -182,7 +182,7 @@ def build(name: str, meta: dict) -> dict:
             "\n"
             f'run = os.path.dirname(glob.glob("simpy_examples/{name}/**/rollout", recursive=True)[0])\n'
             "\n"
-            "# The four rollout CSVs, coarsest to finest: per-action scores, the picks,\n"
+            "# The four rollout CSVs: the picks, per-action scores,\n"
             "# one row per inner simulation, every decision inside every branch.\n"
             'picks = pd.read_csv(f"{run}/rollout/picks.csv")\n'
             'actions = pd.read_csv(f"{run}/rollout/actions.csv")\n'

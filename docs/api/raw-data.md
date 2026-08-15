@@ -67,15 +67,15 @@ A run with declared actions also writes a `rollout/` folder: a
 `manifest.json` describing what produced the files (`actions`,
 `metric`, `minimize`, `outer_run_mode`, `picks_executed`, `k`,
 `replications_per_action`, `decision_count`) and four CSV files from
-coarsest to finest:
+from the pick down to every decision inside every branch:
 
+- `picks.csv` — one row per decision: `trigger`, `time`,
+  `picked_action`, `mean`. A `base_policy` cell means no override: the
+  decision executed the baseline policy's own choice.
 - `actions.csv` — one row per (decision, action): `trigger`, `time`,
   `action`, `mean`, `std`, `n` (replications), `picked`. As everywhere
   in these files, `base_policy` in the `action` cell is the baseline
   policy's own decision.
-- `picks.csv` — one row per decision: `trigger`, `time`,
-  `picked_action`, `mean`. A `base_policy` cell means no override: the
-  decision executed the baseline policy's own choice.
 - `branches.csv` — one row per inner simulation: `inner_id`
   (`j<decision>-a<action>-k<replication>`), `trigger`, `fork_time`,
   `action`, `replication`, `value` (the branch's score), `seed`,
@@ -89,6 +89,6 @@ coarsest to finest:
 ## Reading it back
 
 You rarely need to parse `raw/` by hand: `package_run_outputs(...)` builds the
-`exports/` CSVs, and {doc}`OutputManager <../topical-guides/traces-and-outputs>`
+`exports/` CSVs, and {doc}`OutputManager <../topical-guides/visualization>`
 reads those. Reach for the raw traces mainly when debugging a single branch's
 behavior.

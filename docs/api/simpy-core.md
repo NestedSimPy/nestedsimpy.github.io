@@ -104,6 +104,9 @@ outer_decisions() -> list[(t, decision, feats)]  # the outer run's decisions
 - **`record`** — with `metric="cost"`, branches are scored by the sum of their
   own recorded `"cost"` values; `register_metric` with the same name overrides
   the scoring function.
+- **`set_inner_actions`**, notes — `metric=` requires `outer_run_mode`
+  (alone it raises `ValueError`); the `k` argument (lookahead depth)
+  accepts only 1 in this package.
 - **`get_inner_results_by_action`** — a dict keyed by decision index; each
   value maps an action to its list of branch scores.
 - **`best_inner_action`** — the lowest-scoring action at one decision (the
@@ -113,9 +116,7 @@ outer_decisions() -> list[(t, decision, feats)]  # the outer run's decisions
 - **`set_state_features`** — ``fn(state)`` returns a dict of numeric features;
   every decision (outer and in every branch) records them, and
   `decisions.csv` gains one `state_<key>` column per feature — the
-  (state, action, value) rows offline policy learning needs. `metric=` on
-  `set_inner_actions` requires `outer_run_mode` (alone it raises
-  `ValueError`), and only `k=1` is available in this package.
+  (state, action, value) rows offline policy learning needs.
 - **`last_run_dir`** / **`outer_decisions`** — where the last `nested_run`
   wrote, and the outer run's own (time, decision, features) triples —
   the in-memory companions to the run directory and `decisions.csv`.
