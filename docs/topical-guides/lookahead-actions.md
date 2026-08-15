@@ -167,15 +167,14 @@ To score branches by something other than a recorded sum, register a
 metric of the same name with `env.register_metric`
 ({doc}`API reference <../api/simpy-core>`) before the run.
 
-## What to expect
-
-The picks start from your baseline policy and change only where the
-estimates disagree with it. The gain depends on the baseline: a
-mistuned rule leaves mistakes to correct, while against a well-tuned
-one the noisy per-action estimates rarely change the pick. A longer
-window sees more of each action's consequences but adds noise; more
-replications steady the comparison at the price of computation. When
-in doubt, keep the window short and raise the replications first.
+```{tip}
+Expect gains where the baseline has mistakes to correct: against a
+well-tuned rule the picks mostly stay with the baseline (3 of 8
+decisions in the example above). When tuning, keep the lookahead
+window short and raise the replications first — a longer window sees
+more of each action's consequences but is noisier; more replications
+are steadier but cost compute.
+```
 
 ## A larger example
 
