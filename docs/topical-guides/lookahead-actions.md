@@ -4,56 +4,69 @@
 
 NestedSimPy can also use its inner simulations to *choose* between
 actions: it executes and evaluates a **one-step lookahead** of a
-**baseline policy**, a building block of iterative policy optimization.
-At a decision point, NestedSimPy launches one inner simulation per
-candidate action, lets each branch take its candidate once and then
-follow the baseline policy (your plain model's rule), scores every
-branch over a lookahead window, and executes the action with the best
-average. The outer run continues, and the same happens at the next
-decision. In dynamic optimization this is known as a **rollout
-policy** — hence `outer_run_mode="rollout"` below.
+**baseline policy**, which can serve as a building block for iterative
+policy optimization. At user-defined decision points, NestedSimPy can
+launch multiple inner simulations per candidate action, with each inner
+simulation applying one of the candidate actions (exactly once) and
+then following the user-provided baseline policy. The actions are
+evaluated and the best action can be executed by the outer simulation
+(alternatively, the outer simulation may follow the baseline policy and
+simply report on the performance of candidate actions at decision
+epochs).
 
-Implementing a rollout takes three elements:
+Implementing rollout requires three modifications to the simulation
+code:
 
-1. **Define the decision.** The decision line
+1. **Defining the decision.** The command
    `yield from env.decide(base_policy, state)` executes the baseline
-   policy: any function that returns one complete decision for a given
-   system state (the state object is the user's own). The policy never
-   sees an action and never returns `None` — the lookahead machinery is
-   invisible from inside it. Each `decide` call marks a decision moment.
-2. **Register the actions.** `set_inner_actions(ACTIONS, metric="cost", ...)`
-   declares the alternatives to the baseline policy. An action is either
-   `None` ("the baseline policy decides") or a complete decision,
-   executed exactly as written. At each decision moment NestedSimPy
-   creates copies of the outer simulation — one per action and
-   replication — and each copy evaluates the policy that first applies
-   its assigned action and thereafter follows the baseline policy; a
-   copy's score is the sum of its recorded metric values over the
-   lookahead window.
-3. **Set the running mode.** `outer_run_mode="rollout"` executes the
-   best-scoring action at each decision of the outer run;
-   `outer_run_mode="base_policy"` keeps the outer run on the baseline
-   policy and only collects the scores.
-
-One situation bends the rule in the first element — a decision whose
-variables can only be computed together; see
-{ref}`coupled-decision-variables` below.
+   policy. The function `base_policy()` returns an action for a given
+   system state (`base_policy` is a Python function and `state` is a
+   user-defined object that represents the system state, maintained by
+   the user). The policy should not return the value `None`, which
+   NestedSimPy reserves to stand for the baseline policy's own
+   decision. Note that each `decide` call marks a decision epoch.
+2. **Registering the actions.** `set_inner_actions(ACTIONS, metric="cost", ...)`
+   declares the alternatives to the baseline policy. These are the
+   values that `env.decide` returns in the inner simulations: each
+   inner simulation executes its assigned value once instead of the
+   baseline policy's choice. The baseline's own decision always
+   competes as one more candidate — pass `include_baseline=False` to
+   turn that off; a `None` entry in `ACTIONS` is the same declaration
+   made explicit. At each decision epoch NestedSimPy creates copies of
+   the outer simulation — one per action and inner replication — and
+   each copy evaluates the policy that first applies its assigned
+   action and thereafter follows the baseline policy. The parameter
+   `metric` names the user-defined key under which the model records
+   values; each inner simulation's recorded total is its score, and
+   the scores determine the best action.
+3. **Setting the running mode.** The parameter `outer_run_mode`
+   determines whether the outer simulation acts on the best action
+   (`outer_run_mode="rollout"`) or follows the baseline policy
+   (`outer_run_mode="base_policy"`), in which case NestedSimPy only
+   collects the evaluation of the lookahead policy at each decision
+   epoch.
 
 ## An example
 
-The example is a periodic-review stock: demand each period, then an
-order decision.
+The example below illustrates a rollout implementation in the context
+of a periodic-review inventory model. In each period the sequence of
+events is: the previous period's order arrives, demand realizes,
+holding and shortage costs are incurred, and an order decision is
+made.
 
 - Plain SimPy: [`simpy_examples/inventory_lookahead_plain.py`](https://github.com/NestedSimPy/nestedsimpy.github.io/blob/main/simpy_examples/inventory_lookahead_plain.py)
 - NestedSimPy: [`simpy_examples/inventory_lookahead_nested.py`](https://github.com/NestedSimPy/nestedsimpy.github.io/blob/main/simpy_examples/inventory_lookahead_nested.py)
 
 ### No rollout
 
-A stock faces Poisson demand each period. After demand, an order
-decision: the order-up-to rule looks at the inventory position (on
-hand plus in the pipeline) and orders the shortfall. Orders arrive
-one period later. Holding and shortage costs accrue per period. The
-plain file runs eight periods of exactly that:
+Assume that in each period random demand, modeled with a Poisson
+distribution, is realized. The user then makes a decision about the
+order quantity. The baseline policy we wish to improve is the
+order-up-to rule that considers the inventory position (on hand plus
+in the pipeline) and orders up to a prespecified level. For
+simplicity, we assume orders arrive one period later. Holding and
+shortage costs accrue per period. The code below implements this
+model and runs it for eight periods:
 
 ```{literalinclude} ../../simpy_examples/inventory_lookahead_plain.py
 :language: python
@@ -67,8 +80,13 @@ plain file runs eight periods of exactly that:
 — installs NestedSimPy and runs this example in your browser.
 ```
 
-The nested file has each order chosen by lookahead instead. The three
-elements, in the order they appear in the code:
+The nested file has each order chosen by lookahead instead. The full
+file first, with every change against the plain version highlighted;
+the three modifications are discussed below it:
+
+```{codeannotate} ../../simpy_examples/inventory_lookahead_plain.py ../../simpy_examples/inventory_lookahead_nested.py
+:title: simpy_examples/inventory_lookahead_nested.py
+```
 
 **The decision.** The policy function is identical in both files:
 
@@ -95,9 +113,20 @@ it, so no triggering configuration is needed. Pass `event="my_name"`
 to use another name, and then configure that name explicitly with
 `set_triggering_conditions({"on": "event", "name": "my_name"})`.
 
+```{tip}
+Two different mistakes look similar here. Forgetting `yield from` on
+`env.decide` itself is caught: using the result raises a `TypeError`.
+Forgetting it on one of *your own* functions that contains a decision
+is not: a bare call raises no error — Python builds a generator object,
+discards it, and the body silently never runs, so the model makes no
+decisions at all. Every caller on the path to a decision needs
+`yield from`. If the decision sits directly in your process loop, as in
+this example, nothing extra is needed.
+```
+
 **The actions.** One entry per candidate, in the shape the policy
-returns. Keep `None` in the list so "let the baseline rule decide"
-always competes:
+returns. The baseline's own decision competes automatically; this file
+lists `None` explicitly, which is the same declaration made visible:
 
 ```python
 ACTIONS = [None, 0, 5, 10]
@@ -135,22 +164,30 @@ env.nested_run()
 `"base_policy"` to score every decision while the trajectory stays on
 the baseline rule.
 
-The full file, with every change against the plain version highlighted:
+### The output
 
-```{codeannotate} ../../simpy_examples/inventory_lookahead_plain.py ../../simpy_examples/inventory_lookahead_nested.py
-:title: simpy_examples/inventory_lookahead_nested.py
-```
+Running the nested file prints the total (31.0 over eight periods for
+this seed) and writes the rollout tables under the run directory.
+`picks.csv` answers "what did each period choose" — one row per
+decision epoch. A `base_policy` pick means no override: that period
+executes whatever quantity the order-up-to rule itself computes.
 
-## One rule about `yield from`
+| decision epoch | time | picked action | score of the pick |
+|---|---|---|---|
+| 0 | 1.0 | 5 | 12.00 |
+| 1 | 2.0 | `base_policy` | 16.25 |
+| 2 | 3.0 | 0 | 12.50 |
+| 3 | 4.0 | 5 | 11.75 |
+| 4 | 5.0 | `base_policy` | 10.75 |
+| 5 | 6.0 | 0 | 15.00 |
+| 6 | 7.0 | 5 | 11.75 |
+| 7 | 8.0 | `base_policy` | 14.75 |
 
-Two different mistakes look similar here. Forgetting `yield from` on
-`env.decide` itself is caught: using the result raises a `TypeError`.
-Forgetting it on one of *your own* functions that contains a decision
-is not: a bare call raises no error — Python builds a generator object,
-discards it, and the body silently never runs, so the model makes no
-decisions at all. Every caller on the path to a decision needs
-`yield from`. If the decision sits directly in your process loop, as in
-the example above, nothing extra is needed.
+`actions.csv` keeps every candidate's score at every epoch — at the
+first decision the board was `base_policy`: 16.8, `0`: 15.8, `5`: 12.0
+(picked), `10`: 16.2 — and `branches.csv` / `decisions.csv` go one
+level finer (one row per inner simulation, one row per decision inside
+each inner simulation). {doc}`Raw data files <../api/raw-data>` documents all four.
 
 ## The configuration calls
 
@@ -158,6 +195,7 @@ the example above, nothing extra is needed.
 | --- | --- |
 | `set_inner_actions(ACTIONS, metric="cost", outer_run_mode="rollout")` | declare the candidates, score branches by their summed `"cost"` records, execute the best at each decision |
 | `set_inner_actions(..., outer_run_mode="base_policy")` | score every decision but keep the outer run on its baseline policy — collect per-action data without changing the trajectory |
+| `set_inner_actions(..., include_baseline=False)` | evaluate only the listed actions; by default the baseline's own decision competes as one more candidate |
 | `set_inner_stopping_condition(relative_time=H)` | each branch runs `H` time units past the trigger point — the lookahead window |
 | `set_inner_repetitions(K)` | `K` branches per action; the score is their mean |
 | `set_inner_actions(..., minimize=False)` | pick the highest-scoring action instead — for reward metrics |
@@ -218,8 +256,8 @@ the run directory — a `manifest.json` recording what produced the
 files (including whether the picks were executed) and four CSV
 files: `actions.csv` (per decision and
 action: mean, standard deviation, replications, picked), `picks.csv`
-(the pick per decision, executed in rollout mode; an empty
-`picked_action` cell is the baseline policy), `branches.csv` (one row
+(the pick per decision, executed in rollout mode; a `base_policy`
+cell in `picked_action` is the baseline policy), `branches.csv` (one row
 per inner simulation, with its seed and stop reason), and
 `decisions.csv` (every decision inside every branch) — column details
 in {doc}`Raw data <../api/raw-data>`.

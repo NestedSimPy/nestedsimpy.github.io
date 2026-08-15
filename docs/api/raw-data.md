@@ -71,10 +71,11 @@ coarsest to finest:
 
 - `actions.csv` — one row per (decision, action): `trigger`, `time`,
   `action`, `mean`, `std`, `n` (replications), `picked`. As everywhere
-  in these files, an empty `action` cell is the baseline policy.
+  in these files, `base_policy` in the `action` cell is the baseline
+  policy's own decision.
 - `picks.csv` — one row per decision: `trigger`, `time`,
-  `picked_action`, `mean`. An empty `picked_action` cell is the baseline
-  policy.
+  `picked_action`, `mean`. A `base_policy` cell means no override: the
+  decision executed the baseline policy's own choice.
 - `branches.csv` — one row per inner simulation: `inner_id`
   (`j<decision>-a<action>-k<replication>`), `trigger`, `fork_time`,
   `action`, `replication`, `value` (the branch's score), `seed`,
