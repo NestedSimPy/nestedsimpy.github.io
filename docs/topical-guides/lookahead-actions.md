@@ -29,9 +29,7 @@ code:
    declares the alternatives to the baseline policy. These are the
    values that `env.decide` returns in the inner simulations: each
    inner simulation executes its assigned value once instead of the
-   baseline policy's choice. By default NestedSimPy also evaluates the baseline
-   policy's own decision alongside these candidates, so every
-   comparison includes "keep the baseline's choice". At each decision epoch NestedSimPy creates copies of
+   baseline policy's choice. At each decision epoch NestedSimPy creates copies of
    the outer simulation — one per action and inner replication — and
    each copy evaluates the policy that first applies its assigned
    action and thereafter follows the baseline policy. The parameter
