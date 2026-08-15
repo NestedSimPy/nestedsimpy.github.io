@@ -172,11 +172,11 @@ three more changes convert the decision itself — everything else
 above stays as it is.
 
 **4a. Declare the candidates.** Give one entry per candidate decision, in
-the shape your policy returns; `None` is the policy's own decision and
-should stay in the list:
+the shape your policy returns; the baseline policy's own decision is
+evaluated alongside them by default:
 
 ```python
-ACTIONS = [None, 0, 5, 10]
+ACTIONS = [0, 5, 10]
 ```
 
 **4b. Replace the policy call with the decision line.** The policy

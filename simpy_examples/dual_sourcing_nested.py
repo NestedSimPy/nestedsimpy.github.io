@@ -55,11 +55,12 @@ from dataclasses import dataclass
 import numpy as np
 
 # One entry per candidate decision, in the shape the policy returns:
-# (normal, emergency).  None is the baseline policy's decision -- here
-# (0, 0) or (1, 0) at almost every review, since reviews follow each
-# demand and each delivery.  The other two expedite a unit instead of
-# ordering it normally, and expedite one on top of the normal order.
-ACTIONS = [None, (0, 1), (1, 1)]
+# (normal, emergency).  The baseline policy's own decision competes
+# automatically -- here (0, 0) or (1, 0) at almost every review, since
+# reviews follow each demand and each delivery.  These two expedite a
+# unit instead of ordering it normally, and expedite one on top of the
+# normal order.
+ACTIONS = [(0, 1), (1, 1)]
 INNER_HORIZON = 3.0      # lookahead window, in time units
 INNER_REPS = 12          # replications per action
 
@@ -254,7 +255,7 @@ if __name__ == "__main__":
     params = Params(horizon=25.0, warmup=0.0)
     policy = DualIndexPolicy(s1=30, s2=12)      # the paper's best DI baseline
     r = simulate(params, policy, seed=1, out_dir=NESTED_OUTPUT_FOLDER)
-    print(f"rollout over {len(ACTIONS)} candidates on {policy!r}: "
+    print(f"rollout over {len(ACTIONS) + 1} candidates on {policy!r}: "
           f"total cost {r['total_cost']:.1f} over {params.horizon:.0f} "
           f"({r['total_cost'] / params.horizon:.2f} per unit time)")
     print(f"  ordered {r['counts']['normal']} normal, "

@@ -188,7 +188,7 @@ def build(name: str, meta: dict) -> dict:
             'actions = pd.read_csv(f"{run}/rollout/actions.csv")\n'
             'print(picks.to_string(index=False))\n'
             'print()\n'
-            'print(actions.head(8).to_string(index=False))  # base_policy marks the baseline's own decision\n'
+            'print(actions.head(8).to_string(index=False))  # base_policy = the baseline decision, no override\n'
         )
     else:
         inspect = (

@@ -57,17 +57,17 @@ The baseline policy is the paper's `DualIndexPolicy`, the same object in both
 files, and it goes into the decision line as is:
 
 ```python
-ACTIONS = [None, (0, 1), (1, 1)]
+ACTIONS = [(0, 1), (1, 1)]
 
 normal, emergency = yield from env.decide(policy, state)
 ```
 
 Each action is a complete `(normal, emergency)` order, in the shape
 the policy returns, and a branch executes its candidate exactly as
-written: `None` is the baseline policy's own decision — here `(0, 0)` or
-`(1, 0)` at almost every review, since reviews follow each demand and
-each delivery — and the other two expedite a unit instead of, or on
-top of, a normal order. After that one order, every branch follows the
+written. NestedSimPy also evaluates the baseline policy's own decision
+by default — here `(0, 0)` or `(1, 0)` at almost every review, since
+reviews follow each demand and each delivery — and the two listed
+actions expedite a unit instead of, or on top of, a normal order. After that one order, every branch follows the
 baseline policy, so the comparison isolates the decision at hand. Everything
 else is the standard rollout setup:
 `set_inner_actions(ACTIONS, metric="cost", outer_run_mode="rollout")`,

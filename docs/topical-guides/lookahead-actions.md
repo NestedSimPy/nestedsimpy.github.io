@@ -29,10 +29,9 @@ code:
    declares the alternatives to the baseline policy. These are the
    values that `env.decide` returns in the inner simulations: each
    inner simulation executes its assigned value once instead of the
-   baseline policy's choice. The baseline's own decision always
-   competes as one more candidate — pass `include_baseline=False` to
-   turn that off; a `None` entry in `ACTIONS` is the same declaration
-   made explicit. At each decision epoch NestedSimPy creates copies of
+   baseline policy's choice. By default NestedSimPy also evaluates the baseline
+   policy's own decision alongside these candidates, so every
+   comparison includes "keep the baseline's choice". At each decision epoch NestedSimPy creates copies of
    the outer simulation — one per action and inner replication — and
    each copy evaluates the policy that first applies its assigned
    action and thereafter follows the baseline policy. The parameter
@@ -107,15 +106,15 @@ quantities, and record the cost wherever it arises — `metric="cost"`
 in the configuration sums these records into each branch's score:
 
 ```python
-ACTIONS = [None, 0, 5, 10]     # None = the baseline's own order
+ACTIONS = [0, 5, 10]
 ```
 
 ```python
 env.record("cost", period_cost)
 ```
 
-The baseline competes by default; the `None` entry just makes it
-visible in the output tables.
+NestedSimPy adds the baseline policy's own decision to the comparison
+automatically; the output tables show it as `base_policy`.
 
 **3. The running mode.** The configuration block at the end of the
 file:
@@ -136,25 +135,25 @@ scores.
 
 ### The output
 
-Running the nested file prints the total cost (31.0 for this seed) and
+Running the nested file prints the total cost (39.0 for this seed) and
 writes four CSV tables to the run directory. `picks.csv` is the story
 of the run — what each decision chose (`base_policy` means no
 override: the rule's own order was best):
 
 | decision epoch | time | picked action | score of the pick |
 |---|---|---|---|
-| 0 | 1.0 | 5 | 12.00 |
-| 1 | 2.0 | `base_policy` | 16.25 |
-| 2 | 3.0 | 0 | 12.50 |
-| 3 | 4.0 | 5 | 11.75 |
-| 4 | 5.0 | `base_policy` | 10.75 |
-| 5 | 6.0 | 0 | 15.00 |
-| 6 | 7.0 | 5 | 11.75 |
-| 7 | 8.0 | `base_policy` | 14.75 |
+| 0 | 1.0 | `base_policy` | 10.75 |
+| 1 | 2.0 | `base_policy` | 17.00 |
+| 2 | 3.0 | `base_policy` | 16.50 |
+| 3 | 4.0 | 0 | 11.50 |
+| 4 | 5.0 | 10 | 14.25 |
+| 5 | 6.0 | 0 | 14.25 |
+| 6 | 7.0 | 10 | 16.75 |
+| 7 | 8.0 | 0 | 15.25 |
 
 `actions.csv` holds every candidate's score at every decision — at the
-first one: `base_policy`: 16.8, `0`: 15.8, `5`: 12.0 (picked), `10`:
-16.2. `branches.csv` and `decisions.csv` go one level finer;
+first one: `base_policy`: 10.8 (picked), `0`: 11.8, `5`: 13.2, `10`:
+17.8. `branches.csv` and `decisions.csv` go one level finer;
 {doc}`Raw data files <../api/raw-data>` lists all columns. In code,
 `env.get_inner_results_by_action(metric="cost")` returns the same
 scores keyed by decision and action, `env.best_inner_action(...)` the

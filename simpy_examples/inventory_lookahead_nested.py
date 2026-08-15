@@ -26,7 +26,7 @@ MEAN_DEMAND = 5.0          # Poisson demand per period
 HOLD_COST = 1.0            # per unit on hand per period
 SHORTAGE_COST = 9.0        # per unit short per period (lost sales)
 ORDER_UP_TO = 10           # the rule's target position
-ACTIONS = [None, 0, 5, 10]  # None = the baseline rule's decision
+ACTIONS = [0, 5, 10]   # the baseline rule's own order competes automatically
 LOOKAHEAD = 4              # periods each inner branch runs
 REPS = 4                   # inner branches per candidate
 
@@ -98,4 +98,5 @@ if __name__ == "__main__":
         mean = sum(valid) / len(valid) if valid else float("nan")
         pick = " <- executed" if action == env.best_inner_action(
             trigger=first, metric="cost") else ""
-        print(f"  first decision, action {action!r:6}: mean {mean:6.1f}{pick}")
+        label = "base_policy" if action is None else repr(action)
+        print(f"  first decision, {label:11}: mean {mean:6.1f}{pick}")
