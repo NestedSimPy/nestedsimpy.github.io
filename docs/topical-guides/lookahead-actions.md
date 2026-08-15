@@ -183,31 +183,6 @@ window sees more of each action's consequences but adds noise; more
 replications steady the comparison at the price of computation. When
 in doubt, keep the window short and raise the replications first.
 
-## How this is validated
-
-The test suite checks the machinery against textbook problems whose
-answers are known exactly — not against stored outputs of earlier
-runs. In the classical newsvendor problem (overage cost 1, underage
-cost 3, demand 0 or 4 with probabilities 0.25/0.75) the optimal
-order-up-to level is y\* = 4 and every candidate's expected cost is
-computable by hand. One seeded test run, 64 replications per action:
-
-| order-up-to y | 0 | 1 | 2 | 3 | **4** | 5 | 6 |
-|---|---|---|---|---|---|---|---|
-| exact Q(y), by hand | 9 | 7 | 5 | 3 | **1** | 2 | 3 |
-| simulated score | 9.19 | 7.13 | 5.06 | 3.00 | **0.94** | 1.94 | 2.94 |
-
-The executed pick was 4, and sweep variants with the optimum at the
-top, bottom and middle of the grid (y\* = 4, 0, 2) match theory the
-same way. A five-period companion uses the base-stock result of
-inventory theory (Veinott, *Management Science* 12(3):206-222,
-[1965](https://pubsonline.informs.org/doi/10.1287/mnsc.12.3.206)):
-under its conditions the provably optimal policy orders up to the same
-level every period, and the executed picks came out `[4, 4, 4, 4, 4]`
-— and `[1, 1, 1, 1, 1]` in a mirrored cost setting. Under common
-random numbers some score comparisons are exact to float precision,
-and the suite asserts them as exact.
-
 ## A larger example
 
 For a larger model —
