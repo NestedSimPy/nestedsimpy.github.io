@@ -27,8 +27,8 @@ HOLD_COST = 1.0            # per unit on hand per period
 SHORTAGE_COST = 9.0        # per unit short per period (lost sales)
 ORDER_UP_TO = 10           # the rule's target position
 ACTIONS = [0, 5, 10]   # the baseline rule's own order competes automatically
-LOOKAHEAD = 4              # periods each inner branch runs
-REPS = 4                   # inner branches per candidate
+INNER_HORIZON = 4          # periods each inner branch runs
+INNER_REPS = 4             # inner branches per candidate
 
 NESTED_OUTPUT_FOLDER = set_nested_output_folder("simpy_examples",
                                                 "inventory_lookahead")
@@ -77,8 +77,8 @@ def run():
 
     # No trigger configuration: NestedSimPy branches on decide's event.
     env.set_outer_stopping_condition(timeout=PERIODS + 0.5)
-    env.set_inner_stopping_condition(relative_time=float(LOOKAHEAD))
-    env.set_inner_repetitions(REPS)
+    env.set_inner_stopping_condition(relative_time=float(INNER_HORIZON))
+    env.set_inner_repetitions(INNER_REPS)
     env.set_rng("independent")
     env.set_outer_seed(RANDOM_SEED)
     env.set_inner_actions(ACTIONS, metric="cost", outer_run_mode="rollout")
