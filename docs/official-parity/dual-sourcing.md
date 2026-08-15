@@ -83,7 +83,8 @@ exponential sleeps are declared as `nested_timeout` distributions, so
 at a branch point every pending sleep is resampled.
 
 See {doc}`Implementing lookahead policies
-<../topical-guides/lookahead-actions>` for the full contract, including
-a two-argument decision form for models whose decision variables are
-coupled.
+<../topical-guides/lookahead-actions>` for the full contract; the
+two-argument decision form `fn(state, action)`, for models whose
+decision variables are coupled, is covered in
+{doc}`the API reference <../api/simpy-core>`.
 
