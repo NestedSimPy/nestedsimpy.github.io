@@ -185,10 +185,12 @@ metric of the same name with `env.register_metric`
 ```{tip}
 Expect gains where the baseline has mistakes to correct: this
 example's simple rule is overridden at 5 of 8 decisions, while a
-well-tuned rule keeps most of its picks. When tuning, keep the lookahead
-window short and raise the replications first — a longer window sees
-more of each action's consequences but is noisier; more replications
-are steadier but cost more computation.
+well-tuned rule keeps most of its picks. Each candidate's score is the
+average over its inner simulations, so raising the replications makes
+the comparison steadier and more accurate, at more computation; a
+longer lookahead window sees more of each action's consequences but
+adds noise. When tuning, keep the window short and raise the
+replications first.
 ```
 
 ## A larger example
