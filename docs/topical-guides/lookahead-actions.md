@@ -31,9 +31,7 @@ code:
    decision epoch.
 2. **Registering the actions.** `set_inner_actions(ACTIONS, metric="cost", ...)`
    declares the alternatives to the baseline policy. These are the
-   values that `env.decide` returns in the inner simulations: each
-   inner simulation executes its assigned value once instead of the
-   baseline policy's choice. At each decision epoch NestedSimPy creates
+   values that `env.decide` returns in the inner simulations. At each decision epoch NestedSimPy creates
    copies of the outer simulation — one per action and inner
    replication — and each copy evaluates the policy that first applies
    its assigned action and thereafter follows the baseline policy. The
