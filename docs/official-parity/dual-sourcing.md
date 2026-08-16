@@ -62,13 +62,18 @@ ACTIONS = [(0, 1), (1, 1)]
 normal, emergency = yield from env.decide(policy, state)
 ```
 
-Each action is a complete `(normal, emergency)` order, in the shape
-the policy returns, and a branch executes its candidate exactly as
-written. NestedSimPy also evaluates the baseline policy's own decision
-by default — here `(0, 0)` or `(1, 0)` at almost every review, since
-reviews follow each demand and each delivery — and the two listed
-actions expedite a unit instead of, or on top of, a normal order. After that one order, every branch follows the
-baseline policy, so the comparison isolates the decision at hand. Everything
+Each action is a complete `(normal, emergency)` order — how many units
+to order normally, and how many to expedite. Three candidates compete
+at every review:
+
+| candidate | meaning |
+|---|---|
+| the baseline's own decision (evaluated by default) | whatever Dual-Index says — usually `(0, 0)` or `(1, 0)`, since reviews follow each demand and each delivery |
+| `(0, 1)` | expedite one unit *instead of* ordering it normally |
+| `(1, 1)` | expedite one unit *on top of* the normal order |
+
+A branch executes its candidate once and follows the baseline policy
+afterwards, so the comparison isolates the decision at hand. Everything
 else is the standard rollout setup:
 `set_inner_actions(ACTIONS, metric="cost", outer_run_mode="rollout")`,
 one `env.record("cost", ...)` stream that scores the branches, and no
