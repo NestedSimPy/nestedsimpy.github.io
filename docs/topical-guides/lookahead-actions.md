@@ -8,13 +8,7 @@ actions: it executes and evaluates a **one-step lookahead** of a
 policy optimization.
 
 At user-defined decision points, NestedSimPy can
-launch multiple inner simulations per candidate action, with each inner
-simulation applying one of the candidate actions (exactly once) and
-then following the user-provided baseline policy. The actions are
-evaluated and the best action can be executed by the outer simulation
-(alternatively, the outer simulation may follow the baseline policy and
-simply report on the performance of candidate actions at decision
-epochs).
+launch multiple inner simulations per candidate action.
 
 Implementing rollout requires three modifications to the simulation
 code:
