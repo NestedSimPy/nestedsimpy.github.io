@@ -63,8 +63,10 @@ distribution, is realized. The user then makes a decision about the
 order quantity. The baseline policy we wish to improve is the
 order-up-to rule that considers the inventory position (on hand plus
 in the pipeline) and orders up to a prespecified level. For
-simplicity, we assume orders arrive one period later. Holding and
-shortage costs accrue per period. The code below implements this
+simplicity, we assume orders arrive one period later: each period
+opens with the arrival of the previous period's order, then demand
+realizes, holding and shortage costs are incurred, and the period
+ends with the new order decision. The code below implements this
 model and runs it for eight periods:
 
 ```{literalinclude} ../../simpy_examples/inventory_lookahead_plain.py
