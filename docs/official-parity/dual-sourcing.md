@@ -75,11 +75,13 @@ at every review:
 
 Each inner simulation tries its candidate once and then hands control
 back to the Dual-Index rule, so the only thing the simulations disagree
-on is that first decision. The rest of the setup is two lines:
+on is that first decision. Two lines carry the rollout logic:
 `set_inner_actions(ACTIONS, metric="cost", outer_run_mode="rollout")`
 declares the candidates, and `env.record("cost", ...)` tells NestedSimPy
-what to add up when comparing them. No trigger configuration is needed
-— `env.decide` marks the decision points by itself.
+what to add up when comparing them; the window, replication and seed
+settings around them are the standard configuration shown in the code
+above. No trigger configuration is needed — `env.decide` marks the
+decision points by itself.
 
 Why does this model need nested simulation at all? Because lead times
 are endogenous: how long an order takes depends on how busy the

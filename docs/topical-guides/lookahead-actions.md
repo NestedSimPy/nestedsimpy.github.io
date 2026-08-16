@@ -21,8 +21,8 @@ code:
 
 1. **Defining the decision.** The command
    `yield from env.decide(base_policy, state)` executes the baseline
-   policy; in rollout mode it returns the best candidate instead of
-   the baseline's choice (modification 3). The function `base_policy()`
+   policy; in rollout mode it returns the best candidate found by the
+   inner simulations (modification 3). The function `base_policy()`
    returns an action for a given system state (`base_policy` is a
    Python function and `state` is a user-defined object that represents
    the system state, maintained by the user). The policy should not
@@ -156,7 +156,7 @@ The other three tables go one level finer — `actions.csv` keeps every
 candidate's score at every decision, `branches.csv` one row per inner
 simulation, `decisions.csv` every decision inside each branch;
 {doc}`Raw data files <../api/raw-data>` lists all columns. In code,
-`env.print_rollout_summary()` shows the same boards, one line per
+`env.print_rollout_summary()` shows the same numbers, one line per
 decision with the pick starred:
 
 ```text
@@ -185,9 +185,9 @@ metric of the same name with `env.register_metric`
 ({doc}`API reference <../api/simpy-core>`) before the run.
 
 ```{tip}
-Expect gains where the baseline has mistakes to correct: against a
-well-tuned rule the picks mostly stay with the baseline (3 of 8
-decisions in the example above). When tuning, keep the lookahead
+Expect gains where the baseline has mistakes to correct: this
+example's simple rule is overridden at 5 of 8 decisions, while a
+well-tuned rule keeps most of its picks. When tuning, keep the lookahead
 window short and raise the replications first — a longer window sees
 more of each action's consequences but is noisier; more replications
 are steadier but cost compute.
