@@ -10,7 +10,9 @@ An example for using NestedSimPy for optimization (not from the SimPy
 documentation). We simulate the dual-sourcing inventory model of Song,
 Xiao, Zhang and Zipkin (2017), "Optimal Policies for a Dual-Sourcing
 Inventory Problem with Endogenous Stochastic Leadtimes", *Operations
-Research* 65(2):379–395: a single product faces unit Poisson demand
+Research* 65(2):379–395.
+
+A single product faces unit Poisson demand
 with full backlogging; normal orders ride a two-stage tandem production
 line, so lead times are endogenous (ordering more congests the line),
 and an expedited order — the paper's emergency source — skips stage 1
