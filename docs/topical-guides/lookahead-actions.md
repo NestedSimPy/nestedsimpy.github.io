@@ -152,14 +152,22 @@ override: the rule's own order was best):
 | 6 | 7.0 | 10 | 16.75 |
 | 7 | 8.0 | 0 | 15.25 |
 
-`actions.csv` holds every candidate's score at every decision — at the
-first one: `base_policy`: 10.8 (picked), `0`: 11.8, `5`: 13.2, `10`:
-17.8. `branches.csv` and `decisions.csv` go one level finer;
+The other three tables go one level finer — `actions.csv` keeps every
+candidate's score at every decision, `branches.csv` one row per inner
+simulation, `decisions.csv` every decision inside each branch;
 {doc}`Raw data files <../api/raw-data>` lists all columns. In code,
-`env.get_inner_results_by_action(metric="cost")` returns the same
-scores keyed by decision and action, `env.best_inner_action(...)` the
-winner, and `env.print_rollout_summary()` prints the per-decision
-boards. Plot and load helpers live in `nestedsimpy.reporting`.
+`env.print_rollout_summary()` shows the same boards, one line per
+decision with the pick starred:
+
+```text
+rollout summary (metric 'cost', 8 triggers, 4 actions)
+  trigger  0 (t=1): 0:11.8  5:13.2  10:17.8  base_policy:10.8*
+  trigger  1 (t=2): 0:17.2  5:17.8  10:22.8  base_policy:17.0*
+  ...
+```
+
+`env.get_inner_results_by_action(metric="cost")` returns the scores as
+a dict; plot and load helpers live in `nestedsimpy.reporting`.
 
 ## The configuration calls
 
