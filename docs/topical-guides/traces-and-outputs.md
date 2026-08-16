@@ -118,7 +118,7 @@ three different needs:
    files: `state_wide.csv` (one row per recorded state), `state_long.csv` (the
    queue contents at each of those states), and `events.csv` (every non-snapshot
    event). Use these to analyse the whole run at once.
-3. **Your own metric** — whatever a postprocessor writes (see below); the
+3. **Your own metric** — whatever a postprocessor writes; the
    bundled wait-time hook produces `user_waits.csv`, one waiting time per inner.
 
 Reading a per-realization name such as `[42][j=1][2,arrival][k=0][7].csv`:
