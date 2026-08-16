@@ -5,7 +5,9 @@
 NestedSimPy can also use its inner simulations to *choose* between
 actions: it executes and evaluates a **one-step lookahead** of a
 **baseline policy**, which can serve as a building block for iterative
-policy optimization. At user-defined decision points, NestedSimPy can
+policy optimization.
+
+At user-defined decision points, NestedSimPy can
 launch multiple inner simulations per candidate action, with each inner
 simulation applying one of the candidate actions (exactly once) and
 then following the user-provided baseline policy. The actions are
