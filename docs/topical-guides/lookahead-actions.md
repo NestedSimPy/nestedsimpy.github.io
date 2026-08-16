@@ -188,7 +188,7 @@ example's simple rule is overridden at 5 of 8 decisions, while a
 well-tuned rule keeps most of its picks. When tuning, keep the lookahead
 window short and raise the replications first — a longer window sees
 more of each action's consequences but is noisier; more replications
-are steadier but cost compute.
+are steadier but cost more computation.
 ```
 
 ## A larger example

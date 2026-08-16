@@ -16,7 +16,9 @@ line, so lead times are endogenous (ordering more congests the line),
 and an expedited order — the paper's emergency source — skips stage 1
 at a higher per-unit cost. At each
 decision epoch the decision-maker decides whether to place a normal or
-an expedited order. The example illustrates how NestedSimPy applies
+an expedited order.
+
+The example illustrates how NestedSimPy applies
 rollout (policy lookahead) of an existing baseline policy: both files
 run the paper's Table 5 instance (h=1, b=60, h2=2), whose best
 Dual-Index policy (s1=30, s2=12) has an exact cost rate of 99.89 in the
