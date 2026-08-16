@@ -53,8 +53,9 @@ order in inner simulations launched from the live production line.
 
 ## Discussion
 
-The baseline policy is the paper's `DualIndexPolicy`, the same object in both
-files, and it goes into the decision line as is:
+The baseline policy — the rule the rollout starts from and tries to
+improve — is the paper's `DualIndexPolicy`, the same object in both
+files. It goes into the decision line as is:
 
 ```python
 ACTIONS = [(0, 1), (1, 1)]
@@ -72,20 +73,22 @@ at every review:
 | `(0, 1)` | expedite one unit *instead of* ordering it normally |
 | `(1, 1)` | expedite one unit *on top of* the normal order |
 
-A branch executes its candidate once and follows the baseline policy
-afterwards, so the comparison isolates the decision at hand. Everything
-else is the standard rollout setup:
-`set_inner_actions(ACTIONS, metric="cost", outer_run_mode="rollout")`,
-one `env.record("cost", ...)` stream that scores the branches, and no
-triggering configuration, since NestedSimPy branches on the event
-`decide` publishes.
+Each inner simulation tries its candidate once and then hands control
+back to the Dual-Index rule, so the only thing the simulations disagree
+on is that first decision. The rest of the setup is two lines:
+`set_inner_actions(ACTIONS, metric="cost", outer_run_mode="rollout")`
+declares the candidates, and `env.record("cost", ...)` tells NestedSimPy
+what to add up when comparing them. No trigger configuration is needed
+— `env.decide` marks the decision points by itself.
 
-Endogenous lead times are why this model needs nested simulation at
-all: an order's delay depends on the queue it joins, so there is no
-lead-time distribution to write down — but a launched branch carries the
-whole production line with it, units in service included. The three
-exponential sleeps are declared as `nested_timeout` distributions, so
-at a branch point every pending sleep is resampled.
+Why does this model need nested simulation at all? Because lead times
+are endogenous: how long an order takes depends on how busy the
+production line is at that moment, so there is no lead-time
+distribution to plug into a formula. A forked inner simulation
+sidesteps the problem — it carries the whole production line with it,
+including the units halfway through service, and every pending delay
+is redrawn from its conditional distribution (that is what declaring
+the three exponential delays as `nested_timeout` buys).
 
 See {doc}`Implementing lookahead policies
 <../topical-guides/lookahead-actions>` for the full contract; the
