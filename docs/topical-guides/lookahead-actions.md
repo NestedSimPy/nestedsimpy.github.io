@@ -22,7 +22,7 @@ code:
 1. **Defining the decision.** The command
    `yield from env.decide(base_policy, state)` executes the baseline
    policy; in rollout mode it returns the best candidate found by the
-   inner simulations (modification 3). The function `base_policy()`
+   inner simulations. The function `base_policy()`
    returns an action for a given system state (`base_policy` is a
    Python function and `state` is a user-defined object that represents
    the system state, maintained by the user). The policy should not
