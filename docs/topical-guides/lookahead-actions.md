@@ -5,34 +5,39 @@
 NestedSimPy can also use its inner simulations to *choose* between
 actions: it executes and evaluates a **one-step lookahead** of a
 **baseline policy**, which can serve as a building block for iterative
-policy optimization.
-
-At user-defined decision points, NestedSimPy launches inner simulations
-for each candidate action; each one applies its candidate exactly once
-and then follows the user-provided baseline policy. The outer
-simulation then executes the best action — or, in evaluation mode,
-stays on the baseline policy and only reports each candidate's
-performance at the decision epoch.
+policy optimization. At user-defined decision points, NestedSimPy can
+launch multiple inner simulations per candidate action, with each inner
+simulation applying one of the candidate actions (exactly once) and
+then following the user-provided baseline policy. The actions are
+evaluated and the best action can be executed by the outer simulation
+(alternatively, the outer simulation may follow the baseline policy and
+simply report on the performance of candidate actions at decision
+epochs).
 
 Implementing rollout requires three modifications to the simulation
 code:
 
 1. **Defining the decision.** The command
-   `yield from env.decide(base_policy, state)` marks a decision epoch
-   and returns the decision to execute — the baseline policy's choice,
-   or the best candidate when the running mode is rollout
-   (modification 3). The function `base_policy()` returns an action for
-   a given system state (`base_policy` is a Python function and `state`
-   is a user-defined object that represents the system state,
-   maintained by the user).
+   `yield from env.decide(base_policy, state)` executes the baseline
+   policy; in rollout mode it returns the best candidate instead of
+   the baseline's choice (modification 3). The function `base_policy()`
+   returns an action for a given system state (`base_policy` is a
+   Python function and `state` is a user-defined object that represents
+   the system state, maintained by the user). The policy should not
+   return the value `None`, which NestedSimPy reserves to stand for the
+   baseline policy's own decision. Note that each `decide` call marks a
+   decision epoch.
 2. **Registering the actions.** `set_inner_actions(ACTIONS, metric="cost", ...)`
-   declares the alternatives to the baseline policy — the values
-   `env.decide` returns in the inner simulations. At each decision
-   epoch NestedSimPy forks one copy of the simulation per action and
-   replication; `metric` names the key under which the model records
-   values, and each copy's recorded total is its score. The baseline
-   policy itself should not return `None`, which NestedSimPy reserves
-   to stand for the baseline policy's own decision.
+   declares the alternatives to the baseline policy. These are the
+   values that `env.decide` returns in the inner simulations: each
+   inner simulation executes its assigned value once instead of the
+   baseline policy's choice. At each decision epoch NestedSimPy creates
+   copies of the outer simulation — one per action and inner
+   replication — and each copy evaluates the policy that first applies
+   its assigned action and thereafter follows the baseline policy. The
+   parameter `metric` names the user-defined key under which the model
+   records values; each inner simulation's recorded total is its score,
+   and the scores determine the best action.
 3. **Setting the running mode.** The parameter `outer_run_mode`
    determines whether the outer simulation acts on the best action
    (`outer_run_mode="rollout"`) or follows the baseline policy
